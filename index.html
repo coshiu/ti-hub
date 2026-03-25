@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talent Intelligence Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0b0f;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2330;
+    --border2: #252d3d;
+    --text: #e8eaf0;
+    --text-muted: #6b7491;
+    --text-dim: #3d4560;
+
+    --job: #e8c547;
+    --job-bg: #1a1806;
+    --job-border: #2d2a08;
+
+    --pipeline: #47c5a8;
+    --pipeline-bg: #061a16;
+    --pipeline-border: #082d24;
+
+    --comp: #60c8f0;
+    --comp-bg: #061318;
+    --comp-border: #0a2030;
+
+    --market: #f07a4a;
+    --market-bg: #1a0c06;
+    --market-border: #2d1408;
+
+    --partner: #1a8fff;
+    --partner-bg: #030d1a;
+    --partner-border: #0a2040;
+
+    --reporting: #a78bfa;
+    --reporting-bg: #0f0a1a;
+    --reporting-border: #2a1a4a;
+
+    --accent: #5b8fff;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.022;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ── PASSWORD GATE ── */
+  .gate {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+
+  .gate::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.022; pointer-events: none;
+  }
+
+  .gate-card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 48px 44px;
+    width: 100%; max-width: 400px;
+    text-align: center;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .gate-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+  }
+
+  .gate-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 700;
+    color: var(--text); margin-bottom: 8px; line-height: 1.2;
+  }
+
+  .gate-title span { color: var(--accent); }
+
+  .gate-subtitle {
+    font-size: 13px; color: var(--text-muted);
+    line-height: 1.6; margin-bottom: 32px;
+  }
+
+  .gate-input-wrap { position: relative; margin-bottom: 12px; }
+
+  .gate-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 12px 44px 12px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-align: center; letter-spacing: 0.04em;
+  }
+
+  .gate-input::placeholder { color: var(--text-dim); letter-spacing: 0; }
+
+  .gate-input:focus {
+    border-color: rgba(91,143,255,0.4);
+    box-shadow: 0 0 0 3px rgba(91,143,255,0.07);
+  }
+
+  .gate-input.error {
+    border-color: rgba(240,122,74,0.5);
+    box-shadow: 0 0 0 3px rgba(240,122,74,0.07);
+    animation: shake 0.3s ease;
+  }
+
+  .gate-toggle {
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: var(--text-dim); font-size: 14px; padding: 0;
+    transition: color 0.15s;
+  }
+
+  .gate-toggle:hover { color: var(--text-muted); }
+
+  .gate-btn {
+    width: 100%;
+    background: var(--accent); color: white;
+    border: none; border-radius: 8px;
+    padding: 12px; font-size: 14px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: background 0.15s;
+    margin-bottom: 12px;
+  }
+
+  .gate-btn:hover { background: #4a7aee; }
+
+  .gate-error {
+    font-size: 12px; color: var(--market);
+    font-family: 'DM Mono', monospace;
+    min-height: 18px; margin-top: 4px;
+  }
+
+  .gate.hidden { display: none; }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 240px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 32px 0;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 0 24px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .logo-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+  }
+
+  .logo-name span { color: var(--accent); }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .nav-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 16px 24px 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 24px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { color: var(--text); background: var(--surface2); }
+
+  .nav-item.active[data-type="all"]     { border-left-color: var(--accent); }
+  .nav-item.active[data-type="job"]     { border-left-color: var(--job); }
+  .nav-item.active[data-type="pipeline"]{ border-left-color: var(--pipeline); }
+  .nav-item.active[data-type="comp"]    { border-left-color: var(--comp); }
+  .nav-item.active[data-type="market"]  { border-left-color: var(--market); }
+  .nav-item.active[data-type="partner"]   { border-left-color: var(--partner); }
+  .nav-item.active[data-type="reporting"] { border-left-color: var(--reporting); }
+
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  .nav-count {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    background: var(--border);
+    padding: 2px 6px;
+    border-radius: 10px;
+  }
+
+  .sidebar-footer {
+    padding: 20px 24px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .sidebar-footer p { font-size: 11px; color: var(--text-dim); line-height: 1.6; }
+
+  /* ── MAIN ── */
+  .main { margin-left: 240px; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    background: rgba(10,11,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 50;
+  }
+
+  .search-wrap { flex: 1; position: relative; max-width: 480px; }
+
+  .search-icon {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  .search-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 9px 14px 9px 38px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input::placeholder { color: var(--text-dim); }
+  .search-input:focus { border-color: var(--border2); box-shadow: 0 0 0 3px rgba(91,143,255,0.08); }
+
+  .topbar-actions { display: flex; gap: 10px; margin-left: auto; }
+
+  .btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 7px;
+    font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; border: none;
+  }
+
+  .btn-ghost { background: var(--surface); color: var(--text-muted); border: 1px solid var(--border2); }
+  .btn-ghost:hover { color: var(--text); background: var(--surface2); }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: #4a7aee; }
+
+  /* ── CONTENT ── */
+  .content { padding: 40px 40px 80px; flex: 1; }
+
+  .page-header { margin-bottom: 36px; animation: fadeUp 0.4s ease both; }
+
+  .page-header-top { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 8px; }
+
+  .page-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; line-height: 1.1; color: var(--text); }
+  .page-subtitle { font-size: 13.5px; color: var(--text-muted); margin-top: 6px; line-height: 1.6; }
+
+  /* ── STATS ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 36px;
+    animation: fadeUp 0.4s 0.05s ease both;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    transition: border-color 0.2s;
+  }
+
+  .stat-card:hover { border-color: var(--border2); }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 10px;
+  }
+
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .stat-sub { font-size: 11.5px; color: var(--text-muted); }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+    animation: fadeUp 0.4s 0.1s ease both;
+  }
+
+  .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .pill {
+    padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border2); color: var(--text-muted);
+    background: transparent; font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+  }
+
+  .pill:hover { color: var(--text); border-color: #3a4260; }
+
+  .pill.active-all     { background: rgba(91,143,255,0.12); color: var(--accent); border-color: rgba(91,143,255,0.3); }
+  .pill.active-job     { background: rgba(232,197,71,0.1);  color: var(--job);    border-color: rgba(232,197,71,0.3); }
+  .pill.active-pipeline{ background: rgba(71,197,168,0.1);  color: var(--pipeline);border-color: rgba(71,197,168,0.3); }
+  .pill.active-comp    { background: rgba(96,200,240,0.1);  color: var(--comp);   border-color: rgba(96,200,240,0.3); }
+  .pill.active-market  { background: rgba(240,122,74,0.1);  color: var(--market); border-color: rgba(240,122,74,0.3); }
+  .pill.active-partner   { background: rgba(26,143,255,0.1);  color: var(--partner);border-color: rgba(26,143,255,0.3); }
+  .pill.active-reporting { background: rgba(167,139,250,0.1); color: var(--reporting); border-color: rgba(167,139,250,0.3); }
+
+  .sort-select {
+    background: var(--surface); border: 1px solid var(--border2); border-radius: 7px;
+    padding: 6px 12px; color: var(--text-muted); font-size: 12px;
+    font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer;
+  }
+
+  /* ── CARDS ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+    animation: fadeUp 0.4s 0.15s ease both;
+  }
+
+  .artifact-card {
+    background: var(--surface); border-radius: 12px; border: 1px solid var(--border);
+    overflow: hidden; cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .artifact-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+
+  .artifact-card[data-type="job"]:hover      { border-color: var(--job-border);     box-shadow: 0 8px 32px rgba(232,197,71,0.07); }
+  .artifact-card[data-type="pipeline"]:hover { border-color: var(--pipeline-border);box-shadow: 0 8px 32px rgba(71,197,168,0.07); }
+  .artifact-card[data-type="comp"]:hover     { border-color: var(--comp-border);    box-shadow: 0 8px 32px rgba(96,200,240,0.07); }
+  .artifact-card[data-type="market"]:hover   { border-color: var(--market-border);  box-shadow: 0 8px 32px rgba(240,122,74,0.07); }
+  .artifact-card[data-type="partner"]:hover  { border-color: var(--partner-border); box-shadow: 0 8px 32px rgba(26,143,255,0.07); }
+  .artifact-card[data-type="reporting"]:hover { border-color: var(--reporting-border); box-shadow: 0 8px 32px rgba(167,139,250,0.07); }
+
+  .card-accent-bar { height: 3px; width: 100%; }
+  .card-body { padding: 20px 22px; }
+
+  .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+
+  .card-type-badge {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 4px; font-weight: 500;
+  }
+
+  .badge-job      { background: var(--job-bg);      color: var(--job);      border: 1px solid var(--job-border); }
+  .badge-pipeline { background: var(--pipeline-bg); color: var(--pipeline); border: 1px solid var(--pipeline-border); }
+  .badge-comp     { background: var(--comp-bg);     color: var(--comp);     border: 1px solid var(--comp-border); }
+  .badge-market   { background: var(--market-bg);   color: var(--market);   border: 1px solid var(--market-border); }
+  .badge-partner  { background: var(--partner-bg);  color: var(--partner);  border: 1px solid var(--partner-border); }
+  .badge-reporting{ background: var(--reporting-bg); color: var(--reporting); border: 1px solid var(--reporting-border); }
+
+  .card-date { font-size: 11px; color: var(--text-dim); margin-left: auto; font-family: 'DM Mono', monospace; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; line-height: 1.3; color: var(--text); margin-bottom: 8px; }
+  .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+
+  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+
+  .tag {
+    font-size: 11px; padding: 3px 9px; border-radius: 4px;
+    background: var(--surface2); color: var(--text-dim);
+    border: 1px solid var(--border); font-family: 'DM Mono', monospace;
+  }
+
+  .card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 14px; border-top: 1px solid var(--border);
+  }
+
+  .card-status { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--text-muted); }
+
+  .status-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.live   { background: #47c56a; }
+  .status-dot.draft  { background: var(--text-dim); }
+  .status-dot.review { background: var(--job); }
+
+  .card-actions { display: flex; gap: 6px; }
+
+  .icon-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text-dim); font-size: 12px; transition: all 0.15s;
+  }
+
+  .icon-btn:hover { color: var(--text); border-color: var(--border2); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state { grid-column: 1/-1; text-align: center; padding: 80px 40px; color: var(--text-dim); }
+  .empty-state-icon { font-size: 40px; margin-bottom: 16px; }
+  .empty-state h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--text-muted); margin-bottom: 8px; }
+  .empty-state p { font-size: 13.5px; }
+
+  /* ── MODALS ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    width: 100%; max-width: 560px;
+    max-height: 90vh; overflow-y: auto;
+    transform: translateY(16px);
+    transition: transform 0.2s;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-header {
+    padding: 24px 28px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; }
+
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 6px;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text-muted); font-size: 16px; transition: all 0.15s;
+  }
+
+  .modal-close:hover { color: var(--text); }
+
+  .modal-body { padding: 24px 28px; }
+
+  /* ── DETAIL MODAL ── */
+  .detail-header { padding: 28px; border-bottom: 1px solid var(--border); }
+  .detail-type { margin-bottom: 10px; }
+  .detail-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; line-height: 1.2; margin-bottom: 12px; }
+  .detail-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+  .detail-body { padding: 24px 28px; }
+  .detail-section-label {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+  }
+  .detail-content {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px; font-size: 13.5px; color: var(--text-muted); line-height: 1.7;
+    margin-bottom: 20px; white-space: pre-wrap; font-family: 'DM Mono', monospace;
+  }
+
+  /* ── ABOUT SECTION ── */
+  .about-section {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    margin-bottom: 32px; overflow: hidden; animation: fadeUp 0.4s ease both; transition: border-color 0.2s;
+  }
+
+  .about-section:hover { border-color: var(--border2); }
+
+  .about-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px; cursor: pointer; user-select: none;
+  }
+
+  .about-header-left { display: flex; flex-direction: column; gap: 3px; }
+
+  .about-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent);
+  }
+
+  .about-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--text); }
+
+  .about-toggle {
+    display: flex; align-items: center; gap: 6px; font-size: 12px;
+    color: var(--text-muted); font-family: 'DM Mono', monospace; flex-shrink: 0; transition: color 0.15s;
+  }
+
+  .about-header:hover .about-toggle { color: var(--text); }
+
+  .about-collapsed-preview {
+    padding: 16px 24px 18px; font-size: 13px; color: var(--text-muted);
+    line-height: 1.7; border-top: 1px solid var(--border); font-style: italic;
+  }
+
+  .about-body { display: none; border-top: 1px solid var(--border); padding: 24px; }
+  .about-body.open { display: block; }
+
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .about-block { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+  .about-block-wide { grid-column: 1 / -1; }
+
+  .about-block-label {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px;
+  }
+
+  .about-block-text { font-size: 13px; color: var(--text-muted); line-height: 1.75; }
+
+  .about-quote {
+    margin-top: 14px; padding: 12px 16px;
+    border-left: 2px solid var(--accent);
+    font-family: 'Playfair Display', serif; font-size: 14px; font-style: italic;
+    color: var(--text); background: rgba(91,143,255,0.05); border-radius: 0 6px 6px 0;
+  }
+
+  .about-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .about-list-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .about-bullet { color: var(--accent); flex-shrink: 0; font-size: 11px; margin-top: 1px; }
+
+  .about-pills-wrap { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+
+  .about-tag {
+    font-family: 'DM Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 4px;
+    background: rgba(91,143,255,0.08); color: var(--accent); border: 1px solid rgba(91,143,255,0.2);
+    letter-spacing: 0.04em;
+  }
+
+  .about-vision {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(91,143,255,0.07) 0%, rgba(71,197,168,0.05) 100%);
+    border: 1px solid rgba(91,143,255,0.15); border-radius: 10px; padding: 20px 22px;
+  }
+
+  .about-vision-label {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+  }
+
+  .about-vision-text {
+    font-family: 'Playfair Display', serif; font-size: 15px; color: var(--text);
+    line-height: 1.7; font-style: italic;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { width: 200px; }
+    .main { margin-left: 200px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .content { padding: 24px 24px 60px; }
+    .topbar { padding: 12px 24px; }
+  }
+
+  @media (max-width: 640px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="gate-eyebrow">Crusoe · Internal Tool</div>
+    <div class="gate-title">Talent<br><span>Intelligence</span> Hub</div>
+    <p class="gate-subtitle">This is an internal resource. Enter the team password to continue.</p>
+    <div class="gate-input-wrap">
+      <input class="gate-input" id="gateInput" type="password" placeholder="Enter password…" onkeydown="if(event.key==='Enter') checkPassword()">
+      <button class="gate-toggle" onclick="toggleGateVisibility(this)" tabindex="-1">👁</button>
+    </div>
+    <div class="gate-error" id="gateError"></div>
+    <br>
+    <button class="gate-btn" onclick="checkPassword()">Unlock →</button>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-label">Internal Tool</div>
+    <div class="logo-name">Talent<br><span>Intelligence</span></div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Library</div>
+    <a class="nav-item active" data-type="all" onclick="setFilter('all', this)">
+      <span class="nav-dot" style="background:#5b8fff"></span> All Artifacts
+      <span class="nav-count" id="count-all">0</span>
+    </a>
+    <a class="nav-item" data-type="job" onclick="setFilter('job', this)">
+      <span class="nav-dot" style="background:var(--job)"></span> Sourcing Strategy
+      <span class="nav-count" id="count-job">0</span>
+    </a>
+    <a class="nav-item" data-type="pipeline" onclick="setFilter('pipeline', this)">
+      <span class="nav-dot" style="background:var(--pipeline)"></span> Learning & Development
+      <span class="nav-count" id="count-pipeline">0</span>
+    </a>
+    <a class="nav-item" data-type="market" onclick="setFilter('market', this)">
+      <span class="nav-dot" style="background:var(--market)"></span> Competitive Intelligence
+      <span class="nav-count" id="count-market">0</span>
+    </a>
+    <a class="nav-item" data-type="comp" onclick="setFilter('comp', this)">
+      <span class="nav-dot" style="background:var(--comp)"></span> Public Assets
+      <span class="nav-count" id="count-comp">0</span>
+    </a>
+    <a class="nav-item" data-type="partner" onclick="setFilter('partner', this)">
+      <span class="nav-dot" style="background:var(--partner)"></span> Partnerships
+      <span class="nav-count" id="count-partner">0</span>
+    </a>
+    <a class="nav-item" data-type="reporting" onclick="setFilter('reporting', this)">
+      <span class="nav-dot" style="background:var(--reporting)"></span> Reporting
+      <span class="nav-count" id="count-reporting">0</span>
+    </a>
+
+    <div class="nav-section-label" style="margin-top:8px;">Views</div>
+    <a class="nav-item" onclick="showRecent()">
+      <span class="nav-dot" style="background:var(--text-dim)"></span> Recently Added
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <p>All artifacts are stored locally in your browser.</p>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search artifacts, tags, descriptions…" oninput="renderCards()">
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="exportData()">↓ Export</button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="page-header">
+      <div class="page-header-top">
+        <h1 class="page-title" id="pageTitle">All Artifacts</h1>
+      </div>
+      <p class="page-subtitle" id="pageSubtitle">Your complete Talent Intelligence library — sourcing strategy, competitive intel, learning resources, and more.</p>
+    </div>
+
+    <!-- ABOUT SECTION -->
+    <div class="about-section" id="aboutSection">
+      <div class="about-header" onclick="toggleAbout()">
+        <div class="about-header-left">
+          <div class="about-eyebrow">About this team</div>
+          <div class="about-title">The Future of Technical Sourcing: Talent Intelligence</div>
+        </div>
+        <div class="about-toggle" id="aboutToggle">
+          <span>Read more</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="transition:transform 0.3s ease" id="aboutChevron"><path d="M2 5L7 10L12 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <div class="about-collapsed-preview">
+        Sourcing is not just about filling pipelines — it's about shaping the future of the company through talent strategy, market understanding, and long-term business outcomes.
+      </div>
+      <div class="about-body" id="aboutBody">
+        <div class="about-grid">
+          <div class="about-block about-block-wide">
+            <div class="about-block-label">Why this function matters</div>
+            <p class="about-block-text">Crusoe hires in domains like kernel, storage, compute, virtualization, GPU infrastructure, and SDN — areas that demand senior calibration and technical fluency. The Talent Intelligence Team bridges engineering complexity with recruiting execution, ensuring every hire meets both the bar and the business need.</p>
+            <div class="about-quote">"Within tech, the sourcing role has evolved into a strategic talent intelligence function that partners directly with engineering to drive clarity, alignment, and sustained hiring performance."</div>
+          </div>
+          <div class="about-block">
+            <div class="about-block-label">What we do differently</div>
+            <div class="about-list">
+              <div class="about-list-item"><span class="about-bullet">→</span> Create technical theses & market maps</div>
+              <div class="about-list-item"><span class="about-bullet">→</span> Clarify ambiguous roles early</div>
+              <div class="about-list-item"><span class="about-bullet">→</span> Maintain bar consistency across orgs</div>
+              <div class="about-list-item"><span class="about-bullet">→</span> Build scalable sourcing systems</div>
+              <div class="about-list-item"><span class="about-bullet">→</span> AI-forward sourcing strategies</div>
+              <div class="about-list-item"><span class="about-bullet">→</span> Strengthen cross-functional partnership</div>
+            </div>
+          </div>
+          <div class="about-block">
+            <div class="about-block-label">Success metrics</div>
+            <div class="about-list">
+              <div class="about-list-item"><span class="about-bullet">✦</span> Clear, aligned role definitions</div>
+              <div class="about-list-item"><span class="about-bullet">✦</span> Higher signal quality & faster calibration</div>
+              <div class="about-list-item"><span class="about-bullet">✦</span> Fewer false positives & reduced churn</div>
+              <div class="about-list-item"><span class="about-bullet">✦</span> Improved pass-through rates</div>
+              <div class="about-list-item"><span class="about-bullet">✦</span> Scalable, differentiated metrics</div>
+            </div>
+          </div>
+          <div class="about-block">
+            <div class="about-block-label">Philosophy</div>
+            <div class="about-pills-wrap">
+              <span class="about-tag">Clarity</span><span class="about-tag">Calibration</span><span class="about-tag">Systems thinking</span><span class="about-tag">Technical curiosity</span><span class="about-tag">Low ego</span><span class="about-tag">High bar</span><span class="about-tag">AI-forward</span><span class="about-tag">Precision</span><span class="about-tag">Humility</span><span class="about-tag">Trust</span>
+            </div>
+          </div>
+          <div class="about-block">
+            <div class="about-block-label">Team culture</div>
+            <p class="about-block-text">Direct communication. Structured thinking. Resilience and strong ownership. We reduce chaos, create clarity in ambiguous environments, and lead with context. People are measured by outcomes, not activity.</p>
+          </div>
+          <div class="about-vision">
+            <div class="about-vision-label">Long-term vision</div>
+            <div class="about-vision-text">A technical sourcing function that matches the rigor, strategy, and technical depth of the teams it supports — powered by an AI-forward mindset. We operate as true partners to engineering, aligned to signal, impact, and the trust we build with hiring teams.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Artifacts</div>
+        <div class="stat-value" id="stat-total" style="color:var(--accent)">0</div>
+        <div class="stat-sub">across all categories</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Sourcing Strategy</div>
+        <div class="stat-value" id="stat-job" style="color:var(--job)">0</div>
+        <div class="stat-sub">frameworks & models</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Competitive Intel</div>
+        <div class="stat-value" id="stat-market" style="color:var(--market)">0</div>
+        <div class="stat-sub">battle cards & maps</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Public Assets</div>
+        <div class="stat-value" id="stat-comp" style="color:var(--comp)">0</div>
+        <div class="stat-sub">shareable resources</div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-pills" id="filterPills">
+        <button class="pill active-all" onclick="setFilterPill('all', this)">All</button>
+        <button class="pill" onclick="setFilterPill('job', this)">Sourcing Strategy</button>
+        <button class="pill" onclick="setFilterPill('pipeline', this)">Learning & Development</button>
+        <button class="pill" onclick="setFilterPill('market', this)">Competitive Intelligence</button>
+        <button class="pill" onclick="setFilterPill('comp', this)">Public Assets</button>
+        <button class="pill" onclick="setFilterPill('partner', this)">Partnerships</button>
+        <button class="pill" onclick="setFilterPill('reporting', this)">Reporting</button>
+      </div>
+      <select class="sort-select" id="sortSelect" onchange="renderCards()">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="alpha">A → Z</option>
+      </select>
+    </div>
+
+    <div class="cards-grid" id="cardsGrid"></div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal" onclick="closeDetailModal(event)">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <div></div>
+      <div class="modal-close" onclick="detailModal.classList.remove('open')">✕</div>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+  function toggleAbout() {
+    const body = document.getElementById('aboutBody');
+    const chevron = document.getElementById('aboutChevron');
+    const toggle = document.getElementById('aboutToggle');
+    const preview = document.querySelector('.about-collapsed-preview');
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open');
+    chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+    toggle.querySelector('span').textContent = isOpen ? 'Read more' : 'Collapse';
+    preview.style.display = isOpen ? 'block' : 'none';
+  }
+
+  const TYPE_META = {
+    job:      { label: 'Sourcing Strategy',       color: '#e8c547', barColor: '#e8c547' },
+    pipeline: { label: 'Learning & Development',  color: '#47c5a8', barColor: '#47c5a8' },
+    comp:     { label: 'Public Assets',            color: '#60c8f0', barColor: '#60c8f0' },
+    market:   { label: 'Competitive Intelligence', color: '#f07a4a', barColor: '#f07a4a' },
+    partner:   { label: 'Partnerships', color: '#1a8fff', barColor: '#1a8fff' },
+    reporting: { label: 'Reporting',    color: '#a78bfa', barColor: '#a78bfa' },
+  };
+
+  const SAMPLE_DATA = [
+    {
+      id: 'real11', type: 'reporting',
+      title: 'YTD Sourcing Impact',
+      desc: 'A year-to-date reporting dashboard tracking sourcing impact across key recruiting metrics. Surfaces pipeline contribution, conversion rates, and sourcing performance to support data-driven team reviews.',
+      content: `Year-to-date sourcing impact dashboard.\n\nDesigned to help talent teams:\n→ Track sourcing contribution to pipeline and hires YTD\n→ Surface conversion rates across sourcing stages\n→ Measure and communicate sourcing performance\n→ Support quarterly and annual team reviews with data`,
+      tags: ['YTD', 'sourcing impact', 'reporting', 'pipeline', 'metrics', 'dashboard'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/85a71bf0-b072-4b82-a936-ab01a5f39898',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    },
+    {
+      id: 'real10', type: 'reporting',
+      title: 'Hiring Pace Simulator',
+      desc: 'An interactive simulator for modeling hiring pace and forecasting recruiting outcomes. Helps talent teams visualize pipeline velocity, headcount targets, and time-to-fill projections.',
+      content: `Interactive hiring pace simulation and forecasting tool.\n\nDesigned to help talent teams:\n→ Model hiring pace against headcount targets\n→ Forecast pipeline velocity and time-to-fill\n→ Visualize recruiting outcomes across different scenarios\n→ Support data-driven planning conversations with stakeholders`,
+      tags: ['hiring pace', 'forecasting', 'pipeline velocity', 'headcount', 'reporting'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/bdfbd997-c69b-436e-ac8d-002b11fee166',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    },
+    {
+      id: 'real1', type: 'market',
+      title: 'Talent Intelligence - Competitive Intel Tool',
+      desc: 'Interactive battle card system comparing Crusoe against 15 competitors — Google, Amazon, Microsoft, Meta, OpenAI, Anthropic, CoreWeave, Lambda, Nutanix, NetApp, Cisco, AMD, and more. Includes comp snapshots, inbound level matrices, level crosswalks, and recruiter talk tracks. Styled in Crusoe brand colors.',
+      content: `Coverage: 15 competitors\n• Google, Amazon, Microsoft, Meta, OpenAI, Anthropic\n• CoreWeave, Lambda, FluidStack, Together AI\n• Nutanix, NetApp, Cisco, AMD + more\n\nSections:\n→ Battle Cards — strategic positioning vs. each competitor\n→ Recruiter Talk Tracks — conversation scripts & objection handling\n→ Inbound Level Matrix — level alignment by company\n→ Comp Snapshots — market compensation by level\n→ Level Crosswalks — mapping Crusoe levels to competitor levels\n\nData note: Compensation figures are approximations based on market data and should be used as directional guidance only.`,
+      tags: ['battle cards', 'competitive intel', 'comp data', 'talk tracks', 'level crosswalk'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/222dfb36-da09-4ca3-891a-279f3794fe4f',
+      createdAt: Date.now() - 86400000 * 4,
+      updatedAt: Date.now() - 86400000 * 4
+    },
+    {
+      id: 'real7', type: 'job',
+      title: 'Talent Intelligence - Req Intake',
+      desc: 'A structured, fillable calibration intake form for sourcers and recruiters. Covers business context, position overview, qualifications & calibration, interview plan, HM/recruiter commitments, and boolean search strings. Downloadable as a completed doc.',
+      content: `6-section fillable calibration intake:\n01 → Business Context & Org Structure — team mission, gaps, HM pain points & success signals\n02 → Position Overview — title, leveling, scope, location, reason for opening\n03 → Qualifications & Calibration — must-haves, nice-to-haves, target companies, keywords, ideal profile, archetypes, anti-signals, tech stack, screening questions\n04 → Interview Plan — stage-by-stage table with focus areas, duration, interviewers\n05 → HM & Recruiter/Sourcer Commitments — three-column commitment tracker + agreed SLAs\n06 → Boolean Search Strings — two templates + custom field\n\nFeatures: tabbed navigation, fillable fields, download to .txt, Crusoe brand styling\nAuthored by: Nicole Shiu`,
+      tags: ['intake', 'calibration', 'req intake', 'boolean', 'interview plan', 'downloadable'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/8a87ffee-db7d-430b-9c60-a712967c3cf4',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    },
+    {
+      id: 'real6', type: 'job',
+      title: 'Talent Intelligence: Sourcing SOP',
+      desc: 'Best practices, rules of engagement, communication standards, and sourcing credit guidelines for the Talent Intelligence team. Authored by Nicole Shiu (July 2025).',
+      content: `Rules of Engagement:\n01 → Cool Down Period — avoid re-engaging candidates contacted within past 3 months; past-year interviewees require HM buy-in\n02 → Candidate History — always check Ashby notes before reaching out; acknowledge prior interviews in messaging\n03 → Respect the Outreach Commitment — if they respond with interest, we owe them a conversation\n04 → Ashby Data Hygiene — mark statuses accurately, log InMails, tag context throughout\n\nBest Practices:\n→ Calibrate Early, Calibrate Often\n→ Quality Over Quantity — curated shortlist beats mass outreach\n→ Candidate Experience Comes First — every message reflects Crusoe's brand\n→ Lead with Data — influence decisions with market intel, not assumptions\n\nCommunication Standards:\n→ Respect seniority — tailor tone by experience level\n→ Always personalize — lead with why them and why us\n→ Follow-up cadence: 3–4 follow-ups at 3–5 business day intervals\n→ Never go dark — send "no update" updates to keep candidates informed\n\nSourcing Credit:\n→ First-to-find-and-engage keeps credit, even across team moves\n→ Credit stays with original sourcer while candidate is active in ATS\n→ 3+ months archived = fair game for new sourcing`,
+      tags: ['SOP', 'rules of engagement', 'Ashby', 'cool down', 'sourcing credit', 'best practices'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/88468561-2663-4b02-9245-4680b2ddb9e7',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    },
+    {
+      id: 'real2', type: 'job',
+      title: 'Technical Sourcing Alignment Framework',
+      desc: 'Technical recruiting alignment model for Crusoe\'s Cloud Engineering org (Foundations, CMD/CXX, Cloud Availability, Managed AI, Security & IT). Maps each org to three sourcing swimlanes — The Metal, The Fabric, The Shield — with routing logic, overlap areas, and sourcer archetypes.',
+      content: `Three Swimlanes:\n🟢 The Metal — Hardware-close candidates. Latency, physics, raw performance.\n   → Foundations (primary), Cloud Availability (partial), Managed AI (partial)\n\n🔵 The Fabric — Platform/product candidates. Scalability, APIs, UX.\n   → CMD/CXX (primary), Cloud Availability (partial), Managed AI (partial)\n\n🔴 The Shield — Security-only. Tight-knit community. No overlap.\n   → Security & IT (primary)\n\nSplit Orgs (require careful routing at intake):\n• Foundations → mostly Metal; route to Fabric only for software-layer roles\n• Cloud Availability → SRE straddles Metal/Fabric; key question is hardware vs. software focus\n• Managed AI → Fabric-dominant but requires Metal fluency (GPU topology, NVLink, RDMA)\n\nCrusoe Differentiators: Energy-efficient GPU infra, purpose-built for AI/HPC, fast-moving high-ownership, direct hardware access.`,
+      tags: ['sourcing', 'alignment model', 'swimlanes', 'cloud engineering', 'routing'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/e6c091b0-02c5-4807-b88e-b6fe9a0cb523',
+      createdAt: Date.now() - 86400000 * 3,
+      updatedAt: Date.now() - 86400000 * 3
+    },
+    {
+      id: 'real3', type: 'comp',
+      title: 'Cloud Engineering Content Library',
+      desc: 'Curated library of articles, podcasts, and journals that positively reflect Crusoe\'s mission. Built for PM, TPM, and Design teams to use for their own knowledge and to share with candidates. Includes filterable interactive table by content type, topic, and team.',
+      content: `Content types covered:\n→ Podcasts (Acquired, Not Boring Founders, Age of Miracles, others)\n→ Articles & press coverage\n→ Journals & research\n\nKey highlights:\n• "Saving the Planet with Better AI Data Centers" — Acquired Podcast (Chase Lochmiller)\n• "Not Boring Founders: Crusoe Energy" — Age of Miracles / Spotify\n\nTopics: Sustainable AI, GPU cloud, energy-efficient compute, HPC for AI, founding story, product vision, design culture\n\nAudience: PM, TPM, Design — for team learning and candidate sharing\nFormat: Interactive filterable table with search and date sort`,
+      tags: ['content library', 'mission', 'podcasts', 'PM', 'TPM', 'design', 'candidate sharing'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/f3dc9135-a54e-49c0-afd7-66c2e75995cd',
+      createdAt: Date.now() - 86400000 * 2,
+      updatedAt: Date.now() - 86400000 * 2
+    },
+    {
+      id: 'real9', type: 'pipeline',
+      title: 'Talent Intelligence - AI-assisted Evaluator',
+      desc: 'An AI-powered tool for evaluating candidate-to-role fit. Assesses alignment across must-haves, nice-to-haves, and role-specific criteria to surface signal and support faster, more consistent screening decisions.',
+      content: `AI-powered candidate-to-role matching and evaluation tool.\n\nDesigned to help sourcers and recruiters:\n→ Assess candidate fit against role criteria\n→ Surface signal across must-haves and nice-to-haves\n→ Support faster, more consistent screening decisions\n→ Reduce false positives in the pipeline`,
+      tags: ['AI', 'role matching', 'candidate evaluation', 'screening', 'signal'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/f261d4f5-e7d2-4c81-b80a-1e27983ed628',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    },
+    {
+      id: 'real8', type: 'pipeline',
+      title: 'Talent Intelligence Onboarding',
+      desc: 'Onboarding resource for new members of the Talent Intelligence team at Crusoe. Covers team structure, core responsibilities, tools, workflows, and how to get up to speed quickly.',
+      content: `Onboarding guide for the Talent Intelligence team at Crusoe.\n\nCovers:\n→ Team structure and core responsibilities\n→ Tools and systems (Ashby, LinkedIn, etc.)\n→ Key workflows and processes\n→ How to partner with recruiters and hiring managers\n→ First 30/60/90 day expectations`,
+      tags: ['onboarding', 'L&D', 'new hire', 'talent intelligence', 'training'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/8beec24b-1987-4117-aa53-a5523228cf3a',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    },
+    {
+      id: 'real4', type: 'pipeline',
+      title: 'Talent Intelligence - Sourcing with AI',
+      desc: 'Interactive guide covering how to use AI across all 7 stages of the technical sourcing workflow. Includes copyable example prompts per stage, best practices, expected results, and a "next steps" framework. Built from an uploaded Talent Intelligence deck.',
+      content: `7 Sourcing Stages with AI integration:\n01 → Define the Role — use AI to sharpen intake, identify must-haves vs. nice-to-haves\n02 → Build the Sourcing Strategy — AI-assisted market mapping and channel selection\n03 → Source Candidates — AI for Boolean string generation, profile pattern matching\n04 → Outreach & Engagement — AI-drafted personalized outreach at scale\n05 → Screening & Assessment — AI-assisted resume review and screening frameworks\n06 → Calibration — AI to synthesize feedback and surface patterns\n07 → Offer & Close — AI for comp benchmarking and closing talk tracks\n\nEach stage includes:\n→ Primary goal\n→ How to use AI (3 methods per stage)\n→ Copyable example prompt (terminal-style)\n→ Expected results\n\nCore philosophy: "Amplify judgment, not replace it."\nClosing quote: "The craft still matters. AI just gives you more room to master it."`,
+      tags: ['AI sourcing', 'prompts', 'workflow', '7 stages', 'playbook'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/b7789e8a-a51a-4d39-a5b6-5694d11f920a',
+      createdAt: Date.now() - 86400000 * 1,
+      updatedAt: Date.now() - 86400000 * 1
+    },
+    {
+      id: 'real5', type: 'partner',
+      title: 'Recruiter & Sourcer Partnership Framework',
+      desc: 'Working agreement and training guide defining how Recruiters and Sourcers partner at Crusoe. Covers the four-phase collaboration flow, mandatory SLAs, primary ownership areas, and the philosophies that govern both functions.',
+      content: `Philosophy: Sourcing and recruiting operate as equal strategic partners. Sourcing drives market intelligence, discovery, and early-stage strategy, while recruiting leads stakeholder alignment, candidate experience, and closing.\n\nFour-Phase Collaboration Flow:\nA → Intake, Role Discovery, Kickoff & Strategy Alignment\nB → Pipeline Generation & Handoff\nC → Continuous Feedback & Triage\nD → Process Management & Closing\n\nMandatory SLAs:\n→ New sourced lead: initial outreach within 48 hrs\n→ Qualified lead confirmed: move to next stage within 24 hrs\n→ Active candidates: stage movement within 48 hrs\n→ Interview feedback: submitted within 24-48 hrs of completion\n→ Pipeline stall: ad-hoc sync within 24-48 hrs\n\nSourcer owns: calibration, top-of-funnel, pipeline health, market data & insights\nRecruiter owns: intake meetings, job postings, stakeholder mgmt, offer/closing\n\nSourcing philosophy: Strategy first, search second.\nRecruiting philosophy: Precision first, process second.`,
+      tags: ['partnership', 'SLAs', 'collaboration', 'recruiter', 'sourcer', 'framework'],
+      status: 'live',
+      link: 'https://claude.ai/artifacts/214b8247-cc3f-4860-a328-9956ba5a976f',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    }
+  ];
+
+  let artifacts = [];
+  let currentFilter = 'all';
+  let detailModal;
+
+  function loadData() {
+    try {
+      const stored = localStorage.getItem('ti_hub_v17');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const realIds = ['real1','real2','real3','real4','real5','real6','real7','real8','real9','real10','real11'];
+        const hasReal = realIds.every(id => parsed.some(a => a.id === id));
+        if (hasReal) {
+          artifacts = parsed;
+        } else {
+          const userAdded = parsed.filter(a => !realIds.includes(a.id));
+          artifacts = [...SAMPLE_DATA, ...userAdded];
+        }
+      } else {
+        artifacts = [...SAMPLE_DATA];
+      }
+    } catch(e) {
+      artifacts = [...SAMPLE_DATA];
+    }
+  }
+
+  function saveData() {
+    localStorage.setItem('ti_hub_v17', JSON.stringify(artifacts));
+  }
+
+  function setFilter(type, el) {
+    currentFilter = type;
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+    const titles = {
+      all:      ['All Artifacts', 'Your complete Talent Intelligence library — sourcing strategy, competitive intel, learning resources, and more.'],
+      job:      ['Sourcing Strategy', 'Alignment frameworks, swimlane models, and sourcing playbooks for technical recruiting.'],
+      pipeline: ['Learning & Development', 'Guides, playbooks, and interactive tools for building sourcing craft and AI fluency.'],
+      comp:     ['Public Assets', 'Shareable resources, content libraries, and materials built for candidate and team use.'],
+      market:   ['Competitive Intelligence', 'Battle cards, competitor talent maps, comp snapshots, and recruiter talk tracks.'],
+      partner:   ['Partnerships', 'Working agreements, collaboration frameworks, and SLAs that define how we partner across TA.'],
+      reporting: ['Reporting', 'Dashboards, trackers, and reporting frameworks for measuring sourcing and recruiting performance.'],
+    };
+    document.getElementById('pageTitle').textContent = titles[type][0];
+    document.getElementById('pageSubtitle').textContent = titles[type][1];
+    renderCards();
+  }
+
+  function setFilterPill(type, el) {
+    currentFilter = type;
+    document.querySelectorAll('.pill').forEach(p => { p.className = 'pill'; });
+    el.className = `pill active-${type}`;
+    document.querySelectorAll('.nav-item').forEach(n => {
+      n.classList.remove('active');
+      if (n.dataset.type === type) n.classList.add('active');
+    });
+    renderCards();
+  }
+
+  function showRecent() {
+    currentFilter = 'all';
+    document.getElementById('sortSelect').value = 'newest';
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    renderCards();
+  }
+
+  function getFiltered() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const sort = document.getElementById('sortSelect').value;
+    let filtered = artifacts.filter(a => {
+      if (currentFilter !== 'all' && a.type !== currentFilter) return false;
+      if (!q) return true;
+      return (
+        a.title.toLowerCase().includes(q) ||
+        a.desc.toLowerCase().includes(q) ||
+        (a.tags || []).some(t => t.toLowerCase().includes(q)) ||
+        (a.content || '').toLowerCase().includes(q)
+      );
+    });
+    filtered.sort((a, b) => {
+      if (sort === 'newest') return (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt);
+      if (sort === 'oldest') return (a.updatedAt || a.createdAt) - (b.updatedAt || b.createdAt);
+      return a.title.localeCompare(b.title);
+    });
+    return filtered;
+  }
+
+  function updateCounts() {
+    const types = ['job', 'pipeline', 'comp', 'market', 'partner', 'reporting'];
+    document.getElementById('count-all').textContent = artifacts.length;
+    document.getElementById('stat-total').textContent = artifacts.length;
+    types.forEach(t => {
+      const c = artifacts.filter(a => a.type === t).length;
+      const el = document.getElementById(`count-${t}`);
+      if (el) el.textContent = c;
+      const st = document.getElementById(`stat-${t}`);
+      if (st) st.textContent = c;
+    });
+  }
+
+  function fmtDate(ts) {
+    return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function renderCards() {
+    updateCounts();
+    const grid = document.getElementById('cardsGrid');
+    const filtered = getFiltered();
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty-state">
+        <div class="empty-state-icon">◻</div>
+        <h3>No artifacts found</h3>
+        <p>Try adjusting your search or add your first artifact.</p>
+      </div>`;
+      return;
+    }
+    grid.innerHTML = filtered.map(a => {
+      const meta = TYPE_META[a.type];
+      const tags = (a.tags || []).slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('');
+      return `
+        <div class="artifact-card" data-type="${a.type}" onclick="openDetail('${a.id}')">
+          <div class="card-accent-bar" style="background:${meta.barColor}"></div>
+          <div class="card-body">
+            <div class="card-meta">
+              <span class="card-type-badge badge-${a.type}">${meta.label}</span>
+              <span class="card-date">Last updated: ${fmtDate(a.updatedAt || a.createdAt)}</span>
+            </div>
+            <div class="card-title">${a.title}</div>
+            <div class="card-desc">${a.desc}</div>
+            ${tags ? `<div class="card-tags">${tags}</div>` : ''}
+            <div class="card-footer">
+              <div class="card-status">
+                <div class="status-dot ${a.status}"></div>
+                ${a.status === 'live' ? 'Live' : a.status === 'draft' ? 'Draft' : 'In Review'}
+              </div>
+              <div class="card-actions">
+                ${a.link ? `<a class="icon-btn" href="${a.link}" target="_blank" onclick="event.stopPropagation()" title="Open in Claude" style="font-size:10px;font-family:'DM Mono',monospace;width:auto;padding:0 8px;letter-spacing:0.05em;color:var(--accent);border-color:rgba(91,143,255,0.3)">↗ Claude</a>` : ''}
+                <div class="icon-btn" onclick="event.stopPropagation(); deleteArtifact('${a.id}')" title="Delete">🗑</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function openDetail(id) {
+    const a = artifacts.find(x => x.id === id);
+    if (!a) return;
+    const meta = TYPE_META[a.type];
+    document.getElementById('detailContent').innerHTML = `
+      <div class="detail-header">
+        <div class="detail-type"><span class="card-type-badge badge-${a.type}">${meta.label}</span></div>
+        <div class="detail-title">${a.title}</div>
+        <div class="detail-desc">${a.desc}</div>
+      </div>
+      <div class="detail-body">
+        ${a.content ? `
+          <div class="detail-section-label">Content / Notes</div>
+          <div class="detail-content">${a.content}</div>
+        ` : ''}
+        ${a.tags && a.tags.length ? `
+          <div class="detail-section-label">Tags</div>
+          <div class="card-tags" style="margin-bottom:20px">${a.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        ` : ''}
+        <div style="display:flex; gap:24px">
+          <div>
+            <div class="detail-section-label">Last Updated</div>
+            <div style="font-size:13px; color:var(--text-muted)">${fmtDate(a.updatedAt || a.createdAt)}</div>
+          </div>
+          <div>
+            <div class="detail-section-label">Status</div>
+            <div style="font-size:13px; color:var(--text-muted)">${a.status}</div>
+          </div>
+          ${a.link ? `<div>
+            <div class="detail-section-label">Open Original</div>
+            <a href="${a.link}" target="_blank" style="font-size:13px; color:var(--accent); text-decoration:none">↗ Open in Claude</a>
+          </div>` : ''}
+        </div>
+      </div>
+    `;
+    detailModal.classList.add('open');
+  }
+
+  function closeDetailModal(e) {
+    if (e.target === detailModal) detailModal.classList.remove('open');
+  }
+
+  function deleteArtifact(id) {
+    if (!confirm('Delete this artifact?')) return;
+    artifacts = artifacts.filter(a => a.id !== id);
+    saveData();
+    renderCards();
+  }
+
+  function exportData() {
+    const blob = new Blob([JSON.stringify(artifacts, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'talent-intelligence-hub.json';
+    a.click();
+  }
+
+  // ── PASSWORD GATE ────────────────────────────────────────────────────────────
+  const PASS_HASH = '7d6c9e2f1b4a8c3e5d0f2a9b7c4e6d1f3a8b2c5e0d7f4a1b6c9e3d8f2a5b0c4e';
+
+  function hashString(str) {
+    // Simple non-cryptographic hash for obfuscation
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash).toString(16).padStart(8, '0');
+  }
+
+  function checkPassword() {
+    const input = document.getElementById('gateInput').value;
+    const errorEl = document.getElementById('gateError');
+    const inputEl = document.getElementById('gateInput');
+    // Normalise: lowercase + trim
+    if (input.trim().toLowerCase() === 'pass through rate') {
+      sessionStorage.setItem('ti_auth', '1');
+      document.getElementById('gate').classList.add('hidden');
+      errorEl.textContent = '';
+    } else {
+      inputEl.classList.add('error');
+      errorEl.textContent = 'Incorrect password. Try again.';
+      setTimeout(() => inputEl.classList.remove('error'), 400);
+      inputEl.value = '';
+      inputEl.focus();
+    }
+  }
+
+  function toggleGateVisibility(btn) {
+    const input = document.getElementById('gateInput');
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁';
+    }
+  }
+
+  function checkAuth() {
+    if (sessionStorage.getItem('ti_auth') === '1') {
+      document.getElementById('gate').classList.add('hidden');
+    } else {
+      document.getElementById('gateInput').focus();
+    }
+  }
+
+  window.onload = () => {
+    checkAuth();
+    detailModal = document.getElementById('detailModal');
+    loadData();
+    renderCards();
+  };
+</script>
+</body>
+</html>
