@@ -1,0 +1,428 @@
+import { useState } from "react";
+
+const COLORS = {
+  navy: "#07111f",
+  navy2: "#0c1c30",
+  navy3: "#112038",
+  navy4: "#162845",
+  blue: "#1a8fff",
+  blueDim: "rgba(26,143,255,0.10)",
+  blueBorder: "rgba(26,143,255,0.22)",
+  border: "rgba(255,255,255,0.07)",
+  border2: "rgba(255,255,255,0.13)",
+  text: "#e8edf5",
+  textMuted: "#7a90b0",
+  textDim: "#3a5070",
+  sourcer: "#1a8fff",
+  sourcerDim: "rgba(26,143,255,0.08)",
+  sourcerBdr: "rgba(26,143,255,0.2)",
+  recruiter: "#38d9b0",
+  recruiterDim: "rgba(56,217,176,0.07)",
+  recruiterBdr: "rgba(56,217,176,0.2)",
+  gold: "#f5c842",
+  goldDim: "rgba(245,200,66,0.07)",
+  goldBdr: "rgba(245,200,66,0.2)",
+};
+
+const sty = {
+  root: {
+    background: COLORS.navy,
+    color: COLORS.text,
+    fontFamily: "'Inter', system-ui, sans-serif",
+    fontWeight: 300,
+    minHeight: "100vh",
+    position: "relative",
+  },
+  gridBg: {
+    position: "fixed",
+    inset: 0,
+    backgroundImage: `linear-gradient(rgba(26,143,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(26,143,255,0.025) 1px, transparent 1px)`,
+    backgroundSize: "44px 44px",
+    pointerEvents: "none",
+    zIndex: 0,
+  },
+};
+
+// ── Badge ──
+const Badge = ({ children, style }) => (
+  <span style={{
+    display: "inline-block", padding: "2px 8px", borderRadius: 4,
+    fontSize: 10, fontWeight: 500, marginTop: 4,
+    background: COLORS.blueDim, color: COLORS.blue,
+    border: `1px solid ${COLORS.blueBorder}`, letterSpacing: "0.02em",
+    ...style,
+  }}>{children}</span>
+);
+
+// ── HERO ──
+const Hero = () => (
+  <div style={{
+    position: "relative", zIndex: 1, padding: "52px 60px 50px",
+    borderBottom: `1px solid ${COLORS.border}`,
+    background: `linear-gradient(140deg, ${COLORS.navy2} 0%, ${COLORS.navy} 65%)`,
+    overflow: "hidden",
+  }}>
+    <div style={{
+      position: "absolute", top: -100, right: -100,
+      width: 500, height: 500,
+      background: "radial-gradient(circle, rgba(26,143,255,0.07) 0%, transparent 65%)",
+      pointerEvents: "none",
+    }} />
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 32 }}>
+      <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: COLORS.blue }}>Crusoe</span>
+      <div style={{ width: 1, height: 12, background: COLORS.border2 }} />
+      <span style={{ fontSize: 11, fontWeight: 400, letterSpacing: "0.08em", textTransform: "uppercase", color: COLORS.textDim }}>Talent Intelligence · Internal</span>
+    </div>
+    <h1 style={{
+      fontSize: 46, fontWeight: 700, lineHeight: 1.06, letterSpacing: "-0.025em",
+      color: COLORS.text, marginBottom: 18, maxWidth: 700,
+    }}>
+      Recruiter & Sourcer<br />
+      <span style={{ color: COLORS.blue }}>Partnership Framework</span>
+    </h1>
+    <p style={{ fontSize: 14, color: COLORS.textMuted, lineHeight: 1.75, maxWidth: 520, marginBottom: 34, fontWeight: 300 }}>
+      A working agreement and training guide defining how Recruiters and Sourcers partner at Crusoe to deliver world-class hiring outcomes.
+    </p>
+    <div style={{
+      display: "inline-flex", alignItems: "flex-start", gap: 14,
+      background: COLORS.blueDim, border: `1px solid ${COLORS.blueBorder}`,
+      borderRadius: 8, padding: "16px 20px", maxWidth: 620,
+    }}>
+      <div style={{ width: 3, minHeight: 36, background: COLORS.blue, borderRadius: 2, flexShrink: 0 }} />
+      <p style={{ fontSize: 13.5, color: COLORS.text, lineHeight: 1.65, fontStyle: "italic", fontWeight: 400, margin: 0 }}>
+        "Sourcing and recruiting operate as equal strategic partners — together, we are the engine behind our hiring strategy, translating business goals into world-class hires."
+      </p>
+    </div>
+  </div>
+);
+
+// ── NAV ──
+const TABS = [
+  { id: "flow", label: "Collaboration Flow" },
+  { id: "ownership", label: "Ownership" },
+  { id: "slas", label: "SLAs" },
+  { id: "philosophy", label: "Philosophy" },
+];
+
+const Nav = ({ active, setActive }) => (
+  <nav style={{
+    position: "sticky", top: 0, zIndex: 50,
+    background: "rgba(7,17,31,0.92)", backdropFilter: "blur(14px)",
+    borderBottom: `1px solid ${COLORS.border}`,
+    padding: "0 60px", display: "flex",
+  }}>
+    {TABS.map(t => (
+      <button key={t.id} onClick={() => setActive(t.id)} style={{
+        padding: "14px 20px", fontSize: 11, fontWeight: 500,
+        color: active === t.id ? COLORS.blue : COLORS.textDim,
+        cursor: "pointer", border: "none", background: "none",
+        borderBottom: active === t.id ? `2px solid ${COLORS.blue}` : "2px solid transparent",
+        transition: "all 0.15s", letterSpacing: "0.08em",
+        textTransform: "uppercase", whiteSpace: "nowrap",
+      }}>{t.label}</button>
+    ))}
+  </nav>
+);
+
+// ── PHASE CARD ──
+const PhaseCard = ({ letter, title, subtitle, children }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{
+      background: COLORS.navy2, border: `1px solid ${open ? COLORS.border2 : COLORS.border}`,
+      borderRadius: 10, overflow: "hidden", transition: "border-color 0.2s",
+    }}>
+      <div onClick={() => setOpen(o => !o)} style={{
+        display: "flex", alignItems: "center", gap: 14,
+        padding: "17px 22px", cursor: "pointer", userSelect: "none",
+        background: open ? "rgba(255,255,255,0.02)" : "transparent",
+        transition: "background 0.15s",
+      }}>
+        <div style={{
+          width: 30, height: 30, borderRadius: 6,
+          background: COLORS.blueDim, border: `1px solid ${COLORS.blueBorder}`,
+          color: COLORS.blue, fontSize: 13, fontWeight: 700,
+          display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+        }}>{letter}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.text, letterSpacing: "-0.01em" }}>{title}</div>
+          <div style={{ fontSize: 11, color: COLORS.textDim, marginTop: 2, fontWeight: 300 }}>{subtitle}</div>
+        </div>
+        <span style={{
+          color: COLORS.textDim, fontSize: 11, flexShrink: 0,
+          transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.25s", display: "block",
+        }}>▾</span>
+      </div>
+      {open && (
+        <div style={{ borderTop: `1px solid ${COLORS.border}`, animation: "fadeUp 0.2s ease" }}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── STEP TABLE ──
+const StepTable = ({ col1, rows }) => (
+  <div style={{ overflowX: "auto" }}>
+    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <thead>
+        <tr>
+          <th style={{ width: 150, padding: "10px 18px", textAlign: "left", fontSize: 9, fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: COLORS.textDim, background: COLORS.navy3, borderBottom: `1px solid ${COLORS.border}` }}>{col1 || "Step"}</th>
+          <th style={{ padding: "10px 18px", textAlign: "left", fontSize: 9, fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: COLORS.recruiter, background: COLORS.navy3, borderBottom: `1px solid ${COLORS.border}` }}>Recruiter Action</th>
+          <th style={{ padding: "10px 18px", textAlign: "left", fontSize: 9, fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: COLORS.sourcer, background: COLORS.navy3, borderBottom: `1px solid ${COLORS.border}` }}>Sourcer Action</th>
+          <th style={{ width: 170, padding: "10px 18px", textAlign: "left", fontSize: 9, fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: COLORS.textDim, background: COLORS.navy3, borderBottom: `1px solid ${COLORS.border}` }}>Output / SLA</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row, i) => (
+          <tr key={i} style={{ cursor: "default" }}>
+            <td style={{ padding: "15px 18px", verticalAlign: "top", borderBottom: i < rows.length - 1 ? `1px solid ${COLORS.border}` : "none", fontSize: 12.5 }}>
+              {row.num && <span style={{ fontSize: 9, fontWeight: 500, color: COLORS.textDim, textTransform: "uppercase", letterSpacing: "0.1em", display: "block", marginBottom: 3 }}>{row.num}</span>}
+              <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.text, letterSpacing: "-0.01em" }}>{row.label}</div>
+            </td>
+            <td style={{ padding: "15px 18px", verticalAlign: "top", borderBottom: i < rows.length - 1 ? `1px solid ${COLORS.border}` : "none", fontSize: 12.5, color: COLORS.recruiter, fontWeight: 400, lineHeight: 1.65 }}>{row.recruiter}</td>
+            <td style={{ padding: "15px 18px", verticalAlign: "top", borderBottom: i < rows.length - 1 ? `1px solid ${COLORS.border}` : "none", fontSize: 12.5, color: COLORS.sourcer, fontWeight: 400, lineHeight: 1.65 }}>{row.sourcer}</td>
+            <td style={{ padding: "15px 18px", verticalAlign: "top", borderBottom: i < rows.length - 1 ? `1px solid ${COLORS.border}` : "none", fontSize: 12.5, color: COLORS.textMuted, fontWeight: 300, lineHeight: 1.65 }}>
+              {typeof row.output === "string" ? row.output : row.output}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+// ── FLOW PANEL ──
+const FlowPanel = () => (
+  <div>
+    <SectionHeader eyebrow="Four-Phase Process" title="The Collaboration Flow" desc="Full lifecycle from role open to close. Click any phase to expand." />
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <PhaseCard letter="A" title="Intake, Role Discovery & Strategy Alignment" subtitle="Complete strategic alignment before the role opens">
+        <StepTable rows={[
+          { num: "Step 01", label: "Intake & Role Discovery", recruiter: "Schedule and lead a 30-min deep-dive with HM. Clarify scope, urgency, leveling, compensation, and interview plan.", sourcer: "Partner in calibration: define candidate archetypes, anti-signals, targeted companies, competencies, and selling points.", output: <><div style={{ color: COLORS.textMuted, fontSize: 12, lineHeight: 1.65 }}>Alignment on ideal profile</div><Badge>Sourcing Brief</Badge></> },
+          { num: "Step 02", label: "HM Alignment", recruiter: "Lead 15–30 min sync with HM for final approval of job description and candidate profile.", sourcer: "Market Mapping: build a data-informed map showing talent availability, diversity reach, and competitor presence.", output: <><div style={{ color: COLORS.textMuted, fontSize: 12, lineHeight: 1.65 }}>Finalized JD + interview plan</div><Badge>Market Map</Badge></> },
+        ]} />
+      </PhaseCard>
+
+      <PhaseCard letter="B" title="Pipeline Generation & Handoff" subtitle="Generating a healthy flow of qualified, engaged talent">
+        <StepTable rows={[
+          { num: "Step 01", label: "Lead Identification", recruiter: "Review inbound applications and referrals as primary owner. Support outbound as needed.", sourcer: "Execute outbound sourcing strategy. Maintain 1.5× required pipeline volume. Support inbound review as needed.", output: <Badge>Outreach within 48 hrs</Badge> },
+          { num: "Step 02", label: "Pre-Screen & Pipeline Movement", recruiter: "Conduct recruiter pre-screens. Keep stakeholders accountable on SLAs. Submit ATS feedback within 24 hrs.", sourcer: "Move qualified candidates through process up to full-loop. Provide detailed handoff notes: pre-screen summary, logistics, candidate nuances.", output: <><Badge>ATS feedback 24 hrs</Badge><br /><Badge style={{ marginTop: 4 }}>HM review 48 hrs</Badge></> },
+          { num: "Step 03", label: "Role Kickoff Meeting", recruiter: "Lead mandatory kickoff with HM and hiring team to align on competencies and interview structure.", sourcer: "Attendance required. Align on interview plan, understand required competencies to improve conversion rates during searches and pre-screens.", output: <Badge>Full team alignment</Badge> },
+        ]} />
+      </PhaseCard>
+
+      <PhaseCard letter="C" title="Continuous Feedback & Triage" subtitle="Maintaining quality through rapid communication">
+        <StepTable col1="Practice" rows={[
+          { num: "Recurring", label: "Weekly Syncs", recruiter: "Schedule weekly syncs with Sourcer and HM. Review pipeline health, conversion rates, and triage bottlenecks.", sourcer: "Present pipeline overview, flag risks, present qualified profiles, propose search adjustments based on market response.", output: <Badge>Weekly — all parties</Badge> },
+          { num: "As Needed", label: "Pipeline Risk Escalation", recruiter: "If pipeline is stalling, hold an ad-hoc sync immediately. Present context to HM. Use Slack if meeting window can't be met.", sourcer: "Bring market data, candidate decline reasons, talent trends, and competitor insights to help adjust criteria and realign.", output: <Badge>Within 24–48 hrs of stall</Badge> },
+          { num: "Ongoing", label: "Feedback Loop", recruiter: "Monitor interview feedback for fairness and consistency. Hold interviewers accountable to SLAs.", sourcer: "Review interviewer feedback. Adjust search strings, outreach messaging, and candidate prioritization as needed.", output: <Badge>Feedback 24–48 hrs post-interview</Badge> },
+        ]} />
+      </PhaseCard>
+
+      <PhaseCard letter="D" title="Process Management & Closing" subtitle="Recruiter leads the close; Sourcer provides critical intel">
+        <StepTable rows={[
+          { label: "Candidate Experience & Close", recruiter: "Drive candidate experience through onsite to offer. Lead offer delivery, compensation alignment, and closing strategy.", sourcer: "Ensure steady pipeline flow. Flag market risks. Provide candidate motivations, comp expectations, location preferences, immigration status, and market intel to increase chances of a successful close.", output: <><div style={{ color: COLORS.textMuted, fontSize: 12, lineHeight: 1.65 }}>Recruiter: inbound, stakeholder mgmt, closing. Sourcer: pipeline health, market insights, search strategy.</div><Badge style={{ marginTop: 6 }}>Shared: candidate experience</Badge></> },
+        ]} />
+      </PhaseCard>
+    </div>
+  </div>
+);
+
+// ── SECTION HEADER ──
+const SectionHeader = ({ eyebrow, title, desc }) => (
+  <div style={{ marginBottom: 28 }}>
+    <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: COLORS.blue, marginBottom: 8 }}>{eyebrow}</div>
+    <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: "-0.015em", color: COLORS.text, marginBottom: 8 }}>{title}</div>
+    {desc && <p style={{ fontSize: 13, color: COLORS.textMuted, lineHeight: 1.7, maxWidth: 560, fontWeight: 300, margin: 0 }}>{desc}</p>}
+  </div>
+);
+
+// ── OWNERSHIP PANEL ──
+const OwnershipPanel = () => (
+  <div>
+    <SectionHeader eyebrow="Primary Ownership" title="Who Owns What" desc="Built on three principles: One Team, Complementary Strengths, and a Continuous Feedback Loop." />
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+      {[
+        {
+          role: "Sourcer", color: COLORS.sourcer, dim: COLORS.sourcerDim, bdr: COLORS.sourcerBdr,
+          items: [
+            { title: "Calibration & Intake", desc: "Partner with recruiter on detailed calibration sessions. Define archetypes, green/red flags, must-haves. Maintain real-time feedback journal tagged by theme." },
+            { title: "Top-of-Funnel (ToF)", desc: "Own outreach strategy, multi-touch sequences, and pipeline generation. Conduct candidate pre-screens to improve calibration and advocate for qualified candidates." },
+            { title: "Pipeline Health", desc: "Ensure consistent candidate flow, rebalance profiles as searches evolve, flag risks early. Deep dive into bottlenecks and pass-through rates." },
+            { title: "Market Data & Industry Trends", desc: "Provide data on talent availability, competitor activity, compensation trends, and overall industry trends." },
+          ],
+        },
+        {
+          role: "Recruiter", color: COLORS.recruiter, dim: COLORS.recruiterDim, bdr: COLORS.recruiterBdr,
+          items: [
+            { title: "Intake Meetings", desc: "Schedule and lead intake with HM. Clarify scope, urgency, leveling, compensation, and interview plan + panel participants." },
+            { title: "Job Opening & External Posting", desc: "Gather final job details, finalize JD, ensure all systems (e.g. Ashby) are correctly set up before opening." },
+            { title: "Role Kickoff & Stakeholder Management", desc: "Lead kickoff meetings with HMs and hiring team. Own ongoing communication and alignment with all interviewers." },
+            { title: "Applicant Review & Offer/Closing", desc: "Manage inbound applications, referrals, internal mobility. Drive offer strategy, comp alignment, and candidate closing." },
+          ],
+        },
+      ].map(card => (
+        <div key={card.role} style={{ background: COLORS.navy2, border: `1px solid ${card.bdr}`, borderRadius: 10, overflow: "hidden" }}>
+          <div style={{ padding: "13px 20px", display: "flex", alignItems: "center", gap: 8, borderBottom: `1px solid ${COLORS.border}`, background: card.dim }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: card.color, flexShrink: 0 }} />
+            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: card.color }}>{card.role} — Primary Ownership</div>
+          </div>
+          <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
+            {card.items.map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: 10 }}>
+                <span style={{ color: card.color, fontSize: 10, flexShrink: 0, marginTop: 3 }}>→</span>
+                <div style={{ fontSize: 12.5, lineHeight: 1.6, color: COLORS.textMuted }}>
+                  <strong style={{ fontWeight: 600, color: COLORS.text, display: "block", marginBottom: 2 }}>{item.title}</strong>
+                  {item.desc}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// ── SLA PANEL ──
+const slaData = [
+  { scenario: "New Sourced Lead", action: "Send initial outreach message within the window. Exceptions allowed for niche/specialized roles with unique engagement strategies.", owner: "both", timer: "48 hrs" },
+  { scenario: "Qualified Lead Confirmation", action: "Move the engaged, qualified candidate to the appropriate next stage once they confirm interest.", owner: "both", timer: "24 hrs" },
+  { scenario: "Active Candidates — Stage Timeline", action: "Ensure candidates are moving through appropriate interview stages. Send 'no update, updates' for special cases to keep candidates informed.", owner: "both", timer: "48 hrs" },
+  { scenario: "Urgent Need for Talent", action: "Proactively inform Sourcer via direct message of urgent need and specific profile required to re-prioritize sourcing efforts immediately.", owner: "recruiter", timer: "Immediate" },
+  { scenario: "Interview Feedback Submission", action: "All interviewers must submit feedback into ATS within the window of interview completion. Both Recruiter and Sourcer hold interviewers accountable.", owner: "both", timer: "24–48 hrs" },
+  { scenario: "Unresponsive Sourced Candidate", action: "Sourcer sends follow-up after 5 business days. If still no response, partner with Recruiter to brainstorm appropriate re-engagement strategy.", owner: "sourcer", timer: "5 bus. days" },
+  { scenario: "Pipeline Stall — Ad-hoc Sync", action: "Hold an urgent ad-hoc sync upon identifying a stall. Use Slack to keep realignment flowing if HM meeting window can't be met.", owner: "both", timer: "24–48 hrs" },
+];
+
+const ownerBadge = (owner) => {
+  const map = { both: { bg: COLORS.blueDim, color: COLORS.blue, bdr: COLORS.blueBorder, label: "Both" }, sourcer: { bg: COLORS.sourcerDim, color: COLORS.sourcer, bdr: COLORS.sourcerBdr, label: "Sourcer" }, recruiter: { bg: COLORS.recruiterDim, color: COLORS.recruiter, bdr: COLORS.recruiterBdr, label: "Recruiter" } };
+  const s = map[owner];
+  return <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 10px", borderRadius: 4, whiteSpace: "nowrap", background: s.bg, color: s.color, border: `1px solid ${s.bdr}` }}>{s.label}</span>;
+};
+
+const SLAsPanel = () => (
+  <div>
+    <SectionHeader eyebrow="Mandatory Agreements" title="Service Level Agreements" desc="These SLAs are mandatory for all roles. Exceptions for niche or specialized roles are noted where applicable." />
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {slaData.map((row, i) => (
+        <div key={i} style={{
+          background: COLORS.navy2, border: `1px solid ${COLORS.border}`, borderRadius: 10,
+          padding: "15px 20px", display: "grid", gridTemplateColumns: "1fr auto auto",
+          gap: 20, alignItems: "center", transition: "border-color 0.15s",
+        }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.text, letterSpacing: "-0.01em", marginBottom: 4 }}>{row.scenario}</div>
+            <div style={{ fontSize: 12, color: COLORS.textMuted, lineHeight: 1.6, fontWeight: 300 }}>{row.action}</div>
+          </div>
+          {ownerBadge(row.owner)}
+          <span style={{
+            fontSize: 13, fontWeight: 700, color: COLORS.blue,
+            background: COLORS.blueDim, border: `1px solid ${COLORS.blueBorder}`,
+            padding: "6px 14px", borderRadius: 6, whiteSpace: "nowrap", letterSpacing: "-0.01em",
+          }}>{row.timer}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// ── PHILOSOPHY PANEL ──
+const PhilosophyPanel = () => (
+  <div>
+    <SectionHeader eyebrow="Operating Principles" title="Philosophy & Culture" desc="The beliefs that govern how we work — individually and together." />
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+      {[
+        {
+          role: "Sourcing Philosophy", color: COLORS.sourcer, bdr: COLORS.sourcerBdr,
+          headline: <>Strategy first,<br />search second.</>,
+          tenets: ["We map before we message.", "We calibrate before we chase.", "We influence with data, not assumptions."],
+        },
+        {
+          role: "Recruiting Philosophy", color: COLORS.recruiter, bdr: COLORS.recruiterBdr,
+          headline: <>Precision first,<br />process second.</>,
+          tenets: ["We align before we advance.", "We communicate before we assume.", "We convert insights into outcomes."],
+        },
+      ].map(card => (
+        <div key={card.role} style={{ background: COLORS.navy2, border: `1px solid ${card.bdr}`, borderRadius: 10, padding: "24px 22px" }}>
+          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: card.color, marginBottom: 10 }}>{card.role}</div>
+          <div style={{ fontSize: 21, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.2, color: COLORS.text, marginBottom: 18 }}>{card.headline}</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+            {card.tenets.map((t, i) => (
+              <div key={i} style={{ display: "flex", gap: 8, fontSize: 12.5, color: COLORS.textMuted, lineHeight: 1.55, fontWeight: 300 }}>
+                <span style={{ color: card.color, fontSize: 7, flexShrink: 0, marginTop: 4 }}>◆</span>
+                {t}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+    <div style={{ background: COLORS.navy2, border: `1px solid ${COLORS.goldBdr}`, borderRadius: 10, padding: "24px 22px" }}>
+      <div style={{ fontSize: 15, fontWeight: 700, color: COLORS.text, letterSpacing: "-0.01em", marginBottom: 18 }}>What Good Partnership Looks Like</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        {[
+          "Sourcer brings clarity; recruiter brings alignment.",
+          "Over-communication protects the candidate's experience.",
+          "Feedback and data flow both ways.",
+          "Misalignments are addressed in real time.",
+          "Every intake results in artifacts: market map, outreach plan, candidate archetypes, green/red flags, calibration summary.",
+          "Clean handoffs protect employer brand and candidate experience.",
+        ].map((item, i) => (
+          <div key={i} style={{ display: "flex", gap: 8, fontSize: 12.5, color: COLORS.textMuted, lineHeight: 1.6, fontWeight: 300, alignItems: "flex-start" }}>
+            <span style={{ color: COLORS.gold, fontSize: 11, flexShrink: 0, marginTop: 2 }}>✓</span>
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+// ── ROOT ──
+export default function App() {
+  const [active, setActive] = useState("flow");
+
+  const panels = { flow: <FlowPanel />, ownership: <OwnershipPanel />, slas: <SLAsPanel />, philosophy: <PhilosophyPanel /> };
+
+  return (
+    <div style={sty.root}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #07111f; }
+        ::-webkit-scrollbar-thumb { background: #162845; border-radius: 4px; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        button:hover { color: #7a90b0 !important; }
+      `}</style>
+      <div style={sty.gridBg} />
+      {/* ── TITLE BAR ── */}
+      <div style={{
+        position: "relative", zIndex: 2,
+        padding: "13px 60px",
+        background: COLORS.navy3,
+        borderBottom: `1px solid ${COLORS.border}`,
+        display: "flex", alignItems: "center", gap: 12,
+      }}>
+        <div style={{
+          width: 8, height: 8, borderRadius: "50%",
+          background: COLORS.blue,
+          boxShadow: `0 0 8px ${COLORS.blue}`,
+          flexShrink: 0,
+        }} />
+        <span style={{
+          fontSize: 12, fontWeight: 600, letterSpacing: "0.06em",
+          textTransform: "uppercase", color: COLORS.text,
+        }}>Recruiter &amp; Sourcer Partnership Framework</span>
+      </div>
+      <Hero />
+      <Nav active={active} setActive={setActive} />
+      <div style={{ position: "relative", zIndex: 1, padding: "44px 60px 80px", animation: "fadeUp 0.25s ease both" }}>
+        {panels[active]}
+      </div>
+    </div>
+  );
+}
