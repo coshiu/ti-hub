@@ -1137,7 +1137,7 @@
                 ${a.status === 'live' ? 'Live' : a.status === 'draft' ? 'Draft' : 'In Review'}
               </div>
               <div class="card-actions">
-                ${a.link ? `<a class="icon-btn" href="${a.link}" target="_blank" onclick="event.stopPropagation()" title="Open in Claude" style="font-size:10px;font-family:'DM Mono',monospace;width:auto;padding:0 8px;letter-spacing:0.05em;color:var(--accent);border-color:rgba(91,143,255,0.3)">↗ Claude</a>` : ''}
+                ${a.link ? `<a class="icon-btn" href="${a.link}" target="_blank" onclick="event.stopPropagation()" title="Open in asdf" style="font-size:10px;font-family:'DM Mono',monospace;width:auto;padding:0 8px;letter-spacing:0.05em;color:var(--accent);border-color:rgba(91,143,255,0.3)">↗ asdf</a>` : ''}
                 <div class="icon-btn" onclick="event.stopPropagation(); deleteArtifact('${a.id}')" title="Delete">🗑</div>
               </div>
             </div>
@@ -1177,7 +1177,7 @@
           </div>
           ${a.link ? `<div>
             <div class="detail-section-label">Open Original</div>
-            <a href="${a.link}" target="_blank" style="font-size:13px; color:var(--accent); text-decoration:none">↗ Open in Claude</a>
+            <a href="${a.link}" target="_blank" style="font-size:13px; color:var(--accent); text-decoration:none">↗ Open in asdf</a>
           </div>` : ''}
         </div>
       </div>
