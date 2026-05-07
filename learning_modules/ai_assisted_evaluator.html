@@ -4,30 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Role Matching // Training Module</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Josefin+Sans:wght@300;400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:       #080808;
-  --bg2:      #0d0d0d;
-  --bg3:      #111111;
-  --panel:    #0f0f0f;
-  --panel2:   #141414;
-  --border:   #1c1c1c;
-  --border2:  #242424;
-  --gold:     #c9a84c;
-  --gold-lt:  #e8c97a;
-  --gold-dim: #6b5520;
-  --gold-glow: rgba(201,168,76,0.12);
-  --gold-glow2: rgba(201,168,76,0.05);
-  --text:     #e2ddd4;
-  --text-muted: #6b6560;
-  --text-dim:   #302c28;
-  --red:      #c0392b;
-  --amber:    #d4830a;
-  --teal:     #2e8b7a;
-  --slate:    #4a6b8a;
+  --bg:       #0a0f1a;
+  --bg2:      #0d1520;
+  --bg3:      #111d2e;
+  --panel:    #0f1828;
+  --panel2:   #131e30;
+  --border:   #1a2540;
+  --border2:  #1e2d4a;
+  --blue:     #1a8fff;
+  --blue-lt:  #5aadff;
+  --blue-dim: #0d3d70;
+  --blue-glow: rgba(26,143,255,0.12);
+  --blue-glow2: rgba(26,143,255,0.05);
+  --teal:     #38d9b0;
+  --teal-dim: #1a5a48;
+  --teal-glow: rgba(56,217,176,0.1);
+  --gold:     #f5c842;
+  --gold-dim: #6b5010;
+  --text:     #d8e4f0;
+  --text-muted: #5a7090;
+  --text-dim:   #243048;
+  --red:      #e05050;
+  --amber:    #e09030;
+  --green:    #38b87a;
+  --slate:    #4a7aaa;
 }
 
 html { scroll-behavior: smooth; }
@@ -35,7 +40,7 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'IBM Plex Sans', sans-serif;
   font-weight: 300;
   min-height: 100vh;
   overflow-x: hidden;
@@ -78,21 +83,21 @@ body::before {
 
 .logo-mark {
   width: 36px; height: 36px; flex-shrink: 0;
-  border: 1px solid var(--gold-dim);
+  border: 1px solid var(--blue-dim);
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700;
-  color: var(--gold); font-style: italic;
-  background: var(--gold-glow2);
+  font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;
+  color: var(--blue); letter-spacing: 0.05em;
+  background: var(--blue-glow2);
 }
 
 .logo-text { line-height: 1.4; }
 .logo-text strong {
-  font-family: 'Josefin Sans', sans-serif; font-size: 10px; font-weight: 700;
-  letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold);
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--blue);
   display: block;
 }
 .logo-text span {
-  font-family: 'DM Mono', monospace; font-size: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
   color: var(--text-muted); letter-spacing: 0.06em;
 }
 
@@ -102,9 +107,9 @@ body::before {
 }
 
 .topbar-title {
-  font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600;
-  color: var(--gold-lt); letter-spacing: 0.04em; font-style: italic;
-  text-shadow: 0 0 40px rgba(201,168,76,0.25);
+  font-family: 'IBM Plex Serif', serif; font-size: 22px; font-weight: 600;
+  color: var(--blue-lt); letter-spacing: 0.04em; font-style: italic;
+  text-shadow: 0 0 40px rgba(26,143,255,0.25);
 }
 
 .topbar-rule {
@@ -112,19 +117,19 @@ body::before {
 }
 
 .topbar-sub {
-  font-family: 'DM Mono', monospace; font-size: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
   color: var(--text-dim); letter-spacing: 0.14em; text-transform: uppercase;
 }
 
 .topbar-status {
   margin-left: auto; padding-right: 36px;
   display: flex; align-items: center; gap: 8px;
-  font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim);
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim);
   letter-spacing: 0.1em;
 }
 .status-pip {
   width: 5px; height: 5px; border-radius: 50%;
-  background: var(--gold); opacity: 0.7;
+  background: var(--blue); opacity: 0.7;
   animation: pip 3s ease-in-out infinite;
 }
 @keyframes pip { 0%,100%{opacity:0.7} 50%{opacity:0.2} }
@@ -141,7 +146,7 @@ body::before {
 }
 
 .nav-section {
-  font-family: 'DM Mono', monospace; font-size: 9px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
   letter-spacing: 0.25em; text-transform: uppercase;
   color: var(--text-dim); padding: 20px 28px 10px;
 }
@@ -149,35 +154,36 @@ body::before {
 .nav-item {
   display: flex; align-items: center; gap: 12px;
   padding: 11px 28px; cursor: pointer;
-  font-family: 'Josefin Sans', sans-serif; font-size: 13px; font-weight: 400;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 400;
   letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text-muted);
   border-left: 2px solid transparent;
   transition: all 0.18s;
 }
-.nav-item:hover { color: var(--text); background: var(--gold-glow2); }
+.nav-item:hover { color: var(--text); background: var(--blue-glow2); }
 .nav-item.active {
-  color: var(--gold); border-left-color: var(--gold);
-  background: var(--gold-glow2);
+  color: var(--blue); border-left-color: var(--blue);
+  background: var(--blue-glow2);
 }
+.nav-item:hover { color: var(--text); background: rgba(26,143,255,0.03); }
 
 .nav-num {
-  font-family: 'DM Mono', monospace; font-size: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
   color: var(--text-dim); flex-shrink: 0; width: 18px;
 }
-.nav-item.active .nav-num { color: var(--gold-dim); }
+.nav-item.active .nav-num { color: var(--blue-dim); }
 
 .nav-dash {
   width: 12px; height: 1px; background: var(--text-dim); flex-shrink: 0;
   transition: all 0.18s;
 }
 .nav-item.active .nav-dash,
-.nav-item:hover  .nav-dash { background: var(--gold); width: 16px; }
+.nav-item:hover  .nav-dash { background: var(--blue); width: 16px; }
 
 .sidebar-footer {
   margin-top: auto; padding: 24px 28px;
   border-top: 1px solid var(--border);
-  font-family: 'DM Mono', monospace; font-size: 9px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
   color: var(--text-dim); line-height: 1.8; letter-spacing: 0.06em;
 }
 
@@ -194,25 +200,25 @@ body::before {
 
 /* ── SECTION HEADER ── */
 .section-eyebrow {
-  font-family: 'DM Mono', monospace; font-size: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
   letter-spacing: 0.28em; text-transform: uppercase;
-  color: var(--gold-dim); margin-bottom: 12px;
+  color: var(--blue-dim); margin-bottom: 12px;
   display: flex; align-items: center; gap: 14px;
 }
 .section-eyebrow::after {
   content: ''; flex: 1; height: 1px; max-width: 80px;
-  background: linear-gradient(90deg, var(--gold-dim), transparent);
+  background: linear-gradient(90deg, var(--blue-dim), transparent);
 }
 
 .section-title {
-  font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 700;
+  font-family: 'IBM Plex Serif', serif; font-size: 42px; font-weight: 700;
   color: var(--text); line-height: 1.1; margin-bottom: 16px;
   letter-spacing: 0.01em;
 }
-.section-title em { color: var(--gold); font-style: italic; }
+.section-title em { color: var(--blue); font-style: italic; }
 
 .section-sub {
-  font-family: 'Josefin Sans', sans-serif; font-size: 14px; font-weight: 300;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 300;
   color: var(--text-muted); line-height: 1.8; margin-bottom: 44px;
   max-width: 580px; letter-spacing: 0.04em;
 }
@@ -232,16 +238,16 @@ body::before {
 .stat-item:last-child { border-right: none; }
 .stat-item::after {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: var(--gold-dim); opacity: 0.6;
+  background: var(--blue-dim); opacity: 0.6;
 }
 
 .stat-n {
-  font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 700;
+  font-family: 'IBM Plex Mono', monospace; font-size: 40px; font-weight: 600;
   color: var(--gold); line-height: 1; margin-bottom: 8px;
-  text-shadow: 0 0 30px rgba(201,168,76,0.3);
+  text-shadow: 0 0 24px rgba(245,200,66,0.2);
 }
 .stat-lbl {
-  font-family: 'DM Mono', monospace; font-size: 9px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
   letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--text-muted); margin-bottom: 4px;
 }
@@ -259,21 +265,21 @@ body::before {
   content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 2px;
   background: transparent; transition: background 0.2s;
 }
-.mini-card:hover { border-color: var(--gold-dim); background: var(--panel2); }
-.mini-card:hover::before { background: var(--gold-dim); }
+.mini-card:hover { border-color: var(--blue-dim); background: var(--panel2); }
+.mini-card:hover::before { background: var(--blue-dim); }
 
 .mini-card-num {
-  font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700;
-  color: var(--gold); line-height: 1; margin-bottom: 12px;
-  text-shadow: 0 0 20px rgba(201,168,76,0.2);
+  font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 600;
+  color: var(--teal); line-height: 1; margin-bottom: 12px;
+  text-shadow: 0 0 16px rgba(56,217,176,0.2);
 }
 .mini-card-label {
-  font-family: 'DM Mono', monospace; font-size: 9px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
   letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--text-dim); margin-bottom: 6px;
 }
 .mini-card-title {
-  font-family: 'Josefin Sans', sans-serif; font-size: 13px; font-weight: 600;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text); margin-bottom: 8px;
 }
@@ -285,19 +291,19 @@ body::before {
   margin-bottom: 20px; position: relative; overflow: hidden;
   transition: border-color 0.2s;
 }
-.concept-block:hover { border-color: var(--gold-dim); }
+.concept-block:hover { border-color: var(--blue-dim); }
 .concept-block::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  background: linear-gradient(90deg, transparent, var(--blue-dim), transparent);
 }
 .concept-inner { padding: 32px 34px; }
 .concept-tag {
-  font-family: 'DM Mono', monospace; font-size: 9px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
   letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--gold-dim); margin-bottom: 12px;
+  color: var(--blue-dim); margin-bottom: 12px;
 }
 .concept-heading {
-  font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600;
+  font-family: 'IBM Plex Serif', serif; font-size: 24px; font-weight: 600;
   color: var(--text); margin-bottom: 14px; letter-spacing: 0.02em;
 }
 .concept-text {
@@ -305,10 +311,10 @@ body::before {
 }
 .pull-quote {
   margin-top: 24px; padding: 16px 22px;
-  border-left: 1px solid var(--gold);
-  background: var(--gold-glow2);
-  font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic;
-  color: var(--gold-lt); line-height: 1.65;
+  border-left: 2px solid var(--teal);
+  background: var(--teal-glow);
+  font-family: 'IBM Plex Serif', serif; font-size: 16px; font-style: italic;
+  color: var(--teal); line-height: 1.65;
 }
 
 /* ── ALERT ── */
@@ -336,38 +342,38 @@ body::before {
   border: 1px solid var(--border2); background: var(--panel);
   overflow: hidden; cursor: pointer; transition: border-color 0.2s;
 }
-.step-card:hover { border-color: var(--gold-dim); }
-.step-card.open  { border-color: var(--gold-dim); }
+.step-card:hover { border-color: var(--blue-dim); }
+.step-card.open  { border-color: var(--blue-dim); }
 
 .step-head {
   display: flex; align-items: center; gap: 18px; padding: 20px 24px;
   transition: background 0.2s;
 }
-.step-card.open .step-head { background: var(--gold-glow2); }
+.step-card.open .step-head { background: var(--blue-glow2); }
 
 .step-badge {
   width: 40px; height: 40px; flex-shrink: 0;
-  border: 1px solid var(--gold-dim);
+  border: 1px solid var(--blue-dim);
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700;
-  color: var(--gold); background: var(--gold-glow2);
+  font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600;
+  color: var(--blue); background: var(--blue-glow2);
   transition: box-shadow 0.2s;
 }
-.step-card.open .step-badge { box-shadow: 0 0 16px var(--gold-glow); }
+.step-card.open .step-badge { box-shadow: 0 0 16px var(--blue-glow); }
 
 .step-head-title {
-  font-family: 'Josefin Sans', sans-serif; font-size: 14px; font-weight: 600;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 600;
   letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--text); margin-bottom: 3px; transition: color 0.2s;
 }
-.step-card.open .step-head-title { color: var(--gold); }
+.step-card.open .step-head-title { color: var(--blue); }
 .step-head-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
 
 .step-chev {
   margin-left: auto; color: var(--text-dim); font-size: 14px;
   transition: transform 0.25s, color 0.2s;
 }
-.step-card.open .step-chev { transform: rotate(180deg); color: var(--gold); }
+.step-card.open .step-chev { transform: rotate(180deg); color: var(--blue); }
 
 .step-body {
   display: none; border-top: 1px solid var(--border2); padding: 26px 24px;
@@ -377,12 +383,12 @@ body::before {
 
 .load-list { margin-bottom: 18px; display: flex; flex-direction: column; gap: 8px; }
 .load-item { display: flex; align-items: flex-start; gap: 12px; font-size: 13.5px; color: var(--text-muted); line-height: 1.6; letter-spacing: 0.03em; }
-.load-arrow { color: var(--gold-dim); flex-shrink: 0; font-family: 'DM Mono', monospace; font-size: 11px; margin-top: 2px; }
+.load-arrow { color: var(--blue-dim); flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; margin-top: 2px; }
 
 /* ── PROMPT BOX ── */
 .prompt-box {
-  background: var(--bg); border: 1px solid var(--gold-dim);
-  overflow: hidden; box-shadow: 0 0 20px var(--gold-glow2);
+  background: var(--bg); border: 1px solid var(--blue-dim);
+  overflow: hidden; box-shadow: 0 0 20px var(--blue-glow2);
 }
 .prompt-bar {
   display: flex; align-items: center; justify-content: space-between;
@@ -390,20 +396,20 @@ body::before {
   border-bottom: 1px solid var(--border2);
 }
 .prompt-lbl {
-  font-family: 'DM Mono', monospace; font-size: 9px;
-  letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-dim);
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue-dim);
 }
 .copy-btn {
-  font-family: 'DM Mono', monospace; font-size: 9px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
   letter-spacing: 0.12em; text-transform: uppercase;
-  background: none; border: 1px solid var(--gold-dim);
-  color: var(--gold); padding: 4px 10px; cursor: pointer; transition: all 0.15s;
+  background: none; border: 1px solid var(--blue-dim);
+  color: var(--blue); padding: 4px 10px; cursor: pointer; transition: all 0.15s;
 }
-.copy-btn:hover { background: var(--gold-glow2); }
-.copy-btn.copied { color: var(--gold-lt); }
+.copy-btn:hover { background: var(--blue-glow2); }
+.copy-btn.copied { color: var(--blue-lt); }
 .prompt-text {
-  padding: 16px 18px; font-family: 'DM Mono', monospace; font-size: 12px;
-  color: #c4a96a; line-height: 1.8; white-space: pre-wrap;
+  padding: 16px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  color: #4a9ae0; line-height: 1.8; white-space: pre-wrap;
 }
 
 /* ── RISK GRID ── */
@@ -422,7 +428,7 @@ body::before {
 .risk-card.r-c::before { background: var(--teal); }
 .risk-card.r-d::before { background: var(--slate); }
 
-.risk-card:hover { transform: translateY(-2px); border-color: var(--gold-dim); }
+.risk-card:hover { transform: translateY(-2px); border-color: var(--blue-dim); }
 .risk-card.r-a:hover { box-shadow: 0 8px 32px rgba(192,57,43,0.08); }
 .risk-card.r-b:hover { box-shadow: 0 8px 32px rgba(212,131,10,0.08); }
 .risk-card.r-c:hover { box-shadow: 0 8px 32px rgba(46,139,122,0.08); }
@@ -430,7 +436,7 @@ body::before {
 
 .risk-icon { font-size: 18px; margin-bottom: 14px; }
 .risk-title {
-  font-family: 'Josefin Sans', sans-serif; font-size: 13px; font-weight: 600;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 600;
   letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;
 }
 .risk-card.r-a .risk-title { color: var(--red); }
@@ -439,10 +445,10 @@ body::before {
 .risk-card.r-d .risk-title { color: var(--slate); }
 .risk-text { font-size: 13px; color: var(--text-muted); line-height: 1.7; letter-spacing: 0.03em; }
 .risk-cta {
-  margin-top: 14px; font-family: 'DM Mono', monospace; font-size: 10px;
+  margin-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10px;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); transition: color 0.2s;
 }
-.risk-card:hover .risk-cta { color: var(--gold-dim); }
+.risk-card:hover .risk-cta { color: var(--blue-dim); }
 
 /* ── CHECKLIST ── */
 .checklist { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
@@ -452,25 +458,25 @@ body::before {
   padding: 16px 18px; border: 1px solid var(--border2); background: var(--panel);
   cursor: pointer; transition: all 0.18s;
 }
-.check-item:hover { border-color: var(--gold-dim); background: var(--panel2); }
-.check-item.done { border-color: var(--gold-dim); background: var(--gold-glow2); }
+.check-item:hover { border-color: var(--blue-dim); background: var(--panel2); }
+.check-item.done { border-color: var(--teal-dim); background: var(--teal-glow); }
 
 .check-box {
   width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px;
   border: 1px solid var(--border2); background: var(--bg3);
   display: flex; align-items: center; justify-content: center;
-  font-family: 'DM Mono', monospace; font-size: 11px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
   color: transparent; transition: all 0.18s;
 }
 .check-item.done .check-box {
-  background: var(--gold); border-color: var(--gold); color: var(--bg);
+  background: var(--teal); border-color: var(--teal); color: var(--bg);
 }
 
 .check-title {
-  font-family: 'Josefin Sans', sans-serif; font-size: 13.5px; font-weight: 600;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 13.5px; font-weight: 600;
   letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); margin-bottom: 4px;
 }
-.check-item.done .check-title { color: var(--gold); }
+.check-item.done .check-title { color: var(--teal); }
 .check-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.65; letter-spacing: 0.03em; }
 
 .progress-wrap {
@@ -479,51 +485,51 @@ body::before {
   display: flex; align-items: center; gap: 18px;
 }
 .progress-track { flex: 1; height: 2px; background: var(--border2); }
-.progress-fill { height: 100%; background: var(--gold); transition: width 0.4s ease; }
+.progress-fill { height: 100%; background: var(--teal); transition: width 0.4s ease; }
 .progress-txt {
-  font-family: 'DM Mono', monospace; font-size: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
   color: var(--text-muted); flex-shrink: 0; letter-spacing: 0.1em;
 }
 .progress-ok {
-  font-family: 'DM Mono', monospace; font-size: 10px;
-  color: var(--gold); display: none; letter-spacing: 0.12em;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--teal); display: none; letter-spacing: 0.12em;
 }
 
 .key-q {
-  border: 1px solid var(--gold-dim); background: var(--gold-glow2);
+  border: 1px solid var(--blue-dim); background: var(--blue-glow2);
   padding: 20px 24px; margin-bottom: 20px;
 }
 .key-q-lbl {
-  font-family: 'DM Mono', monospace; font-size: 9px;
-  letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--blue-dim); margin-bottom: 10px;
 }
 .key-q-text {
-  font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic;
-  color: var(--gold-lt); line-height: 1.55;
+  font-family: 'IBM Plex Serif', serif; font-size: 17px; font-style: italic;
+  color: var(--blue-lt); line-height: 1.6;
 }
 
 /* ── PROMPT CARDS ── */
 .prompt-cards { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
 
 .p-card { border: 1px solid var(--border2); background: var(--panel); overflow: hidden; transition: border-color 0.2s; }
-.p-card:hover { border-color: var(--gold-dim); }
+.p-card:hover { border-color: var(--blue-dim); }
 
 .p-card-head {
   display: flex; align-items: center; gap: 12px;
   padding: 14px 18px; border-bottom: 1px solid var(--border);
 }
 .p-tag {
-  font-family: 'DM Mono', monospace; font-size: 9px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
   letter-spacing: 0.14em; text-transform: uppercase;
   padding: 3px 9px; border: 1px solid;
 }
-.p-tag.setup   { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow2); }
+.p-tag.setup   { color: var(--blue); border-color: var(--blue-dim); background: var(--blue-glow2); }
 .p-tag.eval    { color: var(--teal); border-color: rgba(46,139,122,0.3); background: rgba(46,139,122,0.06); }
 .p-tag.probe   { color: var(--amber); border-color: rgba(212,131,10,0.3); background: rgba(212,131,10,0.06); }
 .p-tag.sanity  { color: var(--red); border-color: rgba(192,57,43,0.3); background: rgba(192,57,43,0.06); }
 .p-tag.compare { color: var(--slate); border-color: rgba(74,107,138,0.3); background: rgba(74,107,138,0.06); }
 .p-card-title {
-  font-family: 'Josefin Sans', sans-serif; font-size: 13px; font-weight: 600;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--text);
 }
 .p-card-body { padding: 4px 18px 16px; }
@@ -533,14 +539,14 @@ body::before {
 .rules-col { border: 1px solid var(--border2); background: var(--panel); overflow: hidden; }
 .rules-col-head {
   padding: 13px 20px;
-  font-family: 'DM Mono', monospace; font-size: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
   letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;
 }
 .rules-col.do   .rules-col-head { color: var(--teal); background: rgba(46,139,122,0.07); border-bottom: 1px solid rgba(46,139,122,0.15); }
 .rules-col.dont .rules-col-head { color: var(--red); background: rgba(192,57,43,0.07); border-bottom: 1px solid rgba(192,57,43,0.15); }
 .rules-list { padding: 16px 20px; display: flex; flex-direction: column; gap: 11px; }
 .rule-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--text-muted); line-height: 1.55; letter-spacing: 0.03em; }
-.rule-sym { flex-shrink: 0; font-family: 'DM Mono', monospace; font-size: 11px; margin-top: 2px; }
+.rule-sym { flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; margin-top: 2px; }
 .rules-col.do   .rule-sym { color: var(--teal); }
 .rules-col.dont .rule-sym { color: var(--red); }
 
@@ -554,10 +560,10 @@ body::before {
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 
 .modal {
-  background: var(--bg2); border: 1px solid var(--gold-dim);
+  background: var(--bg2); border: 1px solid var(--blue-dim);
   width: 100%; max-width: 560px; max-height: 88vh; overflow-y: auto;
   transform: translateY(24px); transition: transform 0.28s;
-  box-shadow: 0 0 80px var(--gold-glow);
+  box-shadow: 0 0 80px var(--blue-glow);
 }
 .modal-overlay.open .modal { transform: translateY(0); }
 
@@ -566,20 +572,20 @@ body::before {
   padding: 22px 28px; border-bottom: 1px solid var(--border2);
 }
 .modal-title {
-  font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600;
+  font-family: 'IBM Plex Serif', serif; font-size: 22px; font-weight: 600;
   color: var(--text); letter-spacing: 0.02em;
 }
 .modal-x {
   width: 30px; height: 30px; border: 1px solid var(--border2); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted);
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-muted);
   transition: all 0.18s;
 }
-.modal-x:hover { color: var(--gold); border-color: var(--gold-dim); }
+.modal-x:hover { color: var(--blue); border-color: var(--blue-dim); }
 
 .modal-body { padding: 26px 28px; }
 .modal-lbl {
-  font-family: 'DM Mono', monospace; font-size: 9px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
   letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--text-dim); margin-bottom: 8px;
 }
@@ -588,6 +594,107 @@ body::before {
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); }
+
+/* ── WELCOME BANNER ── */
+.welcome-banner {
+  border: 1px solid var(--blue-dim);
+  background: linear-gradient(135deg, rgba(26,143,255,0.06) 0%, rgba(56,217,176,0.04) 100%);
+  padding: 20px 24px; margin-bottom: 32px;
+  position: relative; overflow: hidden;
+}
+.welcome-banner::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--teal));
+}
+.wb-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 8px;
+}
+.wb-text {
+  font-size: 13.5px; color: var(--text-muted); line-height: 1.75;
+  letter-spacing: 0.02em; margin-bottom: 14px;
+}
+.wb-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--teal); cursor: pointer; border: none; background: none;
+  padding: 0; transition: gap 0.15s;
+}
+.wb-cta:hover { gap: 12px; }
+.wb-cta-arrow { font-size: 12px; }
+
+/* ── NAV DESCRIPTOR ── */
+.nav-desc {
+  font-size: 10px; color: var(--text-dim); letter-spacing: 0.02em;
+  margin-top: 1px; line-height: 1.3; font-weight: 300;
+  transition: color 0.18s;
+}
+.nav-item.active .nav-desc { color: var(--blue-dim); }
+.nav-item:hover .nav-desc { color: var(--text-muted); }
+
+/* ── START HERE BADGE ── */
+.nav-start-badge {
+  margin-left: auto; flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--teal); border: 1px solid var(--teal-dim);
+  background: var(--teal-glow); padding: 2px 6px;
+  animation: badgePulse 2.5s ease-in-out infinite;
+}
+@keyframes badgePulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.nav-start-badge.hidden { display: none; }
+
+/* ── NAV VISITED STATE ── */
+.nav-item.visited .nav-num { color: var(--teal-dim); }
+.nav-item.visited:not(.active) .nav-dash { background: var(--teal-dim); }
+
+/* ── PROMPT LIBRARY FRAMING ── */
+.prompt-library-intro {
+  border: 1px solid var(--border2); background: var(--panel);
+  padding: 16px 20px; margin-bottom: 20px;
+  display: flex; align-items: flex-start; gap: 16px;
+}
+.pli-sequence {
+  display: flex; gap: 6px; flex-shrink: 0; align-items: center; margin-top: 2px;
+}
+.pli-step {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid var(--border2); background: var(--panel2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  color: var(--text-dim);
+}
+.pli-arrow { color: var(--text-dim); font-size: 10px; }
+.pli-text { font-size: 13px; color: var(--text-muted); line-height: 1.7; letter-spacing: 0.02em; }
+.pli-text strong { color: var(--text); font-weight: 500; }
+
+/* ── WHEN TO USE TAG ── */
+.p-when {
+  font-size: 11px; color: var(--text-muted); font-style: italic;
+  padding: 6px 18px 12px; letter-spacing: 0.02em; border-bottom: 1px solid var(--border);
+}
+
+/* ── CHECKLIST RESET BANNER (top) ── */
+.reset-reminder {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  border: 1px solid var(--border2); background: var(--panel);
+  padding: 12px 16px; margin-bottom: 14px;
+}
+.rr-text {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted);
+}
+.rr-text span { color: var(--gold); }
+.btn-reset-prominent {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.25);
+  color: var(--gold); padding: 6px 14px; cursor: pointer;
+  transition: all 0.15s; flex-shrink: 0;
+}
+.btn-reset-prominent:hover { background: rgba(245,200,66,0.15); border-color: var(--gold); }
 </style>
 </head>
 <body>
@@ -614,12 +721,31 @@ body::before {
 
   <aside class="sidebar">
     <div class="nav-section">Navigation</div>
-    <div class="nav-item active" onclick="go('overview',this)"><span class="nav-num">01</span><span class="nav-dash"></span>Overview</div>
-    <div class="nav-item" onclick="go('workflow',this)"><span class="nav-num">02</span><span class="nav-dash"></span>The Workflow</div>
-    <div class="nav-item" onclick="go('risks',this)"><span class="nav-num">03</span><span class="nav-dash"></span>Failure Modes</div>
-    <div class="nav-item" onclick="go('factcheck',this)"><span class="nav-num">04</span><span class="nav-dash"></span>Fact-Check</div>
-    <div class="nav-item" onclick="go('prompts',this)"><span class="nav-num">05</span><span class="nav-dash"></span>Prompt Library</div>
-    <div class="nav-item" onclick="go('rules',this)"><span class="nav-num">06</span><span class="nav-dash"></span>Rules of the Road</div>
+    <div class="nav-item active" id="nav-overview" onclick="go('overview',this)">
+      <span class="nav-num">01</span><span class="nav-dash"></span>
+      <div><div>Overview</div><div class="nav-desc">What this is &amp; how it works</div></div>
+      <span class="nav-start-badge" id="start-badge">Start here</span>
+    </div>
+    <div class="nav-item" id="nav-workflow" onclick="go('workflow',this)">
+      <span class="nav-num">02</span><span class="nav-dash"></span>
+      <div><div>The Workflow</div><div class="nav-desc">3-step evaluation process</div></div>
+    </div>
+    <div class="nav-item" id="nav-risks" onclick="go('risks',this)">
+      <span class="nav-num">03</span><span class="nav-dash"></span>
+      <div><div>Failure Modes</div><div class="nav-desc">Where AI gets it wrong</div></div>
+    </div>
+    <div class="nav-item" id="nav-factcheck" onclick="go('factcheck',this)">
+      <span class="nav-num">04</span><span class="nav-dash"></span>
+      <div><div>Fact-Check</div><div class="nav-desc">Before advancing any candidate</div></div>
+    </div>
+    <div class="nav-item" id="nav-prompts" onclick="go('prompts',this)">
+      <span class="nav-num">05</span><span class="nav-dash"></span>
+      <div><div>Prompt Library</div><div class="nav-desc">Copyable templates by stage</div></div>
+    </div>
+    <div class="nav-item" id="nav-rules" onclick="go('rules',this)">
+      <span class="nav-num">06</span><span class="nav-dash"></span>
+      <div><div>Rules of the Road</div><div class="nav-desc">Non-negotiables</div></div>
+    </div>
     <div class="sidebar-footer">L&amp;D Series<br>Talent Intelligence<br>AI-Forward Sourcing</div>
   </aside>
 
@@ -629,7 +755,15 @@ body::before {
     <div class="section active" id="s-overview">
       <div class="section-eyebrow">Module 01</div>
       <h1 class="section-title">AI as a <em>Role Matching</em> Evaluator</h1>
-      <p class="section-sub">How to use AI to sharpen your sourcing signal at volume — without letting it replace your judgment. Navigate freely between modules using the sidebar.</p>
+      <p class="section-sub">How to use AI to sharpen your sourcing signal at volume — without letting it replace your judgment.</p>
+
+      <div class="welcome-banner">
+        <div class="wb-label">First time here?</div>
+        <div class="wb-text">This module teaches you how to use Claude as a structured thinking partner when screening candidates. Work through the six modules in order the first time — each one builds on the last. After that, use it as a reference whenever you need it.</div>
+        <button class="wb-cta" onclick="go('workflow', document.getElementById('nav-workflow'))">
+          Start with Module 02 — The Workflow <span class="wb-cta-arrow">→</span>
+        </button>
+      </div>
 
       <div class="three-col">
         <div class="mini-card"><div class="mini-card-num">01</div><div class="mini-card-label">Step One</div><div class="mini-card-title">Load the Role Brief</div><div class="mini-card-text">JD + intake notes + HM nuance. One fresh chat per role, no exceptions.</div></div>
@@ -662,7 +796,7 @@ body::before {
       <h1 class="section-title">The <em>3-Step</em> Workflow</h1>
       <p class="section-sub">Click each step to expand the full guidance and a copyable prompt. Run these in sequence for every new search.</p>
       <div class="steps">
-        <div class="step-card" id="st1" onclick="toggleStep('st1')">
+        <div class="step-card open" id="st1" onclick="toggleStep('st1')">
           <div class="step-head"><div class="step-badge">01</div><div><div class="step-head-title">Build Your Role Brief</div><div class="step-head-sub">Load all context before evaluating a single candidate</div></div><div class="step-chev">▾</div></div>
           <div class="step-body">
             <p class="step-body-text">Open a fresh chat for each new search. The quality of this setup directly determines the quality of every evaluation that follows.</p>
@@ -712,7 +846,13 @@ body::before {
     <div class="section" id="s-factcheck">
       <div class="section-eyebrow">Module 04</div>
       <h1 class="section-title">Fact-Check <em>Checklist</em></h1>
-      <p class="section-sub">Run through this after every AI assessment. Click each item to mark it complete. Reset between candidates — don't carry confidence forward.</p>
+      <p class="section-sub">Run through this after every AI assessment. Click each item to mark it complete.</p>
+
+      <div class="reset-reminder">
+        <div class="rr-text"><span>↺ &nbsp;Reset between every candidate.</span> &nbsp;Don't carry confidence forward from a prior profile.</div>
+        <button class="btn-reset-prominent" onclick="resetChecklist()">↺ &nbsp;Reset</button>
+      </div>
+
       <div class="progress-wrap">
         <div class="progress-txt" id="prog-txt">0 / 6 verified</div>
         <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
@@ -727,7 +867,7 @@ body::before {
         <div class="check-item" onclick="chk(this)"><div class="check-box">✓</div><div><div class="check-title">Return to the original document</div><div class="check-desc">Always reference the source resume or LinkedIn — not just what you pasted. You may have cut something that changes the read.</div></div></div>
         <div class="check-item" onclick="chk(this)"><div class="check-box">✓</div><div><div class="check-title">Trust your pattern recognition</div><div class="check-desc">You have market context the AI doesn't. If a "strong" match feels off — dig before you advance.</div></div></div>
       </div>
-      <div class="alert danger"><span class="a-icon">⚠</span><div><strong>Reset this checklist for every candidate.</strong> Don't carry over confidence from a prior profile. Each evaluation is independent.</div></div>
+      <div class="alert danger"><span class="a-icon">⚠</span><div><strong>Each evaluation is independent.</strong> A cleared checklist for one candidate means nothing for the next. Reset before every new profile.</div></div>
     </div>
 
     <!-- 05 PROMPTS -->
@@ -735,12 +875,44 @@ body::before {
       <div class="section-eyebrow">Module 05</div>
       <h1 class="section-title"><em>Prompt</em> Library</h1>
       <p class="section-sub">Five ready-to-use prompts for every stage of the evaluation. Copy and adapt — never paste and trust without fact-checking.</p>
+
+      <div class="prompt-library-intro">
+        <div class="pli-sequence">
+          <div class="pli-step">1</div>
+          <div class="pli-arrow">→</div>
+          <div class="pli-step">2</div>
+          <div class="pli-arrow">→</div>
+          <div class="pli-step">3+</div>
+        </div>
+        <div class="pli-text">Use <strong>Setup</strong> once at the start of each new search, then <strong>Eval</strong> for every candidate you run through. Use <strong>Probe</strong>, <strong>Sanity</strong>, and <strong>Compare</strong> as needed — they're for when you need to go deeper on a specific concern or decision.</div>
+      </div>
+
       <div class="prompt-cards">
-        <div class="p-card"><div class="p-card-head"><span class="p-tag setup">Setup</span><span class="p-card-title">Role Brief — Chat Initialization</span></div><div class="p-card-body"><div class="prompt-box" style="margin-top:14px;"><div class="prompt-bar"><div class="prompt-lbl">Use at the start of every search</div><button class="copy-btn" onclick="cp(event,'pl1')">Copy</button></div><div class="prompt-text" id="pl1">"You're helping me evaluate candidates for [Role Title]. I'll share the JD and intake notes now. When I send profiles, assess each one against these criteria — flag top strengths, notable gaps, and anything you can't determine from what I've shared."</div></div></div></div>
-        <div class="p-card"><div class="p-card-head"><span class="p-tag eval">Eval</span><span class="p-card-title">Candidate Profile Assessment</span></div><div class="p-card-body"><div class="prompt-box" style="margin-top:14px;"><div class="prompt-bar"><div class="prompt-lbl">Use for each candidate cross-reference</div><button class="copy-btn" onclick="cp(event,'pl2')">Copy</button></div><div class="prompt-text" id="pl2">"Here's [Candidate Name]'s background: [paste profile]. Using the criteria we discussed, how well do they match? List strengths, gaps, and anything you can't determine from what I've shared."</div></div></div></div>
-        <div class="p-card"><div class="p-card-head"><span class="p-tag probe">Probe</span><span class="p-card-title">Pressure-Testing a Flagged Gap</span></div><div class="p-card-body"><div class="prompt-box" style="margin-top:14px;"><div class="prompt-bar"><div class="prompt-lbl">Use when AI surfaces a concern</div><button class="copy-btn" onclick="cp(event,'pl3')">Copy</button></div><div class="prompt-text" id="pl3">"You flagged [specific gap] as a concern. What interview question would help me validate whether this is a real disqualifier — or whether there's transferable experience I might be missing?"</div></div></div></div>
-        <div class="p-card"><div class="p-card-head"><span class="p-tag sanity">Sanity</span><span class="p-card-title">Pre-Advance Devil's Advocate</span></div><div class="p-card-body"><div class="prompt-box" style="margin-top:14px;"><div class="prompt-bar"><div class="prompt-lbl">Use before sending anyone to the HM</div><button class="copy-btn" onclick="cp(event,'pl4')">Copy</button></div><div class="prompt-text" id="pl4">"Before I advance this candidate to the HM — what's the strongest case against presenting them? What should I be prepared to defend?"</div></div></div></div>
-        <div class="p-card"><div class="p-card-head"><span class="p-tag compare">Compare</span><span class="p-card-title">Shortlist Comparison</span></div><div class="p-card-body"><div class="prompt-box" style="margin-top:14px;"><div class="prompt-bar"><div class="prompt-lbl">Use when choosing between finalists</div><button class="copy-btn" onclick="cp(event,'pl5')">Copy</button></div><div class="prompt-text" id="pl5">"I have [N] candidates. Based on our criteria, compare them and explain the tradeoffs — don't just rank them. Where does each have the strongest fit, and where are the meaningful gaps?"</div></div></div></div>
+        <div class="p-card">
+          <div class="p-card-head"><span class="p-tag setup">Setup</span><span class="p-card-title">Role Brief — Chat Initialization</span></div>
+          <div class="p-when">Use once at the very start of a new search, before you look at any profiles.</div>
+          <div class="p-card-body"><div class="prompt-box" style="margin-top:4px;"><div class="prompt-bar"><div class="prompt-lbl">paste into Claude first</div><button class="copy-btn" onclick="cp(event,'pl1')">Copy</button></div><div class="prompt-text" id="pl1">"You're helping me evaluate candidates for [Role Title]. I'll share the JD and intake notes now. When I send profiles, assess each one against these criteria — flag top strengths, notable gaps, and anything you can't determine from what I've shared."</div></div></div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-head"><span class="p-tag eval">Eval</span><span class="p-card-title">Candidate Profile Assessment</span></div>
+          <div class="p-when">Use for every candidate — paste their LinkedIn, resume, or your own written profile summary.</div>
+          <div class="p-card-body"><div class="prompt-box" style="margin-top:4px;"><div class="prompt-bar"><div class="prompt-lbl">repeat per candidate</div><button class="copy-btn" onclick="cp(event,'pl2')">Copy</button></div><div class="prompt-text" id="pl2">"Here's [Candidate Name]'s background: [paste profile]. Using the criteria we discussed, how well do they match? List strengths, gaps, and anything you can't determine from what I've shared."</div></div></div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-head"><span class="p-tag probe">Probe</span><span class="p-card-title">Pressure-Testing a Flagged Gap</span></div>
+          <div class="p-when">Use when the AI flags a concern you want to validate — or that you suspect might not be a real disqualifier.</div>
+          <div class="p-card-body"><div class="prompt-box" style="margin-top:4px;"><div class="prompt-bar"><div class="prompt-lbl">use when AI surfaces a concern</div><button class="copy-btn" onclick="cp(event,'pl3')">Copy</button></div><div class="prompt-text" id="pl3">"You flagged [specific gap] as a concern. What interview question would help me validate whether this is a real disqualifier — or whether there's transferable experience I might be missing?"</div></div></div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-head"><span class="p-tag sanity">Sanity</span><span class="p-card-title">Pre-Advance Devil's Advocate</span></div>
+          <div class="p-when">Use before presenting any candidate to your hiring manager — forces you to pressure-test your own confidence.</div>
+          <div class="p-card-body"><div class="prompt-box" style="margin-top:4px;"><div class="prompt-bar"><div class="prompt-lbl">use before advancing to HM</div><button class="copy-btn" onclick="cp(event,'pl4')">Copy</button></div><div class="prompt-text" id="pl4">"Before I advance this candidate to the HM — what's the strongest case against presenting them? What should I be prepared to defend?"</div></div></div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-head"><span class="p-tag compare">Compare</span><span class="p-card-title">Shortlist Comparison</span></div>
+          <div class="p-when">Use when you've narrowed to 2–3 finalists and need to articulate the tradeoffs before a debrief.</div>
+          <div class="p-card-body"><div class="prompt-box" style="margin-top:4px;"><div class="prompt-bar"><div class="prompt-lbl">use when choosing between finalists</div><button class="copy-btn" onclick="cp(event,'pl5')">Copy</button></div><div class="prompt-text" id="pl5">"I have [N] candidates. Based on our criteria, compare them and explain the tradeoffs — don't just rank them. Where does each have the strongest fit, and where are the meaningful gaps?"</div></div></div>
+        </div>
       </div>
     </div>
 
@@ -785,78 +957,110 @@ body::before {
 </div>
 
 <script>
-function go(id,el){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('s-'+id).classList.add('active');
-  el.classList.add('active');
+// Track visited modules
+const visited = new Set(['overview']);
+
+function go(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+
+  // Mark visited
+  visited.add(id);
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('visited');
+
+  // Hide start badge once user navigates away from overview
+  if (id !== 'overview') {
+    const badge = document.getElementById('start-badge');
+    if (badge) badge.classList.add('hidden');
+  }
 }
-function toggleStep(id){
-  const c=document.getElementById(id);
-  const open=c.classList.contains('open');
-  document.querySelectorAll('.step-card').forEach(s=>s.classList.remove('open'));
-  if(!open)c.classList.add('open');
+
+function toggleStep(id) {
+  const c = document.getElementById(id);
+  const open = c.classList.contains('open');
+  document.querySelectorAll('.step-card').forEach(s => s.classList.remove('open'));
+  if (!open) c.classList.add('open');
 }
-function cp(e,id){
+
+function cp(e, id) {
   e.stopPropagation();
-  const text=document.getElementById(id).textContent.trim();
-  navigator.clipboard.writeText(text).catch(()=>{
-    const t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.opacity='0';
-    document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+  const text = document.getElementById(id).textContent.trim();
+  navigator.clipboard.writeText(text).catch(() => {
+    const t = document.createElement('textarea');
+    t.value = text; t.style.position = 'fixed'; t.style.opacity = '0';
+    document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
   });
-  const btn=e.target;btn.textContent='✦ Copied';btn.classList.add('copied');
-  setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2000);
+  const btn = e.target;
+  btn.textContent = '✦ Copied'; btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
 }
-function chk(el){
+
+function chk(el) {
   el.classList.toggle('done');
-  const done=document.querySelectorAll('.check-item.done').length;
-  const total=document.querySelectorAll('.check-item').length;
-  document.getElementById('prog-fill').style.width=(done/total*100)+'%';
-  document.getElementById('prog-txt').textContent=`${done} / ${total} verified`;
-  document.getElementById('prog-ok').style.display=done===total?'block':'none';
+  const done  = document.querySelectorAll('.check-item.done').length;
+  const total = document.querySelectorAll('.check-item').length;
+  document.getElementById('prog-fill').style.width = (done / total * 100) + '%';
+  document.getElementById('prog-txt').textContent = `${done} / ${total} verified`;
+  document.getElementById('prog-ok').style.display = done === total ? 'block' : 'none';
 }
-const RISKS={
-  fp:{title:'False Positives',content:[
-    {l:'What it is',t:'The AI flags a strong match based on keyword overlap — but the experience behind those keywords is surface-level, out of context, or in the wrong scope.'},
-    {l:'Real example',t:'A candidate with "managed budgets" gets scored highly for a Finance Leadership role. In context, they were a recruiting coordinator tracking agency spend — not a finance owner managing P&L.'},
-    {l:'How to catch it',t:'For every "strength" the AI surfaces, ask: where specifically in this profile does that play out? If you can\'t point to a concrete instance, treat it as unverified.'},
-    {l:'Prompt to use',t:'"For each strength you listed, point to the specific part of the profile that supports it. If you can\'t find direct evidence, flag it as an inference."',p:true}
+
+function resetChecklist() {
+  document.querySelectorAll('.check-item').forEach(el => el.classList.remove('done'));
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('prog-txt').textContent = '0 / 6 verified';
+  document.getElementById('prog-ok').style.display = 'none';
+}
+
+const RISKS = {
+  fp: { title: 'False Positives', content: [
+    { l: 'What it is', t: 'The AI flags a strong match based on keyword overlap — but the experience behind those keywords is surface-level, out of context, or in the wrong scope.' },
+    { l: 'Real example', t: 'A candidate with "managed budgets" gets scored highly for a Finance Leadership role. In context, they were a recruiting coordinator tracking agency spend — not a finance owner managing P&L.' },
+    { l: 'How to catch it', t: 'For every "strength" the AI surfaces, ask: where specifically in this profile does that play out? If you can\'t point to a concrete instance, treat it as unverified.' },
+    { l: 'Prompt to use', t: '"For each strength you listed, point to the specific part of the profile that supports it. If you can\'t find direct evidence, flag it as an inference."', p: true }
   ]},
-  fn:{title:'False Negatives',content:[
-    {l:'What it is',t:'A genuinely strong candidate gets underscored because their profile doesn\'t mirror the language in your JD. AI pattern-matches against vocabulary — your eye reads between the lines.'},
-    {l:'Real example',t:'A candidate who "built and scaled the data platform from scratch" may not trigger on a JD asking for "distributed systems experience" — even though the experience is directly relevant.'},
-    {l:'How to catch it',t:'Don\'t let AI dismissals be final. If a candidate caught your attention for a reason the AI downscored, investigate it. Use AI to probe the gap, not to close the case.'},
-    {l:'Prompt to use',t:'"This candidate was flagged as a weak match, but I think there may be transferable experience the criteria don\'t capture. Can you reassess against the underlying business need rather than the literal JD language?"',p:true}
+  fn: { title: 'False Negatives', content: [
+    { l: 'What it is', t: 'A genuinely strong candidate gets underscored because their profile doesn\'t mirror the language in your JD. AI pattern-matches against vocabulary — your eye reads between the lines.' },
+    { l: 'Real example', t: 'A candidate who "built and scaled the data platform from scratch" may not trigger on a JD asking for "distributed systems experience" — even though the experience is directly relevant.' },
+    { l: 'How to catch it', t: 'Don\'t let AI dismissals be final. If a candidate caught your attention for a reason the AI downscored, investigate it. Use AI to probe the gap, not to close the case.' },
+    { l: 'Prompt to use', t: '"This candidate was flagged as a weak match, but I think there may be transferable experience the criteria don\'t capture. Can you reassess against the underlying business need rather than the literal JD language?"', p: true }
   ]},
-  hall:{title:'Hallucinated Details',content:[
-    {l:'What it is',t:'When you paste a partial or summarized profile, the AI fills in missing context with plausible-sounding inferences. These sound confident and specific — but they\'re fabricated.'},
-    {l:'Real example',t:'You paste a condensed LinkedIn summary: "led infrastructure projects at Google." The AI assumes team size, scope, and tech stack — none of which were in the profile.'},
-    {l:'How to catch it',t:'Always paste the complete profile. After receiving an assessment, ask: "What did you infer versus what was explicitly stated?" Anything inferred needs manual verification.'},
-    {l:'Prompt to use',t:'"Before I use this assessment — what did you infer versus what was explicitly stated in the profile? Flag any areas where you made assumptions."',p:true}
+  hall: { title: 'Hallucinated Details', content: [
+    { l: 'What it is', t: 'When you paste a partial or summarized profile, the AI fills in missing context with plausible-sounding inferences. These sound confident and specific — but they\'re fabricated.' },
+    { l: 'Real example', t: 'You paste a condensed LinkedIn summary: "led infrastructure projects at Google." The AI assumes team size, scope, and tech stack — none of which were in the profile.' },
+    { l: 'How to catch it', t: 'Always paste the complete profile. After receiving an assessment, ask: "What did you infer versus what was explicitly stated?" Anything inferred needs manual verification.' },
+    { l: 'Prompt to use', t: '"Before I use this assessment — what did you infer versus what was explicitly stated in the profile? Flag any areas where you made assumptions."', p: true }
   ]},
-  soft:{title:'Missing the Soft Stuff',content:[
-    {l:'What it is',t:'AI can evaluate hard criteria reasonably well. It cannot assess culture fit, career trajectory logic, motivation signals, stability patterns, or working-style compatibility with your HM.'},
-    {l:'Real example',t:'A candidate checks every technical box. But their progression — startup to startup, 18 months each — is a pattern your HM has explicitly passed on before. The AI has no way to know that history.'},
-    {l:'How to catch it',t:'Before advancing anyone, explicitly ask: what does this trajectory suggest about their motivations? Would this fit how this team operates? Does this match my HM\'s known preferences?'},
-    {l:'What AI can help with',t:'You can use prompts to surface questions to explore in a screen — but the answers require a human conversation. That\'s where your value lives.'}
+  soft: { title: 'Missing the Soft Stuff', content: [
+    { l: 'What it is', t: 'AI can evaluate hard criteria reasonably well. It cannot assess culture fit, career trajectory logic, motivation signals, stability patterns, or working-style compatibility with your HM.' },
+    { l: 'Real example', t: 'A candidate checks every technical box. But their progression — startup to startup, 18 months each — is a pattern your HM has explicitly passed on before. The AI has no way to know that history.' },
+    { l: 'How to catch it', t: 'Before advancing anyone, explicitly ask: what does this trajectory suggest about their motivations? Would this fit how this team operates? Does this match my HM\'s known preferences?' },
+    { l: 'What AI can help with', t: 'You can use prompts to surface questions to explore in a screen — but the answers require a human conversation. That\'s where your value lives.' }
   ]}
 };
-function openModal(type){
-  const d=RISKS[type];
-  document.getElementById('modal-title').textContent=d.title;
-  document.getElementById('modal-body').innerHTML=d.content.map(s=>`
+
+function openModal(type) {
+  const d = RISKS[type];
+  document.getElementById('modal-title').textContent = d.title;
+  document.getElementById('modal-body').innerHTML = d.content.map(s => `
     <div style="margin-bottom:22px;">
       <div class="modal-lbl">${s.l}</div>
       ${s.p
-        ?`<div class="prompt-box"><div class="prompt-bar"><div class="prompt-lbl">Suggested Prompt</div></div><div class="prompt-text">${s.t}</div></div>`
-        :`<div class="modal-text">${s.t}</div>`}
+        ? `<div class="prompt-box"><div class="prompt-bar"><div class="prompt-lbl">Suggested Prompt</div></div><div class="prompt-text">${s.t}</div></div>`
+        : `<div class="modal-text">${s.t}</div>`}
     </div>`).join('');
   document.getElementById('modal').classList.add('open');
 }
-function closeModal(e){
-  if(e.target===document.getElementById('modal'))
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal'))
     document.getElementById('modal').classList.remove('open');
 }
+
+// Mark overview as visited on load
+document.getElementById('nav-overview').classList.add('visited');
 </script>
 </body>
 </html>

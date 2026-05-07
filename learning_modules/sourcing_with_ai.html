@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Talent Intelligence - Sourcing with AI</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2e;
+    --navy-mid: #0f2035;
+    --navy-card: #132540;
+    --navy-card2: #172d4a;
+    --blue: #1a8fff;
+    --blue-light: #4aaeff;
+    --gold: #f5c842;
+    --teal: #38d9b0;
+    --text-primary: #f0f4ff;
+    --text-secondary: #94a3b8;
+    --text-muted: #4e6280;
+    --border: rgba(26,143,255,0.15);
+    --border-bright: rgba(26,143,255,0.35);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'IBM Plex Sans',sans-serif; background:var(--navy); color:var(--text-primary); min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(26,143,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(26,143,255,0.04) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+
+  /* HERO */
+  .hero { position:relative; z-index:1; padding:44px 48px 32px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#0d1b2e 0%,#0f2240 50%,#0d1b2e 100%); overflow:hidden; }
+  .hero::after { content:''; position:absolute; top:-80px; right:-80px; width:400px; height:400px; background:radial-gradient(circle,rgba(26,143,255,0.12) 0%,transparent 70%); pointer-events:none; }
+  .hero-inner { max-width:1200px; margin:0 auto; }
+  .hero-label { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .hero-label::before { content:'//'; opacity:0.5; }
+  .hero h1 { font-size:clamp(1.6rem,4vw,2.8rem); font-weight:700; line-height:1.15; margin-bottom:10px; max-width:640px; }
+  .hl-gold { color:var(--gold); } .hl-blue { color:var(--blue-light); }
+  .hero-sub { font-size:14px; color:var(--text-secondary); max-width:540px; line-height:1.6; margin-bottom:18px; }
+  .hero-meta { display:flex; gap:20px; flex-wrap:wrap; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted); }
+
+  /* SEARCH */
+  .search-wrap { position:relative; z-index:1; background:var(--navy-mid); border-bottom:1px solid var(--border); padding:11px 48px; }
+  .search-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:14px; }
+  .search-container { position:relative; display:flex; align-items:center; max-width:420px; flex:1; }
+  .search-icon { position:absolute; left:12px; color:var(--text-muted); font-size:13px; pointer-events:none; }
+  .search-box { width:100%; background:var(--navy-card); border:1px solid var(--border); border-radius:8px; padding:8px 32px 8px 34px; color:var(--text-primary); font-family:'IBM Plex Sans',sans-serif; font-size:13px; outline:none; transition:border-color 0.2s; }
+  .search-box:focus { border-color:var(--border-bright); }
+  .search-box::placeholder { color:var(--text-muted); }
+  .search-clear { position:absolute; right:10px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px; line-height:1; display:none; }
+  .search-clear:hover { color:var(--text-secondary); }
+  .search-count { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted); white-space:nowrap; }
+
+  /* PRINCIPLES */
+  .principles-bar { position:relative; z-index:1; background:var(--navy-card); border-bottom:1px solid var(--border); padding:11px 48px; overflow-x:auto; }
+  .principles-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; }
+  .principles-label { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); white-space:nowrap; margin-right:24px; }
+  .principles-items { display:flex; }
+  .principle-item { display:flex; align-items:center; gap:7px; padding:5px 18px; font-size:12px; font-weight:600; color:var(--text-secondary); border-right:1px solid var(--border); white-space:nowrap; transition:color 0.2s; cursor:default; }
+  .principle-item:last-child { border-right:none; }
+  .principle-item:hover { color:var(--blue-light); }
+  .dot { width:6px; height:6px; border-radius:50%; background:var(--teal); flex-shrink:0; }
+
+  /* NAV */
+  .nav-wrap { position:sticky; top:0; z-index:100; background:var(--navy-mid); border-bottom:1px solid var(--border); box-shadow:0 2px 20px rgba(0,0,0,0.35); }
+  .nav-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; padding:0 48px; overflow-x:auto; }
+  .nav-tab { padding:13px 15px; font-size:12px; font-weight:600; color:var(--text-muted); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; white-space:nowrap; display:flex; align-items:center; gap:6px; background:none; border-top:none; border-left:none; border-right:none; font-family:'IBM Plex Sans',sans-serif; }
+  .nav-tab:hover { color:var(--text-secondary); }
+  .nav-tab.active { color:var(--blue-light); border-bottom-color:var(--blue); }
+  .nbadge { font-family:'IBM Plex Mono',monospace; font-size:9px; padding:2px 5px; border-radius:3px; background:rgba(26,143,255,0.15); color:var(--blue-light); }
+  .nav-tab.active .nbadge { background:var(--blue); color:white; }
+  .done-dot { width:6px; height:6px; border-radius:50%; background:var(--teal); display:none; flex-shrink:0; }
+  .nav-tab.done .done-dot { display:block; }
+  .stage-counter { margin-left:auto; flex-shrink:0; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted); padding:0 4px; white-space:nowrap; }
+  .nav-progress { height:2px; background:rgba(26,143,255,0.1); }
+  .nav-progress-fill { height:100%; background:linear-gradient(90deg,var(--blue),var(--teal)); transition:width 0.4s ease; width:0; }
+
+  /* CONTENT */
+  .content { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:36px 48px 64px; }
+  .panel { display:none; animation:fadeIn 0.25s ease; }
+  .panel.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* NO RESULTS */
+  .no-results { display:none; text-align:center; padding:60px 20px; }
+  .no-results.visible { display:block; }
+  .no-results-title { font-size:18px; font-weight:600; margin-bottom:8px; color:var(--text-secondary); }
+  .no-results-sub { font-size:13px; color:var(--text-muted); }
+
+  /* OVERVIEW */
+  .mindset-hero { background:linear-gradient(135deg,var(--navy-card) 0%,var(--navy-card2) 100%); border:1px solid var(--border); border-radius:16px; padding:36px; margin-bottom:24px; position:relative; overflow:hidden; }
+  .mindset-hero::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--gold),var(--blue),var(--teal)); }
+  .mindset-statement { font-size:clamp(1.2rem,2.5vw,1.75rem); font-weight:700; line-height:1.3; margin-bottom:12px; max-width:600px; }
+  .mindset-sub { color:var(--text-secondary); font-size:14px; line-height:1.7; max-width:560px; }
+  .stages-chips { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted); margin-top:18px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .stage-chip { padding:3px 10px; border:1px solid var(--border); border-radius:4px; color:var(--text-secondary); }
+
+  /* Stage launch cards */
+  .slc-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:13px; margin-bottom:28px; }
+  .slc { background:var(--navy-card); border:1px solid var(--border); border-radius:12px; padding:18px; cursor:pointer; transition:border-color 0.2s,transform 0.15s,background 0.2s; display:flex; flex-direction:column; gap:8px; position:relative; overflow:hidden; }
+  .slc:hover { border-color:var(--border-bright); transform:translateY(-2px); background:var(--navy-card2); }
+  .slc::after { content:'→'; position:absolute; bottom:14px; right:14px; font-size:15px; color:var(--blue-light); opacity:0; transition:opacity 0.2s; }
+  .slc:hover::after { opacity:1; }
+  .slc-top { display:flex; align-items:center; justify-content:space-between; }
+  .slc-num { font-family:'IBM Plex Mono',monospace; font-size:9px; padding:2px 7px; border-radius:3px; background:rgba(26,143,255,0.15); color:var(--blue-light); }
+  .slc-icon { font-size:20px; }
+  .slc-title { font-size:13px; font-weight:700; color:var(--text-primary); padding-right:18px; }
+  .slc-goal { font-size:12px; color:var(--text-secondary); line-height:1.4; padding-right:18px; }
+  .slc-bar { height:2px; background:rgba(26,143,255,0.1); border-radius:1px; overflow:hidden; margin-top:4px; }
+  .slc-fill { height:100%; width:0; background:var(--teal); transition:width 0.3s; }
+  .slc-done-label { font-size:10px; color:var(--teal); font-family:'IBM Plex Mono',monospace; display:none; }
+  .slc.done { border-color:rgba(56,217,176,0.25); }
+  .slc.done .slc-fill { width:100%; }
+  .slc.done .slc-done-label { display:block; }
+
+  /* Enablers */
+  .three-col { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .enabler-card { background:var(--navy-card); border:1px solid var(--border); border-radius:12px; padding:20px; transition:border-color 0.2s,transform 0.15s; }
+  .enabler-card:hover { border-color:var(--border-bright); transform:translateY(-2px); }
+  .eicon { width:38px; height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:17px; margin-bottom:10px; }
+  .eicon-blue { background:rgba(26,143,255,0.15); } .eicon-teal { background:rgba(56,217,176,0.15); } .eicon-gold { background:rgba(245,200,66,0.12); }
+  .enabler-title { font-size:13px; font-weight:700; margin-bottom:5px; }
+  .enabler-desc { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+
+  /* STAGE PANELS */
+  .stage-heading-row { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:22px; gap:14px; flex-wrap:wrap; }
+  .stage-tag { display:inline-flex; align-items:center; background:rgba(26,143,255,0.2); color:var(--blue-light); border:1px solid rgba(26,143,255,0.35); border-radius:100px; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; padding:3px 12px; margin-bottom:6px; letter-spacing:0.05em; }
+  .stage-title { font-size:clamp(1.3rem,3vw,1.9rem); font-weight:700; line-height:1.2; }
+  .stage-icon-large { width:50px; height:50px; border-radius:13px; border:1px solid var(--border); background:var(--navy-card); display:flex; align-items:center; justify-content:center; font-size:23px; flex-shrink:0; }
+  .stage-hr { display:flex; align-items:center; gap:10px; }
+
+  .mark-done-btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; font-family:'IBM Plex Sans',sans-serif; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.2s; background:rgba(26,143,255,0.1); border:1px solid rgba(26,143,255,0.25); color:var(--blue-light); }
+  .mark-done-btn:hover { background:rgba(26,143,255,0.2); }
+  .mark-done-btn.done { background:rgba(56,217,176,0.12); border-color:rgba(56,217,176,0.3); color:var(--teal); }
+
+  .stage-layout { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:16px; }
+  .left-col,.right-col { display:flex; flex-direction:column; gap:14px; }
+
+  .goal-card { background:var(--navy-card); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:12px; padding:18px; }
+  .goal-label { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:7px; }
+  .goal-text { font-size:15px; font-weight:600; line-height:1.4; }
+
+  .how-card { background:var(--navy-card); border:1px solid var(--border); border-radius:12px; padding:18px; }
+  .how-header { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:var(--blue-light); margin-bottom:14px; }
+  .how-item { display:flex; gap:10px; margin-bottom:11px; align-items:flex-start; }
+  .how-item:last-child { margin-bottom:0; }
+  .how-item-icon { width:25px; height:25px; border-radius:5px; background:rgba(245,200,66,0.12); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; }
+  .how-item-text { font-size:13px; line-height:1.5; color:var(--text-secondary); }
+  .how-item-text strong { color:var(--text-primary); font-weight:600; }
+
+  .bp-callout { background:rgba(245,200,66,0.05); border:1px solid rgba(245,200,66,0.2); border-radius:10px; padding:13px 15px; display:flex; gap:10px; align-items:flex-start; font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .bp-callout-icon { font-size:14px; flex-shrink:0; margin-top:1px; }
+  .bp-callout strong { color:var(--gold); font-weight:600; }
+
+  .prompt-card { background:var(--navy-card); border:1px solid var(--border); border-radius:12px; padding:18px; }
+  .prompt-header { display:flex; align-items:center; gap:7px; color:var(--gold); font-size:13px; font-weight:700; margin-bottom:11px; }
+  .prompt-terminal { background:#080f1c; border:1px solid rgba(26,143,255,0.2); border-radius:8px; overflow:hidden; }
+  .terminal-bar { background:rgba(26,143,255,0.08); border-bottom:1px solid rgba(26,143,255,0.15); padding:7px 12px; display:flex; align-items:center; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted); }
+  .copy-btn { background:rgba(26,143,255,0.15); border:1px solid rgba(26,143,255,0.3); color:var(--blue-light); padding:3px 10px; border-radius:4px; font-family:'IBM Plex Mono',monospace; font-size:10px; cursor:pointer; transition:all 0.2s; }
+  .copy-btn:hover { background:rgba(26,143,255,0.3); }
+  .copy-btn.copied { background:rgba(56,217,176,0.2); border-color:var(--teal); color:var(--teal); }
+  .terminal-content { padding:14px 12px; font-family:'IBM Plex Mono',monospace; font-size:12px; line-height:1.7; color:#38d9b0; }
+
+  .results-card { background:var(--navy-card); border:1px solid var(--border); border-radius:12px; padding:18px; }
+  .results-header { display:flex; align-items:center; gap:7px; color:var(--teal); font-size:13px; font-weight:700; margin-bottom:11px; }
+  .result-item { display:flex; align-items:center; gap:9px; background:rgba(56,217,176,0.06); border:1px solid rgba(56,217,176,0.15); border-radius:8px; padding:9px 12px; margin-bottom:6px; font-size:13px; font-weight:500; transition:border-color 0.2s; }
+  .result-item:last-child { margin-bottom:0; }
+  .result-item:hover { border-color:rgba(56,217,176,0.35); }
+  .result-check { width:18px; height:18px; border-radius:50%; background:var(--teal); display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; color:var(--navy); font-weight:700; }
+
+  .stage-nav { display:flex; justify-content:space-between; margin-top:6px; }
+  .snav-btn { background:none; border:none; font-size:12px; cursor:pointer; font-family:'IBM Plex Sans',sans-serif; padding:4px 0; }
+  .snav-prev { color:var(--text-muted); } .snav-prev:hover { color:var(--text-secondary); }
+  .snav-next { color:var(--blue-light); font-weight:600; } .snav-next:hover { color:white; }
+
+  /* PROMPT LIBRARY */
+  .lib-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:14px; }
+  .lib-card { background:var(--navy-card); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.2s; }
+  .lib-card:hover { border-color:var(--border-bright); }
+  .lib-card-header { padding:13px 15px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .lib-meta { display:flex; align-items:center; gap:8px; }
+  .lib-stag { font-family:'IBM Plex Mono',monospace; font-size:9px; padding:2px 7px; border-radius:3px; background:rgba(26,143,255,0.15); color:var(--blue-light); }
+  .lib-title { font-size:13px; font-weight:600; }
+  .lib-body { padding:13px 15px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--teal); line-height:1.6; }
+  .lib-copy { background:rgba(26,143,255,0.12); border:1px solid rgba(26,143,255,0.25); color:var(--blue-light); padding:4px 10px; border-radius:4px; font-family:'IBM Plex Mono',monospace; font-size:10px; cursor:pointer; transition:all 0.2s; white-space:nowrap; flex-shrink:0; }
+  .lib-copy:hover { background:rgba(26,143,255,0.25); }
+  .lib-copy.copied { background:rgba(56,217,176,0.2); border-color:var(--teal); color:var(--teal); }
+  .copy-all-btn { display:flex; align-items:center; gap:7px; padding:8px 16px; border-radius:8px; background:rgba(26,143,255,0.12); border:1px solid rgba(26,143,255,0.3); color:var(--blue-light); font-family:'IBM Plex Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+  .copy-all-btn:hover { background:rgba(26,143,255,0.25); }
+  .copy-all-btn.copied { background:rgba(56,217,176,0.15); border-color:rgba(56,217,176,0.35); color:var(--teal); }
+
+  /* TAKEAWAY */
+  .takeaway-pills { background:var(--navy-card); border:1px solid var(--border); border-radius:12px; padding:13px 18px; display:flex; align-items:center; gap:8px; margin-bottom:22px; overflow-x:auto; }
+  .tpill { display:flex; align-items:center; gap:7px; padding:6px 13px; background:rgba(26,143,255,0.1); border:1px solid rgba(26,143,255,0.2); border-radius:100px; font-size:12px; font-weight:700; white-space:nowrap; color:var(--blue-light); }
+  .tsep { color:var(--border-bright); font-size:15px; }
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .sec-head { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:13px; }
+  .bpi { display:flex; align-items:flex-start; gap:10px; margin-bottom:13px; }
+  .bpicon { width:28px; height:28px; border-radius:7px; background:rgba(26,143,255,0.12); display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+  .bpt { font-size:13px; font-weight:700; margin-bottom:2px; }
+  .bpd { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .ns-card { background:var(--navy-card); border:1px solid var(--border); border-radius:10px; padding:13px 16px; margin-bottom:9px; display:flex; align-items:flex-start; gap:12px; transition:border-color 0.2s; }
+  .ns-card:hover { border-color:var(--border-bright); }
+  .ns-num { font-family:'IBM Plex Mono',monospace; font-size:19px; font-weight:700; color:var(--gold); line-height:1; flex-shrink:0; padding-top:2px; }
+  .ns-title { font-size:13px; font-weight:700; margin-bottom:3px; }
+  .ns-desc { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .tq { background:linear-gradient(135deg,rgba(245,200,66,0.07),rgba(26,143,255,0.07)); border:1px solid rgba(245,200,66,0.2); border-radius:10px; padding:15px 17px; margin-top:16px; font-style:italic; font-size:13px; color:var(--text-secondary); text-align:center; line-height:1.6; }
+
+  /* MOBILE */
+  @media(max-width:768px) {
+    .hero,.search-wrap,.principles-bar { padding-left:20px; padding-right:20px; }
+    .nav-inner { padding:0 12px; }
+    .content { padding:24px 20px 48px; }
+    .stage-layout,.three-col,.two-col { grid-template-columns:1fr; }
+    .slc-grid { grid-template-columns:1fr 1fr; }
+    .lib-grid { grid-template-columns:1fr; }
+    .stage-icon-large { display:none; }
+    .principles-bar { display:none; }
+  }
+  @media(max-width:480px) { .slc-grid { grid-template-columns:1fr; } }
+  ::-webkit-scrollbar { height:4px; width:4px; }
+  ::-webkit-scrollbar-track { background:var(--navy-mid); }
+  ::-webkit-scrollbar-thumb { background:var(--border-bright); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-label">Talent Acquisition Enablement</div>
+    <h1>Technical Talent Intelligence:<br><span class="hl-gold">Sourcing</span> with <span class="hl-blue">AI</span></h1>
+    <p class="hero-sub">A comprehensive framework to integrate AI across the sourcing lifecycle — amplifying judgment, not replacing it.</p>
+    <div class="hero-meta">
+      <span>👤 Nicole Shiu &amp; Dan Dougherty</span>
+      <span>📅 Q1 2026</span>
+      <span>🎯 7 Stages</span>
+    </div>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <div class="search-inner">
+    <div class="search-container">
+      <span class="search-icon">🔍</span>
+      <input class="search-box" id="searchInput" type="text" placeholder="Search stages, prompts, techniques…" oninput="handleSearch(this.value)">
+      <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
+    </div>
+    <span class="search-count" id="searchCount"></span>
+  </div>
+</div>
+
+<div class="principles-bar">
+  <div class="principles-inner">
+    <div class="principles-label">⭐ Core Principles</div>
+    <div class="principles-items">
+      <div class="principle-item"><span class="dot"></span>Clarify Complexity</div>
+      <div class="principle-item"><span class="dot"></span>Compress Research</div>
+      <div class="principle-item"><span class="dot"></span>Codify What Works</div>
+      <div class="principle-item"><span class="dot"></span>Elevate Signal</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-wrap">
+  <div class="nav-inner">
+    <button class="nav-tab active" data-panel="overview" onclick="showPanel('overview',this)">Overview</button>
+    <button class="nav-tab" data-panel="stage1" onclick="showPanel('stage1',this)"><span class="nbadge">01</span>Intake &amp; Role<span class="done-dot"></span></button>
+    <button class="nav-tab" data-panel="stage2" onclick="showPanel('stage2',this)"><span class="nbadge">02</span>Market Mapping<span class="done-dot"></span></button>
+    <button class="nav-tab" data-panel="stage3" onclick="showPanel('stage3',this)"><span class="nbadge">03</span>Search Strings<span class="done-dot"></span></button>
+    <button class="nav-tab" data-panel="stage4" onclick="showPanel('stage4',this)"><span class="nbadge">04</span>Calibration<span class="done-dot"></span></button>
+    <button class="nav-tab" data-panel="stage5" onclick="showPanel('stage5',this)"><span class="nbadge">05</span>Outreach<span class="done-dot"></span></button>
+    <button class="nav-tab" data-panel="stage6" onclick="showPanel('stage6',this)"><span class="nbadge">06</span>Pipeline<span class="done-dot"></span></button>
+    <button class="nav-tab" data-panel="stage7" onclick="showPanel('stage7',this)"><span class="nbadge">07</span>Learning<span class="done-dot"></span></button>
+    <button class="nav-tab" data-panel="prompts" onclick="showPanel('prompts',this)">📋 Prompt Library</button>
+    <button class="nav-tab" data-panel="takeaway" onclick="showPanel('takeaway',this)">🏁 Takeaways</button>
+    <span class="stage-counter" id="stageCounter"></span>
+  </div>
+  <div class="nav-progress"><div class="nav-progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="content" id="mainContent">
+
+  <div class="no-results" id="noResults">
+    <div class="no-results-title">No results found</div>
+    <div class="no-results-sub">Try a different keyword — or browse the stage tabs above.</div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div id="overview" class="panel active">
+    <div class="mindset-hero">
+      <div class="goal-label">INTRODUCTION · The AI Mindset</div>
+      <div class="mindset-statement">AI isn't here to <span style="color:var(--gold)">replace</span> sourcing;<br>it's here to <span style="color:var(--blue-light)">amplify judgment</span>.</div>
+      <p class="mindset-sub">Used correctly, AI acts as a force multiplier for your expertise. It handles the processing at scale, while you retain the decision-making precision.</p>
+      <div class="stages-chips"><span style="color:var(--text-muted);margin-right:4px">7 stages:</span><span class="stage-chip">1. Intake</span><span class="stage-chip">2. Market Map</span><span class="stage-chip">3. Strings</span><span class="stage-chip">4. Calibration</span><span class="stage-chip">5. Outreach</span><span class="stage-chip">6. Pipeline</span><span class="stage-chip">7. Learning</span></div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted)">Jump to a stage</div>
+      <div style="font-size:12px;color:var(--text-muted)" id="doneCount"></div>
+    </div>
+    <div class="slc-grid" id="slcGrid">
+      <div class="slc" id="slc-1" onclick="showPanel('stage1',getTab('stage1'))"><div class="slc-top"><span class="slc-num">STAGE 01</span><span class="slc-icon">📋</span></div><div class="slc-title">Intake &amp; Role Understanding</div><div class="slc-goal">Get technical clarity fast so you can calibrate with confidence.</div><div class="slc-bar"><div class="slc-fill"></div></div><div class="slc-done-label">✓ Complete</div></div>
+      <div class="slc" id="slc-2" onclick="showPanel('stage2',getTab('stage2'))"><div class="slc-top"><span class="slc-num">STAGE 02</span><span class="slc-icon">🗺️</span></div><div class="slc-title">Market Mapping</div><div class="slc-goal">Identify where qualified talent actually sits — faster and cleaner.</div><div class="slc-bar"><div class="slc-fill"></div></div><div class="slc-done-label">✓ Complete</div></div>
+      <div class="slc" id="slc-3" onclick="showPanel('stage3',getTab('stage3'))"><div class="slc-top"><span class="slc-num">STAGE 03</span><span class="slc-icon">🔍</span></div><div class="slc-title">Search String Design</div><div class="slc-goal">Build smarter boolean strings and avoid keyword bias.</div><div class="slc-bar"><div class="slc-fill"></div></div><div class="slc-done-label">✓ Complete</div></div>
+      <div class="slc" id="slc-4" onclick="showPanel('stage4',getTab('stage4'))"><div class="slc-top"><span class="slc-num">STAGE 04</span><span class="slc-icon">⚖️</span></div><div class="slc-title">Calibration &amp; Pattern Recognition</div><div class="slc-goal">Strengthen judgment through comparison, not volume.</div><div class="slc-bar"><div class="slc-fill"></div></div><div class="slc-done-label">✓ Complete</div></div>
+      <div class="slc" id="slc-5" onclick="showPanel('stage5',getTab('stage5'))"><div class="slc-top"><span class="slc-num">STAGE 05</span><span class="slc-icon">✉️</span></div><div class="slc-title">Outreach Craft</div><div class="slc-goal">Write high-conversion outreach faster without sounding generic.</div><div class="slc-bar"><div class="slc-fill"></div></div><div class="slc-done-label">✓ Complete</div></div>
+      <div class="slc" id="slc-6" onclick="showPanel('stage6',getTab('stage6'))"><div class="slc-top"><span class="slc-num">STAGE 06</span><span class="slc-icon">📊</span></div><div class="slc-title">Pipeline Management &amp; Reporting</div><div class="slc-goal">Spend less time formatting updates, more time sourcing.</div><div class="slc-bar"><div class="slc-fill"></div></div><div class="slc-done-label">✓ Complete</div></div>
+      <div class="slc" id="slc-7" onclick="showPanel('stage7',getTab('stage7'))"><div class="slc-top"><span class="slc-num">STAGE 07</span><span class="slc-icon">🎓</span></div><div class="slc-title">Reflection &amp; Continuous Learning</div><div class="slc-goal">Treat AI as a sourcing partner, not a shortcut.</div><div class="slc-bar"><div class="slc-fill"></div></div><div class="slc-done-label">✓ Complete</div></div>
+    </div>
+
+    <div class="three-col" style="margin-top:28px">
+      <div class="enabler-card"><div class="eicon eicon-blue">⚡</div><div class="enabler-title">Move Faster</div><div class="enabler-desc">Accelerate research and processing without sacrificing output quality.</div></div>
+      <div class="enabler-card"><div class="eicon eicon-teal">🔍</div><div class="enabler-title">Extract Insights</div><div class="enabler-desc">Identify signals and patterns without drowning in the noise of massive datasets.</div></div>
+      <div class="enabler-card"><div class="eicon eicon-gold">🎯</div><div class="enabler-title">Focus on Nuance</div><div class="enabler-desc">Automate rote work to stay focused on parts that strictly require human judgment.</div></div>
+    </div>
+  </div>
+
+  <!-- STAGE 1 -->
+  <div id="stage1" class="panel">
+    <div class="stage-heading-row">
+      <div><div class="stage-tag">STAGE 01 · 7</div><div class="stage-title">Intake &amp; Role Understanding</div></div>
+      <div class="stage-hr"><button class="mark-done-btn" id="done-stage1" onclick="toggleDone('stage1')">Mark complete</button><div class="stage-icon-large">📋</div></div>
+    </div>
+    <div class="stage-layout">
+      <div class="left-col">
+        <div class="goal-card"><div class="goal-label">PRIMARY GOAL</div><div class="goal-text">Get technical clarity fast so you can calibrate with confidence.</div></div>
+        <div class="how-card">
+          <div class="how-header">🤖 How to use AI</div>
+          <div class="how-item"><div class="how-item-icon">📚</div><div class="how-item-text"><strong>Blueprint Creation:</strong> Summarize intake notes into a role blueprint covering scope, level, must-haves, and differentiators.</div></div>
+          <div class="how-item"><div class="how-item-icon">🧩</div><div class="how-item-text"><strong>Skill Decomposition:</strong> Break down key skill clusters (e.g., "What are core subdomains of storage engineering?").</div></div>
+          <div class="how-item"><div class="how-item-icon">🌐</div><div class="how-item-text"><strong>Market Alignment:</strong> Compare internal descriptions vs. market equivalents to align terminology.</div></div>
+        </div>
+        <div class="bp-callout"><span class="bp-callout-icon">💡</span><div><strong>Best Practice:</strong> Always verify AI-generated role blueprints with your HM before sourcing starts — AI may miss org-specific context or unstated preferences.</div></div>
+      </div>
+      <div class="right-col">
+        <div class="prompt-card"><div class="prompt-header">⟩_ Example Prompt</div><div class="prompt-terminal"><div class="terminal-bar"><span>⚙ Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'p1')">Copy</button></div><div class="terminal-content" id="p1">"Summarize this job description into 3 buckets: core systems knowledge, domain-specific expertise, and differentiators between senior and staff-level talent."</div></div></div>
+        <div class="results-card"><div class="results-header">📈 Expected Results</div><div class="result-item"><span class="result-check">✓</span>Shared language with hiring manager before search starts</div><div class="result-item"><span class="result-check">✓</span>Clear must-haves vs. nice-to-haves definition</div><div class="result-item"><span class="result-check">✓</span>Faster, higher-confidence calibration cycles</div></div>
+      </div>
+    </div>
+    <div class="stage-nav"><button class="snav-btn snav-prev" onclick="showPanel('overview',getTab('overview'))">← Overview</button><button class="snav-btn snav-next" onclick="showPanel('stage2',getTab('stage2'))">Stage 02: Market Mapping →</button></div>
+  </div>
+
+  <!-- STAGE 2 -->
+  <div id="stage2" class="panel">
+    <div class="stage-heading-row">
+      <div><div class="stage-tag">STAGE 02 · 7</div><div class="stage-title">Market Mapping</div></div>
+      <div class="stage-hr"><button class="mark-done-btn" id="done-stage2" onclick="toggleDone('stage2')">Mark complete</button><div class="stage-icon-large">🗺️</div></div>
+    </div>
+    <div class="stage-layout">
+      <div class="left-col">
+        <div class="goal-card"><div class="goal-label">PRIMARY GOAL</div><div class="goal-text">Identify where qualified talent actually sits — faster and cleaner.</div></div>
+        <div class="how-card">
+          <div class="how-header">🤖 How to use AI</div>
+          <div class="how-item"><div class="how-item-icon">📋</div><div class="how-item-text"><strong>Target Generation:</strong> Generate lists of target companies by tech stack, product type, or infrastructure model.</div></div>
+          <div class="how-item"><div class="how-item-icon">🏢</div><div class="how-item-text"><strong>Org Classification:</strong> Use AI to classify orgs (e.g., "Which companies have built distributed file systems?").</div></div>
+          <div class="how-item"><div class="how-item-icon">🔭</div><div class="how-item-text"><strong>Signal Detection:</strong> Cross-check public profiles for emerging players or acquisition spin-offs.</div></div>
+        </div>
+        <div class="bp-callout"><span class="bp-callout-icon">💡</span><div><strong>Best Practice:</strong> AI-generated company lists are a starting point. Cross-reference with LinkedIn, Crunchbase, or recent news before building outreach lists.</div></div>
+      </div>
+      <div class="right-col">
+        <div class="prompt-card"><div class="prompt-header">⟩_ Example Prompt</div><div class="prompt-terminal"><div class="terminal-bar"><span>⚙ Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'p2')">Copy</button></div><div class="terminal-content" id="p2">"List companies known for developing hypervisor or kernel-level technology in the AI/Cloud Infra space."</div></div></div>
+        <div class="results-card"><div class="results-header">📈 Expected Results</div><div class="result-item"><span class="result-check">✓</span>Strategic market maps instead of scattershot sourcing</div><div class="result-item"><span class="result-check">✓</span>Better targeting and higher hit rates</div><div class="result-item"><span class="result-check">✓</span>Discovery of hidden talent pools</div></div>
+      </div>
+    </div>
+    <div class="stage-nav"><button class="snav-btn snav-prev" onclick="showPanel('stage1',getTab('stage1'))">← Stage 01</button><button class="snav-btn snav-next" onclick="showPanel('stage3',getTab('stage3'))">Stage 03: Search Strings →</button></div>
+  </div>
+
+  <!-- STAGE 3 -->
+  <div id="stage3" class="panel">
+    <div class="stage-heading-row">
+      <div><div class="stage-tag">STAGE 03 · 7</div><div class="stage-title">Search String Design</div></div>
+      <div class="stage-hr"><button class="mark-done-btn" id="done-stage3" onclick="toggleDone('stage3')">Mark complete</button><div class="stage-icon-large">🔍</div></div>
+    </div>
+    <div class="stage-layout">
+      <div class="left-col">
+        <div class="goal-card"><div class="goal-label">PRIMARY GOAL</div><div class="goal-text">Build smarter boolean strings and avoid keyword bias in your sourcing.</div></div>
+        <div class="how-card">
+          <div class="how-header">🤖 How to use AI</div>
+          <div class="how-item"><div class="how-item-icon">⚙</div><div class="how-item-text"><strong>Generate Variations:</strong> Create complex boolean variations for niche roles automatically.</div></div>
+          <div class="how-item"><div class="how-item-icon">🔤</div><div class="how-item-text"><strong>Synonym Detection:</strong> Spot synonyms, alternate titles, and jargon you might miss.</div></div>
+          <div class="how-item"><div class="how-item-icon">✏️</div><div class="how-item-text"><strong>Pre-Testing:</strong> Test strings for potential false positives before running in LinkedIn or SeekOut.</div></div>
+        </div>
+        <div class="bp-callout"><span class="bp-callout-icon">💡</span><div><strong>Best Practice:</strong> Run a quick sample after deploying any AI-built string. High volume doesn't mean high signal — calibrate after the first 10–15 profiles.</div></div>
+      </div>
+      <div class="right-col">
+        <div class="prompt-card"><div class="prompt-header">⟩_ Example Prompt</div><div class="prompt-terminal"><div class="terminal-bar"><span>⚙ Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'p3')">Copy</button></div><div class="terminal-content" id="p3">"Create a boolean string for senior engineers experienced in hypervisor or virtualization stack development (KVM, Xen, QEMU, VMware). Exclude front-end and QA roles."</div></div></div>
+        <div class="results-card"><div class="results-header">📈 Expected Results</div><div class="result-item"><span class="result-check">✓</span>Cleaner pipelines with reduced noise</div><div class="result-item"><span class="result-check">✓</span>Higher signal-to-noise ratio in search results</div><div class="result-item"><span class="result-check">✓</span>Broader coverage of relevant titles and skills</div></div>
+      </div>
+    </div>
+    <div class="stage-nav"><button class="snav-btn snav-prev" onclick="showPanel('stage2',getTab('stage2'))">← Stage 02</button><button class="snav-btn snav-next" onclick="showPanel('stage4',getTab('stage4'))">Stage 04: Calibration →</button></div>
+  </div>
+
+  <!-- STAGE 4 -->
+  <div id="stage4" class="panel">
+    <div class="stage-heading-row">
+      <div><div class="stage-tag">STAGE 04 · 7</div><div class="stage-title">Calibration &amp; Pattern Recognition</div></div>
+      <div class="stage-hr"><button class="mark-done-btn" id="done-stage4" onclick="toggleDone('stage4')">Mark complete</button><div class="stage-icon-large">⚖️</div></div>
+    </div>
+    <div class="stage-layout">
+      <div class="left-col">
+        <div class="goal-card"><div class="goal-label">PRIMARY GOAL</div><div class="goal-text">Strengthen judgment through comparison, not volume.</div></div>
+        <div class="how-card">
+          <div class="how-header">🤖 How to use AI</div>
+          <div class="how-item"><div class="how-item-icon">👥</div><div class="how-item-text"><strong>Profile Comparison:</strong> Compare two profiles side-by-side and ask AI to summarize relative strengths or potential fit.</div></div>
+          <div class="how-item"><div class="how-item-icon">📡</div><div class="how-item-text"><strong>Pattern Extraction:</strong> Extract shared patterns across high-signal candidates (e.g., company lineage, keywords, project scope).</div></div>
+          <div class="how-item"><div class="how-item-icon">🗂</div><div class="how-item-text"><strong>Archetype Creation:</strong> Turn calibration notes into archetype profiles for the hiring team.</div></div>
+        </div>
+        <div class="bp-callout"><span class="bp-callout-icon">💡</span><div><strong>Best Practice:</strong> Pattern extraction works best when you feed 3–5 confirmed strong profiles. The quality of input determines the quality of the archetype.</div></div>
+      </div>
+      <div class="right-col">
+        <div class="prompt-card"><div class="prompt-header">⟩_ Example Prompt</div><div class="prompt-terminal"><div class="terminal-bar"><span>⚙ Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'p4')">Copy</button></div><div class="terminal-content" id="p4">"Summarize the common experience patterns among these three storage engineers that indicate readiness for staff-level scope."</div></div></div>
+        <div class="results-card"><div class="results-header">📈 Expected Results</div><div class="result-item"><span class="result-check">✓</span>Faster calibration loops</div><div class="result-item"><span class="result-check">✓</span>Less second-guessing on candidate quality</div><div class="result-item"><span class="result-check">✓</span>Increased hiring manager trust</div></div>
+      </div>
+    </div>
+    <div class="stage-nav"><button class="snav-btn snav-prev" onclick="showPanel('stage3',getTab('stage3'))">← Stage 03</button><button class="snav-btn snav-next" onclick="showPanel('stage5',getTab('stage5'))">Stage 05: Outreach →</button></div>
+  </div>
+
+  <!-- STAGE 5 -->
+  <div id="stage5" class="panel">
+    <div class="stage-heading-row">
+      <div><div class="stage-tag">STAGE 05 · 7</div><div class="stage-title">Outreach Craft</div></div>
+      <div class="stage-hr"><button class="mark-done-btn" id="done-stage5" onclick="toggleDone('stage5')">Mark complete</button><div class="stage-icon-large">✉️</div></div>
+    </div>
+    <div class="stage-layout">
+      <div class="left-col">
+        <div class="goal-card"><div class="goal-label">PRIMARY GOAL</div><div class="goal-text">Write high-conversion outreach faster without sounding generic.</div></div>
+        <div class="how-card">
+          <div class="how-header">🤖 How to use AI</div>
+          <div class="how-item"><div class="how-item-icon">🧪</div><div class="how-item-text"><strong>Tone A/B Testing:</strong> Draft multiple message variants and test tone (technical, conversational, value-driven).</div></div>
+          <div class="how-item"><div class="how-item-icon">🪞</div><div class="how-item-text"><strong>Relevance Mirroring:</strong> Mirror language from candidate profiles (project names, tech stacks) for immediate relevance.</div></div>
+          <div class="how-item"><div class="how-item-icon">📦</div><div class="how-item-text"><strong>Asset Creation:</strong> Build a "message bank" for instant reuse across similar roles.</div></div>
+        </div>
+        <div class="bp-callout"><span class="bp-callout-icon">🔒</span><div><strong>Data Hygiene:</strong> Never paste candidate names, contact details, or identifying info into a public AI model. Use role context only — not personal data.</div></div>
+      </div>
+      <div class="right-col">
+        <div class="prompt-card"><div class="prompt-header">⟩_ Example Prompt</div><div class="prompt-terminal"><div class="terminal-bar"><span>⚙ Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'p5')">Copy</button></div><div class="terminal-content" id="p5">"Write a concise, authentic outreach message to a Staff Virtualization Engineer at Google who's worked on KVM, highlighting impact, ownership, and [insert-company-here]'s mission."</div></div></div>
+        <div class="results-card"><div class="results-header">📈 Expected Results</div><div class="result-item"><span class="result-check">✓</span>Outreach that feels handcrafted in half the time</div><div class="result-item"><span class="result-check">✓</span>Higher reply and interest rates</div><div class="result-item"><span class="result-check">✓</span>Consistent voice across the team</div></div>
+      </div>
+    </div>
+    <div class="stage-nav"><button class="snav-btn snav-prev" onclick="showPanel('stage4',getTab('stage4'))">← Stage 04</button><button class="snav-btn snav-next" onclick="showPanel('stage6',getTab('stage6'))">Stage 06: Pipeline →</button></div>
+  </div>
+
+  <!-- STAGE 6 -->
+  <div id="stage6" class="panel">
+    <div class="stage-heading-row">
+      <div><div class="stage-tag">STAGE 06 · 7</div><div class="stage-title">Pipeline Management &amp; Reporting</div></div>
+      <div class="stage-hr"><button class="mark-done-btn" id="done-stage6" onclick="toggleDone('stage6')">Mark complete</button><div class="stage-icon-large">📊</div></div>
+    </div>
+    <div class="stage-layout">
+      <div class="left-col">
+        <div class="goal-card"><div class="goal-label">PRIMARY GOAL</div><div class="goal-text">Spend less time formatting updates, more time sourcing.</div></div>
+        <div class="how-card">
+          <div class="how-header">🤖 How to use AI</div>
+          <div class="how-item"><div class="how-item-icon">📸</div><div class="how-item-text"><strong>Snapshot Creation:</strong> Summarize weekly pipeline movement into status snapshots for HMs or execs.</div></div>
+          <div class="how-item"><div class="how-item-icon">🔎</div><div class="how-item-text"><strong>Funnel Analysis:</strong> Analyze PTRs (Pass-Through Rates) or stage-drop reasons to spot systemic issues.</div></div>
+          <div class="how-item"><div class="how-item-icon">⏱</div><div class="how-item-text"><strong>Action Planning:</strong> Generate quick follow-up plans for stalled candidates.</div></div>
+        </div>
+        <div class="bp-callout"><span class="bp-callout-icon">💡</span><div><strong>Best Practice:</strong> Validate any AI-summarized numbers or trends against Ashby before sharing with leadership. AI summaries are only as accurate as your inputs.</div></div>
+      </div>
+      <div class="right-col">
+        <div class="prompt-card"><div class="prompt-header">⟩_ Example Prompt</div><div class="prompt-terminal"><div class="terminal-bar"><span>⚙ Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'p6')">Copy</button></div><div class="terminal-content" id="p6">"Summarize this pipeline data into a brief update for leadership: outcomes, risks, and next moves."</div></div></div>
+        <div class="results-card"><div class="results-header">📈 Expected Results</div><div class="result-item"><span class="result-check">✓</span>Instant clarity and consistent reporting</div><div class="result-item"><span class="result-check">✓</span>Faster root-cause detection for issues</div><div class="result-item"><span class="result-check">✓</span>More time back for high-value sourcing</div></div>
+      </div>
+    </div>
+    <div class="stage-nav"><button class="snav-btn snav-prev" onclick="showPanel('stage5',getTab('stage5'))">← Stage 05</button><button class="snav-btn snav-next" onclick="showPanel('stage7',getTab('stage7'))">Stage 07: Learning →</button></div>
+  </div>
+
+  <!-- STAGE 7 -->
+  <div id="stage7" class="panel">
+    <div class="stage-heading-row">
+      <div><div class="stage-tag">STAGE 07 · 7</div><div class="stage-title">Reflection &amp; Continuous Learning</div></div>
+      <div class="stage-hr"><button class="mark-done-btn" id="done-stage7" onclick="toggleDone('stage7')">Mark complete</button><div class="stage-icon-large">🎓</div></div>
+    </div>
+    <div class="stage-layout">
+      <div class="left-col">
+        <div class="goal-card"><div class="goal-label">PRIMARY GOAL</div><div class="goal-text">Treat AI as a sourcing partner, not a shortcut.</div></div>
+        <div class="how-card">
+          <div class="how-header">🤖 How to use AI</div>
+          <div class="how-item"><div class="how-item-icon">🔁</div><div class="how-item-text"><strong>Search Debriefs:</strong> Debrief tough searches — "What did I miss?" to uncover gaps.</div></div>
+          <div class="how-item"><div class="how-item-icon">🔀</div><div class="how-item-text"><strong>Pivot Strategy:</strong> Ask for alternative sourcing angles after a failed search cycle.</div></div>
+          <div class="how-item"><div class="how-item-icon">📖</div><div class="how-item-text"><strong>Technical Fluency:</strong> Keep learning technical language through guided Q&amp;A (e.g., "Explain I/O virtualization").</div></div>
+        </div>
+        <div class="bp-callout"><span class="bp-callout-icon">💡</span><div><strong>Best Practice:</strong> Save your best prompts and message templates to a shared team doc after each sprint. What works for one search often translates to the next.</div></div>
+      </div>
+      <div class="right-col">
+        <div class="prompt-card"><div class="prompt-header">⟩_ Example Prompt</div><div class="prompt-terminal"><div class="terminal-bar"><span>⚙ Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'p7')">Copy</button></div><div class="terminal-content" id="p7">"Suggest 3 alternative sourcing strategies for a search that has stalled for senior-level SDN engineers."</div></div></div>
+        <div class="results-card"><div class="results-header">📈 Expected Results</div><div class="result-item"><span class="result-check">✓</span>Faster iteration on search strategies</div><div class="result-item"><span class="result-check">✓</span>Sharper instincts and domain fluency</div><div class="result-item"><span class="result-check">✓</span>Better strategy refresh between cycles</div></div>
+      </div>
+    </div>
+    <div class="stage-nav"><button class="snav-btn snav-prev" onclick="showPanel('stage6',getTab('stage6'))">← Stage 06</button><button class="snav-btn snav-next" onclick="showPanel('takeaway',getTab('takeaway'))">Takeaways →</button></div>
+  </div>
+
+  <!-- PROMPT LIBRARY -->
+  <div id="prompts" class="panel">
+    <div class="stage-heading-row">
+      <div><div class="stage-tag">ALL STAGES</div><div class="stage-title">Prompt Library</div></div>
+      <button class="copy-all-btn" id="copyAllBtn" onclick="copyAllPrompts()">📋 Copy all 7 prompts</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:22px;max-width:600px;line-height:1.6">All seven stage prompts in one place. Copy individually or grab all of them at once to load into your AI session before a sourcing sprint.</p>
+    <div class="lib-grid">
+      <div class="lib-card"><div class="lib-card-header"><div class="lib-meta"><span class="lib-stag">STAGE 01</span><span class="lib-title">Intake &amp; Role Understanding</span></div><button class="lib-copy" onclick="copyLibPrompt(this,0)">Copy</button></div><div class="lib-body">"Summarize this job description into 3 buckets: core systems knowledge, domain-specific expertise, and differentiators between senior and staff-level talent."</div></div>
+      <div class="lib-card"><div class="lib-card-header"><div class="lib-meta"><span class="lib-stag">STAGE 02</span><span class="lib-title">Market Mapping</span></div><button class="lib-copy" onclick="copyLibPrompt(this,1)">Copy</button></div><div class="lib-body">"List companies known for developing hypervisor or kernel-level technology in the AI/Cloud Infra space."</div></div>
+      <div class="lib-card"><div class="lib-card-header"><div class="lib-meta"><span class="lib-stag">STAGE 03</span><span class="lib-title">Search String Design</span></div><button class="lib-copy" onclick="copyLibPrompt(this,2)">Copy</button></div><div class="lib-body">"Create a boolean string for senior engineers experienced in hypervisor or virtualization stack development (KVM, Xen, QEMU, VMware). Exclude front-end and QA roles."</div></div>
+      <div class="lib-card"><div class="lib-card-header"><div class="lib-meta"><span class="lib-stag">STAGE 04</span><span class="lib-title">Calibration &amp; Pattern Recognition</span></div><button class="lib-copy" onclick="copyLibPrompt(this,3)">Copy</button></div><div class="lib-body">"Summarize the common experience patterns among these three storage engineers that indicate readiness for staff-level scope."</div></div>
+      <div class="lib-card"><div class="lib-card-header"><div class="lib-meta"><span class="lib-stag">STAGE 05</span><span class="lib-title">Outreach Craft</span></div><button class="lib-copy" onclick="copyLibPrompt(this,4)">Copy</button></div><div class="lib-body">"Write a concise, authentic outreach message to a Staff Virtualization Engineer at Google who's worked on KVM, highlighting impact, ownership, and [insert-company-here]'s mission."</div></div>
+      <div class="lib-card"><div class="lib-card-header"><div class="lib-meta"><span class="lib-stag">STAGE 06</span><span class="lib-title">Pipeline Management &amp; Reporting</span></div><button class="lib-copy" onclick="copyLibPrompt(this,5)">Copy</button></div><div class="lib-body">"Summarize this pipeline data into a brief update for leadership: outcomes, risks, and next moves."</div></div>
+      <div class="lib-card"><div class="lib-card-header"><div class="lib-meta"><span class="lib-stag">STAGE 07</span><span class="lib-title">Reflection &amp; Continuous Learning</span></div><button class="lib-copy" onclick="copyLibPrompt(this,6)">Copy</button></div><div class="lib-body">"Suggest 3 alternative sourcing strategies for a search that has stalled for senior-level SDN engineers."</div></div>
+    </div>
+  </div>
+
+  <!-- TAKEAWAY -->
+  <div id="takeaway" class="panel">
+    <div class="stage-heading-row">
+      <div><div class="stage-tag">TEAM TAKEAWAY</div><div class="stage-title">The Strategic Edge</div></div>
+      <div class="stage-icon-large">🏁</div>
+    </div>
+    <div class="takeaway-pills">
+      <div class="tpill">🔍 Clarify Complexity</div><span class="tsep">·</span>
+      <div class="tpill">⚡ Compress Research</div><span class="tsep">·</span>
+      <div class="tpill">📦 Codify What Works</div><span class="tsep">·</span>
+      <div class="tpill">📈 Elevate Signal</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="how-card">
+          <div class="sec-head" style="color:var(--teal)">👍 Best Practices</div>
+          <div class="bpi"><div class="bpicon">👤</div><div><div class="bpt">Human Oversight</div><div class="bpd">AI is the engine, you are the pilot. Always verify outputs for accuracy and bias.</div></div></div>
+          <div class="bpi"><div class="bpicon">🔒</div><div><div class="bpt">Data Hygiene</div><div class="bpd">Protect candidate privacy. Never input PII into public AI models.</div></div></div>
+          <div class="bpi"><div class="bpicon">🧪</div><div><div class="bpt">A/B Testing</div><div class="bpd">Don't settle for the first draft. Test different prompts and outreach tones.</div></div></div>
+          <div class="bpi"><div class="bpicon">📚</div><div><div class="bpt">Asset Building</div><div class="bpd">Save successful prompts and messages to a team library for reuse.</div></div></div>
+          <div class="bpi"><div class="bpicon">📊</div><div><div class="bpt">Track Impact</div><div class="bpd">Monitor response rates and time-to-calibration to measure ROI.</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="how-card">
+          <div class="sec-head" style="color:var(--gold)">🏃 Next Steps</div>
+          <div class="ns-card"><div class="ns-num">01</div><div><div class="ns-title">Pilot a Workflow</div><div class="ns-desc">Pick 1–2 stages (e.g., Intake or Outreach) to apply AI this week.</div></div></div>
+          <div class="ns-card"><div class="ns-num">02</div><div><div class="ns-title">Define Metrics</div><div class="ns-desc">Set success criteria and schedule a review in 2 weeks.</div></div></div>
+          <div class="ns-card"><div class="ns-num">03</div><div><div class="ns-title">Share &amp; Iterate</div><div class="ns-desc">Bring wins and failures to the next team standup to refine playbooks.</div></div></div>
+          <div class="tq">"The craft still matters. AI just gives you more room to master it."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PROMPTS = [
+  '"Summarize this job description into 3 buckets: core systems knowledge, domain-specific expertise, and differentiators between senior and staff-level talent."',
+  '"List companies known for developing hypervisor or kernel-level technology in the AI/Cloud Infra space."',
+  '"Create a boolean string for senior engineers experienced in hypervisor or virtualization stack development (KVM, Xen, QEMU, VMware). Exclude front-end and QA roles."',
+  '"Summarize the common experience patterns among these three storage engineers that indicate readiness for staff-level scope."',
+  '"Write a concise, authentic outreach message to a Staff Virtualization Engineer at Google who\'s worked on KVM, highlighting impact, ownership, and company mission."',
+  '"Summarize this pipeline data into a brief update for leadership: outcomes, risks, and next moves."',
+  '"Suggest 3 alternative sourcing strategies for a search that has stalled for senior-level SDN engineers."'
+];
+const PROMPT_LABELS = ['Stage 01 — Intake & Role Understanding','Stage 02 — Market Mapping','Stage 03 — Search String Design','Stage 04 — Calibration & Pattern Recognition','Stage 05 — Outreach Craft','Stage 06 — Pipeline Management & Reporting','Stage 07 — Reflection & Continuous Learning'];
+const STAGE_PANELS = ['stage1','stage2','stage3','stage4','stage5','stage6','stage7'];
+const TOTAL = 7;
+
+let doneStages = new Set(JSON.parse(localStorage.getItem('sai_done')||'[]'));
+
+function getTab(id){ return document.querySelector(`.nav-tab[data-panel="${id}"]`); }
+
+function showPanel(id, tabEl){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(tabEl) tabEl.classList.add('active');
+  updateCounter(id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateCounter(id){
+  const idx = STAGE_PANELS.indexOf(id);
+  document.getElementById('stageCounter').textContent = idx>=0 ? `${idx+1} / ${TOTAL}` : '';
+  updateProgress();
+}
+
+function updateProgress(){
+  const pct = (doneStages.size/TOTAL)*100;
+  document.getElementById('progressFill').style.width = pct+'%';
+  const dc = document.getElementById('doneCount');
+  if(dc) dc.textContent = doneStages.size>0 ? `${doneStages.size} of ${TOTAL} stages completed` : '';
+}
+
+function toggleDone(stageId){
+  const btn = document.getElementById('done-'+stageId);
+  const num = stageId.replace('stage','');
+  const card = document.getElementById('slc-'+num);
+  const tab = getTab(stageId);
+  if(doneStages.has(stageId)){
+    doneStages.delete(stageId);
+    btn.classList.remove('done'); btn.textContent='Mark complete';
+    if(card) card.classList.remove('done');
+    if(tab) tab.classList.remove('done');
+  } else {
+    doneStages.add(stageId);
+    btn.classList.add('done'); btn.textContent='Complete';
+    if(card) card.classList.add('done');
+    if(tab) tab.classList.add('done');
+  }
+  localStorage.setItem('sai_done',JSON.stringify([...doneStages]));
+  updateProgress();
+}
+
+function restoreDone(){
+  doneStages.forEach(id=>{
+    const btn=document.getElementById('done-'+id);
+    const num=id.replace('stage','');
+    const card=document.getElementById('slc-'+num);
+    const tab=getTab(id);
+    if(btn){btn.classList.add('done');btn.textContent='Complete';}
+    if(card) card.classList.add('done');
+    if(tab) tab.classList.add('done');
+  });
+  updateProgress();
+}
+
+function copyPrompt(btn, id){
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    btn.textContent='Copied!'; btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2000);
+  });
+}
+
+function copyLibPrompt(btn, idx){
+  navigator.clipboard.writeText(PROMPTS[idx]).then(()=>{
+    btn.textContent='Copied!'; btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2000);
+  });
+}
+
+function copyAllPrompts(){
+  const all = PROMPTS.map((p,i)=>`${PROMPT_LABELS[i]}:\n${p}`).join('\n\n---\n\n');
+  navigator.clipboard.writeText(all).then(()=>{
+    const btn=document.getElementById('copyAllBtn');
+    btn.textContent='✓ All 7 copied!'; btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Copy all 7 prompts';btn.classList.remove('copied');},2500);
+  });
+}
+
+// SEARCH
+const SEARCH_INDEX = [
+  {panel:'stage1',label:'Stage 01 · Intake & Role Understanding',terms:'intake role blueprint skill decomposition market alignment technical clarity calibrate confidence summarize job description core systems knowledge must haves nice to haves'},
+  {panel:'stage2',label:'Stage 02 · Market Mapping',terms:'market mapping target generation org classification signal detection talent pool companies tech stack infrastructure hypervisor kernel AI cloud infra strategic scattershot hit rates hidden pools'},
+  {panel:'stage3',label:'Stage 03 · Search String Design',terms:'search string boolean generate variations synonym detection pre testing keyword bias noise signal ratio niche roles KVM Xen QEMU VMware linkedin seekout'},
+  {panel:'stage4',label:'Stage 04 · Calibration & Pattern Recognition',terms:'calibration pattern recognition profile comparison archetype creation judgment comparison volume storage engineers staff level company lineage keywords project scope calibration loops hiring manager trust'},
+  {panel:'stage5',label:'Stage 05 · Outreach Craft',terms:'outreach craft tone AB testing relevance mirroring asset creation message bank high conversion authentic handcrafted reply interest rates consistent voice PII data hygiene privacy KVM google'},
+  {panel:'stage6',label:'Stage 06 · Pipeline Management & Reporting',terms:'pipeline management reporting snapshot funnel analysis pass through rates PTR stage drop stalled candidates leadership outcomes risks next moves instant clarity root cause ashby'},
+  {panel:'stage7',label:'Stage 07 · Reflection & Continuous Learning',terms:'reflection continuous learning search debriefs pivot strategy technical fluency partner shortcut what did i miss alternative sourcing angles SDN engineers domain fluency'},
+  {panel:'prompts',label:'Prompt Library',terms:'prompt library all prompts copy boolean outreach pipeline calibration intake market mapping search string sprint session copy all'},
+  {panel:'takeaway',label:'Takeaways · Best Practices & Next Steps',terms:'takeaway best practices next steps human oversight data hygiene AB testing asset building track impact pilot workflow define metrics share iterate craft matters'},
+];
+
+function handleSearch(val){
+  const clear = document.getElementById('searchClear');
+  const count = document.getElementById('searchCount');
+  clear.style.display = val ? 'block' : 'none';
+  if(!val.trim()){ count.textContent=''; document.getElementById('noResults').classList.remove('visible'); return; }
+  const q = val.toLowerCase();
+  const hits = SEARCH_INDEX.filter(item=>item.terms.toLowerCase().includes(q)||item.label.toLowerCase().includes(q));
+  count.textContent = hits.length ? `${hits.length} result${hits.length>1?'s':''}` : 'No results';
+  document.getElementById('noResults').classList.toggle('visible', hits.length===0);
+  if(hits.length===1) showPanel(hits[0].panel, getTab(hits[0].panel));
+}
+
+function clearSearch(){
+  document.getElementById('searchInput').value='';
+  document.getElementById('searchClear').style.display='none';
+  document.getElementById('searchCount').textContent='';
+  document.getElementById('noResults').classList.remove('visible');
+}
+
+restoreDone();
+updateCounter('overview');
+</script>
+</body>
+</html>

@@ -1,0 +1,2751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TalentIQ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap');
+:root{
+  --bg:#1a1a1a;--bg2:#242424;--bg3:#2e2e2e;
+  --tx:#f0ede8;--tx2:#a8a49e;--tx3:#6e6b65;
+  --bd:rgba(255,255,255,0.08);--bd2:rgba(255,255,255,0.16);
+  --green:#7aa832;--gbg:rgba(122,168,50,0.15);--gtx:#a8d048;--gbd:rgba(122,168,50,0.3);
+  --amber:#b89a28;--abg:rgba(184,154,40,0.15);--atx:#d4b840;--abd:rgba(184,154,40,0.3);
+  --blue:#3d7aaa;--bbg:rgba(61,122,170,0.15);--btx:#6aaad4;--bbd:rgba(61,122,170,0.3);
+  --red:#c0444a;--rbg:rgba(192,68,74,0.15);--rtx:#e07a80;--rbd:rgba(192,68,74,0.3);
+  --purple:#7a6ab8;--pbg:rgba(122,106,184,0.12);
+  --r:8px;--rl:12px;
+  --f:'Roboto Mono',monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100vh;}
+
+/* ── APP NAV ── */
+.app-nav{display:flex;align-items:center;background:var(--bg);border-bottom:0.5px solid var(--bd);position:sticky;top:0;z-index:100;padding:0 1.5rem;}
+.app-nav-brand{font-size:13px;font-weight:500;padding:12px 16px 12px 0;margin-right:8px;border-right:0.5px solid var(--bd);color:var(--tx);white-space:nowrap;letter-spacing:-.01em;}
+.app-nav-brand span{color:var(--amber);}
+.nav-tab{padding:14px 16px;font-size:12px;cursor:pointer;border:none;background:transparent;color:var(--tx3);font-family:var(--f);border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+.nav-tab:hover{color:var(--tx2);}
+.nav-tab.active-tab{color:var(--tx);border-bottom-color:var(--amber);font-weight:500;}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;padding:8px 0;}
+.snav-btn{padding:5px 12px;font-size:11px;font-family:var(--f);border:0.5px solid var(--bd2);border-radius:6px;background:transparent;color:var(--tx2);cursor:pointer;transition:all .15s;}
+.snav-btn:hover{background:var(--bg2);color:var(--tx);}
+.snav-btn.p{background:var(--amber);color:#1a1a1a;border-color:var(--amber);font-weight:500;}
+.snav-btn.p:hover{opacity:.9;}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.sdot.stale{background:var(--amber);}
+
+/* ── VIEW SWITCHER ── */
+.tiq-view{display:none;}
+.tiq-view.tiq-active{display:block;}
+
+/* ── MODAL (global override) ── */
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);padding:1.5rem;align-items:center;justify-content:center;z-index:500;}
+.modal-wrap.show{display:flex;}
+
+/* ── HOME CSS ── */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+
+body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;}
+
+/* Background texture */
+
+
+.wrap{max-width:1000px;margin:0 auto;padding:4rem 2rem;position:relative;z-index:1;flex:1;}
+
+/* Header */
+.hdr{margin-bottom:4rem;}
+.hdr-eyebrow{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.hdr-eyebrow::before{content:'';width:24px;height:1px;background:var(--amber);}
+.hdr-title{font-size:clamp(32px,5vw,52px);font-weight:300;letter-spacing:-0.02em;line-height:1.1;margin-bottom:16px;}
+.hdr-title strong{font-weight:600;color:var(--green);}
+.hdr-sub{font-size:15px;color:var(--tx2);line-height:1.6;max-width:520px;}
+
+/* Status strip */
+.status-strip{display:flex;align-items:center;gap:16px;margin-bottom:3rem;padding:12px 16px;background:var(--bg2);border-radius:10px;border:0.5px solid var(--bd);flex-wrap:wrap;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.status-txt{font-size:12px;color:var(--tx2);}
+.status-sep{width:1px;height:14px;background:var(--bd2);}
+.status-chip{font-size:11px;font-weight:500;padding:3px 8px;border-radius:4px;}
+
+/* Module cards */
+.modules{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:2rem;}
+.mod-card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:16px;padding:2rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;text-decoration:none;display:block;}
+.mod-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s;}
+.mod-card:hover{border-color:var(--bd2);transform:translateY(-3px);}
+.mod-card:hover::before{opacity:1;}
+.mod-card.perf::before{background:radial-gradient(ellipse at top left,rgba(122,168,50,0.08),transparent 60%);}
+.mod-card.src::before{background:radial-gradient(ellipse at top left,rgba(184,154,40,0.08),transparent 60%);}
+.mod-card.perf:hover{box-shadow:0 12px 40px rgba(122,168,50,0.18);border-color:rgba(122,168,50,0.4) !important;}
+.mod-card.src:hover{box-shadow:0 12px 40px rgba(184,154,40,0.18);border-color:rgba(184,154,40,0.4) !important;}
+
+.mod-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:1.25rem;}
+.mod-icon.perf{background:var(--gbg);border:0.5px solid rgba(29,158,117,0.25);}
+.mod-icon.src{background:var(--abg);border:0.5px solid rgba(232,197,71,0.25);}
+
+.mod-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.mod-label.perf{color:var(--green);}
+.mod-label.src{color:var(--amber);}
+.mod-title{font-size:20px;font-weight:500;letter-spacing:-0.01em;margin-bottom:8px;}
+.mod-desc{font-size:13px;color:var(--tx2);line-height:1.6;margin-bottom:1.5rem;}
+
+.mod-cta{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;margin-bottom:1rem;font-size:12px;font-weight:500;transition:all .2s;}
+.mod-card.perf .mod-cta{background:rgba(122,168,50,0.1);color:var(--green);border:0.5px solid rgba(122,168,50,0.2);}
+.mod-card.src .mod-cta{background:rgba(184,154,40,0.1);color:var(--amber);border:0.5px solid rgba(184,154,40,0.2);}
+.mod-card:hover .mod-cta{filter:brightness(1.15);}
+.mod-stats{display:flex;gap:16px;padding-top:1.25rem;border-top:0.5px solid var(--bd);}
+.stat{flex:1;}
+.stat-num{font-size:22px;font-weight:500;line-height:1;font-family:'DM Mono',monospace;}
+.stat-num.perf{color:var(--green);}
+.stat-num.src{color:var(--amber);}
+.stat-lbl{font-size:10px;color:var(--tx3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;}
+
+.mod-arrow{position:absolute;top:1.5rem;right:1.5rem;display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--tx3);border:0.5px solid var(--bd);padding:5px 10px;border-radius:20px;transition:all .2s;letter-spacing:.04em;}
+.mod-card.perf:hover .mod-arrow{border-color:rgba(122,168,50,0.5);color:var(--green);}
+.mod-card.src:hover .mod-arrow{border-color:rgba(184,154,40,0.5);color:var(--amber);}
+
+/* Upcoming card */
+
+/* Footer */
+footer{text-align:center;padding:1.5rem;font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:.04em;}
+
+@media(max-width:640px){
+  .modules{grid-template-columns:1fr;}
+  .wrap{padding:2rem 1rem;}
+  .hdr{margin-bottom:2.5rem;}
+}
+
+
+/* ── PERFORMANCE SYSTEM CSS ── */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+@media(prefers-color-scheme:dark){}
+body{font-family:var(--f);color:var(--tx);background:var(--bg2);min-height:100vh;padding:1.5rem 1rem;}
+.wrap{max-width:1040px;margin:0 auto;background:var(--bg);border-radius:16px;border:0.5px solid var(--bd);padding:1.5rem;background:var(--bg2);}
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem;}
+.htitle{font-size:18px;font-weight:500;letter-spacing:-0.01em;margin-bottom:2px;}
+.htitle span{color:var(--green);}
+.hsub{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);}
+.hright{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.sync{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tx3);}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.dot.spin{background:var(--amber);animation:pulse 1s infinite;}
+.dot.ok{background:var(--green);}
+.dot.warn{background:var(--amber);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gbtn{display:flex;align-items:center;gap:5px;padding:6px 13px;font-size:12px;font-family:var(--f);background:#FFFF00;color:#1a1a18;border:none;border-radius:var(--r);cursor:pointer;font-weight:500;}
+.gbtn:hover{background:#e6e600;}
+.guide{display:none;background:var(--bg2);border-radius:var(--rl);padding:1.25rem;margin-bottom:1.25rem;border:0.5px solid var(--bd);}
+.guide.open{display:block;}
+.g-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;}
+.g-hdr h2{font-size:14px;font-weight:500;margin-bottom:3px;}
+.g-hdr p{font-size:12px;color:var(--tx2);line-height:1.5;max-width:580px;}
+.g-close{border:none;background:transparent;color:var(--tx3);cursor:pointer;font-size:18px;padding:0;margin-left:12px;}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;}
+.sc{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:.875rem;cursor:pointer;}
+.sc:hover{border-color:var(--bd2);}
+.sc-num{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:4px;}
+.sc-title{font-size:13px;font-weight:500;margin-bottom:3px;}
+.sc-desc{font-size:11px;color:var(--tx2);line-height:1.5;}
+.gmeta{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.gmc{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:.875rem;}
+.gmc h3{font-size:12px;font-weight:500;margin-bottom:8px;}
+.tier-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:11px;}
+.t-pip{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.grule{font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:3px;}
+.g-foot{border-top:0.5px solid var(--bd);padding-top:10px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.g-foot span{font-size:11px;color:var(--tx3);}
+.stepper{display:flex;align-items:center;margin-bottom:1.25rem;overflow-x:auto;padding-bottom:2px;gap:0;}
+.sp{display:flex;align-items:center;flex-shrink:0;}
+.spb{display:flex;align-items:center;gap:7px;padding:6px 13px;border:0.5px solid var(--bd);border-radius:20px;cursor:pointer;background:var(--bg);font-family:var(--f);font-size:12px;color:var(--tx2);white-space:nowrap;transition:all .15s;}
+.spb:hover{border-color:var(--bd2);color:var(--tx);}
+.spb.active{background:var(--tx);color:var(--bg);border-color:var(--tx);}
+.spb.done{background:var(--gbg);color:var(--gtx);border-color:var(--green);}
+.spn{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;background:var(--bd);color:var(--tx2);flex-shrink:0;}
+.spb.active .spn{background:rgba(255,255,255,.25);color:var(--bg);}
+.spb.done .spn{background:var(--green);color:#fff;}
+.connector{width:20px;height:1px;background:var(--bd);flex-shrink:0;}
+.pane{display:none;}.pane.on{display:block;}
+.team-dash{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem;}
+.dc{background:var(--bg2);border-radius:var(--r);padding:1rem;text-align:center;}
+.dn{font-size:26px;font-weight:500;line-height:1;margin-bottom:3px;}
+.dl{font-size:11px;color:var(--tx2);}
+.person-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--bd);flex-wrap:wrap;}
+.person-row:last-child{border-bottom:none;}
+.pname{font-size:13px;font-weight:500;min-width:130px;}
+.prole{font-size:10px;color:var(--tx3);background:var(--bg2);padding:2px 6px;border-radius:3px;flex-shrink:0;}
+.pbar-wrap{flex:1;min-width:100px;}
+.pbar-track{background:var(--bd);border-radius:4px;height:6px;overflow:hidden;margin-bottom:3px;}
+.pbar-fill{height:100%;border-radius:4px;transition:width .5s;}
+.pbar-lbl{font-size:10px;color:var(--tx3);}
+.otbadge{font-size:10px;font-weight:500;padding:2px 7px;border-radius:10px;flex-shrink:0;}
+.slabel{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:10px;}
+.note{background:var(--bg2);border-left:2px solid #378ADD;border-radius:0 var(--r) var(--r) 0;padding:10px 14px;font-size:12px;color:var(--tx2);margin-bottom:1rem;line-height:1.6;}
+.warn-note{background:var(--abg);border-left:2px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:10px 14px;font-size:12px;color:var(--atx);margin-bottom:1rem;line-height:1.6;}
+.btn{padding:7px 14px;font-size:12px;font-family:var(--f);border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg);color:var(--tx);cursor:pointer;}
+.btn:hover{background:var(--bg2);}
+.btn.p{background:var(--tx);color:var(--bg);border-color:var(--tx);}
+.btn.p:hover{opacity:.85;}
+.btn.ghost{color:var(--green);border-color:var(--green);background:transparent;}
+.btn.ghost:hover{background:var(--gbg);}
+.btn.sm{padding:4px 10px;font-size:11px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.fb{font-size:12px;color:var(--green);}
+.spinner{display:inline-block;width:11px;height:11px;border:1.5px solid var(--bd2);border-top-color:#378ADD;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:4px;}
+input,select,textarea{font-family:var(--f);font-size:13px;color:var(--tx);background:var(--bg3);border:0.5px solid var(--bd2);border-radius:var(--r);}
+input[type=text],input[type=number],select{padding:7px 10px;width:100%;}
+textarea{padding:8px 10px;width:100%;resize:vertical;}
+input[type=range]{width:100%;accent-color:#378ADD;border:none;background:transparent;}
+.form-row{margin-bottom:10px;}
+.form-lbl{font-size:12px;color:var(--tx2);margin-bottom:4px;display:block;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1rem;}
+.tip-wrap{position:relative;display:inline-block;}
+.tip-wrap .tip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);font-size:11px;padding:6px 10px;border-radius:var(--r);width:210px;line-height:1.5;z-index:100;pointer-events:none;white-space:normal;}
+.tip-wrap:hover .tip{display:block;}
+.tb{font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;cursor:default;}
+.t1b{background:var(--gbg);color:var(--gtx);}
+.t2b{background:var(--bbg);color:var(--btx);}
+.t3b{background:var(--abg);color:var(--atx);}
+.t4b{background:var(--rbg);color:var(--rtx);}
+.empty-state{text-align:center;padding:3rem 1rem;border:1.5px dashed var(--bd);border-radius:var(--rl);margin-top:1rem;}
+.empty-state h3{font-size:14px;font-weight:500;margin-bottom:6px;}
+.empty-state p{font-size:12px;color:var(--tx2);line-height:1.6;max-width:340px;margin:0 auto 16px;}
+.score-layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.score-big{background:var(--bg2);border-radius:var(--rl);padding:1.25rem;text-align:center;margin-bottom:1rem;}
+.score-big .num{font-size:52px;font-weight:500;line-height:1;}
+.score-big .sub{font-size:13px;color:var(--tx2);margin-top:4px;}
+.stb{display:inline-block;font-size:12px;font-weight:500;padding:4px 12px;border-radius:var(--r);margin-top:8px;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.bar-lbl{font-size:12px;color:var(--tx2);width:130px;flex-shrink:0;}
+.bar-track{flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width .4s;}
+.bar-val{font-size:12px;color:var(--tx3);width:28px;text-align:right;}
+.dim-row{margin-bottom:14px;}
+.dim-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.dim-name{font-size:13px;color:var(--tx2);}
+.dim-val{font-size:13px;font-weight:500;}
+.dim-reason{font-size:11px;color:var(--tx3);margin-top:3px;line-height:1.4;min-height:14px;font-style:italic;}
+.req-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--bd);}
+.req-row:last-child{border-bottom:none;}
+.req-rm{font-size:11px;color:var(--red);cursor:pointer;padding:2px 6px;border-radius:3px;flex-shrink:0;}
+.req-rm:hover{background:var(--rbg);}
+.goal-summary{background:var(--bg2);border-radius:var(--rl);padding:1.25rem;margin-top:1rem;}
+.goal-num{font-size:36px;font-weight:500;line-height:1;}
+.stall-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px;}
+.live-sum{background:var(--bg2);border-radius:var(--r);padding:8px 12px;font-size:12px;color:var(--tx2);margin-top:8px;line-height:1.6;display:none;}
+.person-card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1rem;margin-bottom:10px;}
+.pc-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.pc-name{font-size:15px;font-weight:500;}
+.pc-role{font-size:11px;color:var(--tx3);margin-top:2px;}
+.prog-wrap{background:var(--bd);border-radius:4px;height:7px;overflow:hidden;margin:6px 0;}
+.prog-fill{height:100%;border-radius:4px;transition:width .5s;}
+.log-entry{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--bd);font-size:12px;flex-wrap:wrap;}
+.log-entry:last-child{border-bottom:none;}
+.log-pts{font-weight:500;min-width:40px;}
+.log-date{color:var(--tx3);font-size:11px;}
+.log-del{color:var(--red);cursor:pointer;font-size:11px;padding:1px 5px;border-radius:3px;flex-shrink:0;margin-left:2px;}
+.log-edit{color:var(--tx3);cursor:pointer;font-size:12px;padding:1px 5px;border-radius:3px;flex-shrink:0;margin-left:auto;}
+.log-edit:hover{background:var(--bg2);color:var(--tx);}
+.log-del:hover{background:var(--rbg);}
+.ptr-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
+.ptr-stage{font-size:12px;color:var(--tx2);width:195px;flex-shrink:0;}
+.ptr-track{flex:1;min-width:80px;background:var(--bg2);border-radius:4px;height:6px;overflow:hidden;}
+.ptr-fill{height:100%;border-radius:4px;}
+.ptr-val{font-size:12px;font-weight:500;width:36px;text-align:right;}
+.ptr-tgt{font-size:10px;color:var(--tx3);width:56px;text-align:right;}
+.ptr-icon{width:16px;height:16px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.modal-wrap{display:none;background:rgba(0,0,0,.35);border-radius:var(--rl);padding:1.5rem;margin-bottom:1rem;align-items:flex-start;justify-content:center;}
+.modal-wrap.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--rl);border:0.5px solid var(--bd);padding:1.5rem;width:100%;max-width:520px;}
+.modal-title{font-size:15px;font-weight:500;margin-bottom:1rem;}
+.modal-ctx{background:var(--bg2);border-radius:var(--r);padding:8px 12px;font-size:12px;color:var(--tx2);margin-bottom:1rem;line-height:1.6;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem;}
+.drop-zone{border:1.5px dashed var(--bd2);border-radius:var(--rl);padding:1.5rem;text-align:center;cursor:pointer;margin-bottom:1rem;transition:background .15s;}
+.drop-zone:hover{background:var(--bg2);}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{text-align:left;padding:8px 12px;background:var(--bg2);font-weight:500;font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;}
+.tbl td{padding:9px 12px;border-bottom:0.5px solid var(--bd);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--bg2);}
+.nav-row{margin-top:1.25rem;display:flex;gap:8px;flex-wrap:wrap;}
+.credit{text-align:center;padding:1.25rem 0 .25rem;font-size:10px;color:var(--bd2);letter-spacing:.04em;}
+@media(max-width:680px){
+  .wrap{padding:1rem;}
+  .score-layout,.g2,.gmeta{grid-template-columns:1fr !important;}
+  .steps-grid{grid-template-columns:1fr 1fr;}
+  .team-dash{grid-template-columns:1fr 1fr;}
+  .connector{display:none;}
+  .stepper{gap:6px;flex-wrap:wrap;}
+  .bar-lbl{width:95px;}
+  .ptr-stage{width:130px;}
+}
+@media(max-width:400px){.steps-grid{grid-template-columns:1fr;}}
+
+/* Save/Load bar */
+.save-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg2);border-bottom:0.5px solid var(--bd);position:sticky;top:0;z-index:200;flex-wrap:wrap;}
+.save-bar-left{display:flex;align-items:center;gap:8px;flex:1;}
+.save-status{font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:5px;}
+.save-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);}
+.save-dot.stale{background:var(--amber);box-shadow:0 0 5px var(--amber);}
+.save-btn{padding:5px 12px;font-size:11px;font-family:var(--f);border:0.5px solid var(--bd2);border-radius:6px;background:var(--bg3);color:var(--tx2);cursor:pointer;transition:all .15s;}
+.save-btn:hover{background:var(--bg2);color:var(--tx);}
+.save-btn.primary{background:var(--amber);color:#141820;border-color:var(--amber);font-weight:500;}
+.save-btn.primary:hover{opacity:.9;}
+.save-btn.danger{color:var(--red);border-color:rgba(192,68,74,0.4);}
+.save-btn.danger:hover{background:rgba(192,68,74,0.1);}
+
+
+/* ── SOURCING ENGINE CSS ── */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+
+body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100vh;}
+
+
+.wrap{max-width:1200px;margin:0 auto;padding:1.5rem;position:relative;z-index:1;}
+
+/* HEADER */
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:1.5rem;}
+.hdr-left{display:flex;align-items:center;gap:12px;}
+.back-btn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx3);text-decoration:none;padding:6px 10px;border:0.5px solid var(--bd);border-radius:var(--r);transition:all .15s;}
+.back-btn:hover{color:var(--tx);border-color:var(--bd2);}
+.htitle{font-size:18px;font-weight:500;letter-spacing:-0.01em;}
+.htitle span{color:var(--amber);}
+.hsub{font-size:11px;color:var(--tx3);margin-top:2px;}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+/* TOGGLES */
+.toggle-group{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--r);}
+.toggle-lbl{font-size:11px;color:var(--tx3);white-space:nowrap;}
+.toggle-sw{position:relative;width:36px;height:20px;flex-shrink:0;}
+.toggle-sw input{opacity:0;width:0;height:0;}
+.toggle-sw .slider{position:absolute;cursor:pointer;inset:0;background:var(--bg2);border-radius:10px;border:0.5px solid var(--bd2);transition:.2s;}
+.toggle-sw .slider::before{content:'';position:absolute;width:14px;height:14px;left:2px;bottom:2px;background:var(--tx3);border-radius:50%;transition:.2s;}
+.toggle-sw input:checked+.slider{background:var(--abg);border-color:var(--abd);}
+.toggle-sw input:checked+.slider::before{transform:translateX(16px);background:var(--amber);}
+.toggle-val{font-size:10px;font-weight:500;min-width:80px;}
+
+/* CAPACITY STRIP */
+.cap-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
+.cap-card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1rem;text-align:center;}
+.cap-num{font-size:26px;font-weight:500;font-family:monospace;line-height:1;margin-bottom:3px;}
+.cap-lbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:var(--bg2);border-radius:var(--rl);padding:4px;width:fit-content;border:0.5px solid var(--bd);}
+.tab{padding:7px 16px;font-size:12px;font-weight:500;cursor:pointer;border-radius:var(--r);color:var(--tx3);border:none;background:transparent;font-family:var(--f);transition:all .15s;}
+.tab.on{background:var(--bg3);color:var(--tx);border:0.5px solid var(--bd2);}
+.tab:hover:not(.on){color:var(--tx2);}
+.pane{display:none;}.pane.on{display:block;}
+
+/* SHARED ATOMS */
+.btn{padding:7px 14px;font-size:12px;font-family:var(--f);border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg2);color:var(--tx);cursor:pointer;transition:all .15s;}
+.btn:hover{background:var(--bg3);border-color:var(--bd2);}
+.btn.p{background:var(--amber);color:#1a1a17;border-color:var(--amber);font-weight:500;}
+.btn.p:hover{opacity:.9;}
+.btn.sm{padding:4px 10px;font-size:11px;}
+.btn.ghost{background:transparent;border-color:var(--bd);color:var(--tx2);}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.slabel{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:8px;}
+.note{background:var(--bg2);border-left:2px solid var(--blue);border-radius:0 var(--r) var(--r) 0;padding:10px 14px;font-size:12px;color:var(--tx2);margin-bottom:1rem;line-height:1.6;}
+.warn{background:var(--rbg);border-left:2px solid var(--red);border-radius:0 var(--r) var(--r) 0;padding:10px 14px;font-size:12px;color:#f8a8a7;margin-bottom:1rem;line-height:1.6;}
+input,select,textarea{font-family:var(--f);font-size:13px;color:var(--tx);background:var(--bg3);border:0.5px solid var(--bd2);border-radius:var(--r);}
+input[type=text],input[type=number],select{padding:7px 10px;width:100%;}
+select option{background:var(--bg3);}
+.form-row{margin-bottom:10px;}
+.form-lbl{font-size:11px;color:var(--tx2);margin-bottom:4px;display:block;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1rem;}
+.fb{font-size:12px;color:var(--green);}
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);padding:1.5rem;align-items:center;justify-content:center;z-index:500;}
+.modal-wrap.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--rl);border:0.5px solid var(--bd2);padding:1.5rem;width:100%;max-width:540px;}
+.modal-title{font-size:15px;font-weight:500;margin-bottom:1rem;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;white-space:nowrap;}
+.t1b{background:var(--gbg);color:#5bc49b;border:0.5px solid var(--gbd);}
+.t2b{background:var(--bbg);color:var(--blue);border:0.5px solid var(--bbd);}
+.t3b{background:var(--abg);color:var(--amber);border:0.5px solid var(--abd);}
+.t4b{background:var(--rbg);color:#f8a8a7;border:0.5px solid var(--rbd);}
+.rec-badge{background:var(--gbg);color:#5bc49b;border:0.5px solid var(--gbd);}
+.queue-badge{background:var(--abg);color:var(--amber);border:0.5px solid var(--abd);}
+.ded-badge{background:var(--rbg);color:#f8a8a7;border:0.5px solid var(--rbd);}
+.gap-badge{background:rgba(155,127,232,0.12);color:var(--purple);border:0.5px solid rgba(155,127,232,0.3);}
+
+/* DOMAIN FIT */
+.fit-high{color:#5bc49b;font-weight:500;}
+.fit-mid{color:var(--amber);font-weight:500;}
+.fit-low{color:#f8a8a7;font-weight:500;}
+.fit-none{color:var(--tx3);}
+
+/* QUEUE TABLE */
+.qtbl{width:100%;border-collapse:collapse;font-size:12px;}
+.qtbl th{text-align:left;padding:8px 10px;background:var(--bg2);font-weight:500;font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;position:sticky;top:0;}
+.qtbl td{padding:9px 10px;border-bottom:0.5px solid var(--bd);vertical-align:middle;}
+.qtbl tr:hover td{background:rgba(255,255,255,0.02);}
+.qtbl tr.priority-high td{border-left:2px solid var(--red);}
+.qtbl tr.priority-med td{border-left:2px solid var(--amber);}
+.qtbl tr.priority-low td{border-left:2px solid var(--bd2);}
+.qtbl-wrap{max-height:600px;overflow-y:auto;border:0.5px solid var(--bd);border-radius:var(--rl);}
+
+/* SOURCER CARDS */
+.sourcers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.sc-card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1rem;transition:border-color .15s;}
+.sc-card:hover{border-color:var(--bd2);}
+.sc-card.over-cap{border-color:var(--rbd);}
+.sc-card.warn-spread{border-color:var(--abd);}
+.sc-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.sc-name{font-size:14px;font-weight:500;}
+.sc-type{font-size:10px;padding:2px 6px;border-radius:3px;font-weight:500;}
+.sc-type.dedicated{background:var(--rbg);color:#f8a8a7;}
+.sc-type.embedded{background:var(--bbg);color:var(--blue);}
+.sc-domains{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;}
+.domain-tag{font-size:10px;padding:2px 7px;border-radius:3px;border:0.5px solid var(--bd2);color:var(--tx2);}
+.domain-tag.primary{background:var(--gbg);color:#5bc49b;border-color:var(--gbd);}
+.domain-tag.secondary{background:var(--bbg);color:var(--blue);border-color:var(--bbd);}
+.domain-tag.flex{background:var(--bg3);color:var(--tx3);}
+.cap-bar-wrap{margin-bottom:8px;}
+.cap-bar-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:4px;}
+.cap-bar-track{background:var(--bg3);border-radius:4px;height:6px;overflow:hidden;}
+.cap-bar-fill{height:100%;border-radius:4px;transition:width .4s;}
+.sc-reqs{margin-top:8px;}
+.sc-req-item{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:0.5px solid var(--bd);font-size:11px;}
+.sc-req-item:last-child{border-bottom:none;}
+.sc-req-title{flex:1;color:var(--tx2);}
+.sc-req-unassign{color:var(--red);cursor:pointer;font-size:10px;padding:1px 5px;border-radius:3px;}
+.sc-req-unassign:hover{background:var(--rbg);}
+.spread-warn{font-size:10px;color:var(--amber);margin-top:6px;padding:4px 8px;background:var(--abg);border-radius:var(--r);}
+
+/* GAP BANNER */
+.gap-banner{background:rgba(155,127,232,0.08);border:0.5px solid rgba(155,127,232,0.25);border-radius:var(--rl);padding:1rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:12px;}
+.gap-banner-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.gap-banner-txt{flex:1;}
+.gap-banner-txt strong{font-size:13px;font-weight:500;color:var(--purple);}
+.gap-banner-txt p{font-size:12px;color:var(--tx2);margin-top:3px;line-height:1.5;}
+.gap-assign{display:flex;gap:6px;margin-top:8px;align-items:center;}
+.gap-assign input{flex:1;font-size:12px;padding:5px 8px;}
+.gap-assign button{white-space:nowrap;}
+
+/* FILTERS */
+.filter-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center;}
+.filter-chip{font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;border:0.5px solid var(--bd);background:transparent;color:var(--tx3);font-family:var(--f);transition:all .15s;}
+.filter-chip.on{border-color:var(--amber);color:var(--amber);background:var(--abg);}
+.filter-chip:hover:not(.on){color:var(--tx2);}
+
+/* RESPONSIVE */
+@media(max-width:680px){
+  .cap-strip{grid-template-columns:1fr 1fr;}
+  .g2,.g3{grid-template-columns:1fr;}
+  .sourcers-grid{grid-template-columns:1fr;}
+}
+
+/* Save/Load bar */
+.save-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg);border-bottom:0.5px solid var(--bd);position:sticky;top:0;z-index:50;flex-wrap:wrap;}
+.save-bar-left{display:flex;align-items:center;gap:8px;flex:1;}
+.save-status{font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:5px;}
+.save-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);}
+.save-dot.stale{background:var(--amber);box-shadow:0 0 5px var(--amber);}
+.save-btn{padding:5px 12px;font-size:11px;font-family:var(--f);border:0.5px solid var(--bd2);border-radius:6px;background:var(--bg3);color:var(--tx2);cursor:pointer;transition:all .15s;}
+.save-btn:hover{background:var(--bg2);color:var(--tx);}
+.save-btn.primary{background:var(--amber);color:#141820;border-color:var(--amber);font-weight:500;}
+.save-btn.primary:hover{opacity:.9;}
+.save-btn.danger{color:var(--red);border-color:rgba(192,68,74,0.4);}
+.save-btn.danger:hover{background:rgba(192,68,74,0.1);}
+
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="app-nav">
+  <div class="app-nav-brand"><span>TalentIQ</span></div>
+  <button class="nav-tab active-tab" id="ntab-home" onclick="showView('home')">Home</button>
+  <button class="nav-tab" id="ntab-perf" onclick="showView('perf')">Performance System</button>
+  <button class="nav-tab" id="ntab-engine" onclick="showView('engine')">Sourcing Engine</button>
+  <div class="nav-right">
+    <div class="sdot" id="gDot"></div>
+    <button class="snav-btn p" onclick="saveSnapshot()">&#8595; Save</button>
+    <button class="snav-btn" onclick="document.getElementById('gLoad').click()">&#8593; Load</button>
+    <input type="file" id="gLoad" accept=".json" style="display:none" onchange="loadSnapshot(this)" />
+  </div>
+</nav>
+
+<!-- ── HOME VIEW ── -->
+<div class="tiq-view tiq-active" id="tiq-view-home">
+
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-eyebrow">Talent Intelligence</div>
+    <h1 class="hdr-title"><strong>TalentIQ</strong></h1>
+    <p class="hdr-sub">A modular talent intelligence platform for role complexity scoring, performance tracking, and sourcing allocation.</p>
+  </div>
+
+  <div class="status-strip">
+    <div class="status-dot"></div>
+    <span class="status-txt">System active</span>
+    <div class="status-sep"></div>
+    <span class="status-txt" id="roleCount">0 roles scored</span>
+    <div class="status-sep"></div>
+    <span class="status-txt" id="peopleCount">0 people tracked</span>
+    <div class="status-sep"></div>
+    <span class="status-txt" id="allocCount">0 reqs allocated</span>
+    <button onclick="saveHomeSnapshot()" style="margin-left:auto;padding:5px 12px;font-size:11px;font-family:var(--f);border:0.5px solid var(--bd2);border-radius:6px;background:var(--amber);color:#141820;cursor:pointer;font-weight:500;">&#8595; Save snapshot</button>
+    <button onclick="document.getElementById('homeLoadInput').click()" style="padding:5px 12px;font-size:11px;font-family:var(--f);border:0.5px solid var(--bd2);border-radius:6px;background:var(--bg2);color:var(--tx2);cursor:pointer;">&#8593; Load snapshot</button>
+    <input type="file" id="homeLoadInput" accept=".json" style="display:none" onchange="loadHomeSnapshot(this)" />
+  </div>
+
+  <div style="margin-bottom:2.5rem;padding:1.75rem;background:var(--bg2);border-radius:16px;border:0.5px solid var(--bd);">
+  <p style="font-size:13px;color:var(--tx2);line-height:1.8;margin-bottom:1.5rem;">This was built to add a layer of context to how we measure and deploy recruiting capacity. A consistent hiring target is the right foundation, and understanding the complexity behind each req is what makes that target meaningful. Closing a Principal Systems Engineer and closing a Senior Backend SWE require fundamentally different strategies, timelines, and levels of market expertise. Strategic sourcing delivers the most value on niche, specialized roles precisely because those searches demand a completely different approach: deeper market mapping, longer runway, tighter calibration, and the kind of candidate relationships that don't come from inbound volume alone. TalentIQ makes that complexity visible so sourcing support goes where it creates the most leverage.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+    <div style="padding:1rem;background:var(--bg3);border-radius:var(--r);border:0.5px solid var(--bd);">
+      <div style="font-size:11px;font-weight:600;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;">Speed</div>
+      <p style="font-size:12px;color:var(--tx2);line-height:1.7;">Knowing immediately which reqs need sourcing support, and who is best positioned to own them, eliminates a layer of coordination overhead that compounds across every open req.</p>
+    </div>
+    <div style="padding:1rem;background:var(--bg3);border-radius:var(--r);border:0.5px solid var(--bd);">
+      <div style="font-size:11px;font-weight:600;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;">Efficiency</div>
+      <p style="font-size:12px;color:var(--tx2);line-height:1.7;">Portfolio-adjusted goals let every recruiter and sourcer be measured fairly against the actual complexity of their work. Good performance means something specific here, not just a number hit.</p>
+    </div>
+    <div style="padding:1rem;background:var(--bg3);border-radius:var(--r);border:0.5px solid var(--bd);">
+      <div style="font-size:11px;font-weight:600;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;">Quality</div>
+      <p style="font-size:12px;color:var(--tx2);line-height:1.7;">Pairing sourcers to reqs by domain expertise and existing calibration means we're not starting from zero on every search. Relationships and institutional knowledge compound over time.</p>
+    </div>
+  </div>
+</div>
+<div class="modules">
+    <a class="mod-card perf" href="ta_performance_system.html">
+      <div class="mod-arrow">&#8599;</div>
+      <div class="mod-icon perf">&#9650;</div>
+      <div class="mod-label perf">Performance System</div>
+      <div class="mod-title"><span style="-webkit-text-stroke:1px #b89a28;text-stroke:1px #b89a28;color:#ffffff;font-weight:700">Weighted</span> <span style="-webkit-text-stroke:1px #b89a28;text-stroke:1px #b89a28;color:#ffffff;font-weight:700">Performance</span> <span style="-webkit-text-stroke:1px #b89a28;text-stroke:1px #b89a28;color:#ffffff;font-weight:700">Tracker</span></div>
+      <div class="mod-desc">Score role complexity, track offer accepts and extends with tier-weighted points, and diagnose funnel bottlenecks across your recruiting team.</div>
+      <div class="mod-cta">Open Performance System <span>&#8594;</span></div>
+      <div class="mod-stats">
+        <div class="stat"><div class="stat-num perf" id="ps-roles">0</div><div class="stat-lbl">Roles scored</div></div>
+        <div class="stat"><div class="stat-num perf" id="ps-people">0</div><div class="stat-lbl">People tracked</div></div>
+        <div class="stat"><div class="stat-num perf" id="ps-pts">0</div><div class="stat-lbl">Pts logged</div></div>
+      </div>
+    </a>
+
+    <a class="mod-card src" href="sourcing_engine.html">
+      <div class="mod-arrow">&#8599;</div>
+      <div class="mod-icon src">&#9670;</div>
+      <div class="mod-label src">Sourcing Engine</div>
+      <div class="mod-title"><span style="-webkit-text-stroke:1px #b89a28;text-stroke:1px #b89a28;color:#ffffff;font-weight:700">Sourcing</span> <span style="-webkit-text-stroke:1px #b89a28;text-stroke:1px #b89a28;color:#ffffff;font-weight:700">Decision</span> <span style="-webkit-text-stroke:1px #b89a28;text-stroke:1px #b89a28;color:#ffffff;font-weight:700">Engine</span></div>
+      <div class="mod-desc">Determine which reqs need sourcing support, allocate sourcers by domain expertise and capacity, and maintain team assignment balance across recruiters.</div>
+      <div class="mod-cta">Open Sourcing Engine <span>&#8594;</span></div>
+      <div class="mod-stats">
+        <div class="stat"><div class="stat-num src" id="se-reqs">0</div><div class="stat-lbl">Reqs in queue</div></div>
+        <div class="stat"><div class="stat-num src" id="se-assigned">0</div><div class="stat-lbl">Assigned</div></div>
+        <div class="stat"><div class="stat-num src" id="se-sourcers">8</div><div class="stat-lbl">Active sourcers</div></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<footer>Designed by Nicole Shiu &middot; Talent Intelligence</footer>
+
+
+
+</div>
+
+<!-- ── PERFORMANCE SYSTEM VIEW ── -->
+<div class="tiq-view" id="tiq-view-perf">
+
+<!-- SAVE/LOAD BAR -->
+
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div><div class="htitle"><span>TalentIQ</span></div><div class="hsub">Weighted Performance System &nbsp;·&nbsp; Talent Intelligence</div></div>
+  <div class="hright">
+    <div class="sync"><div class="dot spin" id="dot"></div><span id="synclbl">Connecting...</span><button class="btn sm" id="refreshBtn" style="display:none" onclick="initAshby()">Refresh</button></div>
+    <button class="gbtn" onclick="toggleGuide()" id="guideBtn">? How to use</button>
+  </div>
+</div>
+
+<!-- GUIDE PANEL -->
+<div class="guide" id="guidePanel">
+  <div class="g-hdr">
+    <div><h2>Welcome to TalentIQ</h2><p>A weighted performance system that replaces flat hire targets with a model calibrated to actual role complexity. Recruiter north star: <strong>offer accepts</strong>. Sourcer north star: <strong>offer extends</strong> from sourcer-originated pipeline (first touch + Ashby &ldquo;sourced&rdquo; tag). Recruiter and sourcer quarterly target: <strong>9 weighted points</strong> &mdash; editable per person on the Progress tab.</p></div>
+    <button class="g-close" onclick="toggleGuide()">&#x2715;</button>
+  </div>
+  <div class="steps-grid">
+    <div class="sc" onclick="goStep(0)"><div class="sc-num">Step 1</div><div class="sc-title">Score roles</div><div class="sc-desc">Enter a role title and department, paste the JD, and click Auto-score. Claude scores 5 complexity dimensions and applies team floors and role overrides automatically. Bulk upload via CSV is also supported.</div></div>
+    <div class="sc" onclick="goStep(1)"><div class="sc-num">Step 2</div><div class="sc-title">Progress</div><div class="sc-desc">Log offer accepts (recruiters) and offer extends (sourcers). Weighted points update in real time per person. Edit, rename, or remove any entry or person. Bulk upload via CSV supported. Quarterly target is editable on each card.</div></div>
+    <div class="sc" onclick="goStep(2)"><div class="sc-num">Step 3</div><div class="sc-title">Diagnose</div><div class="sc-desc">Log weekly funnel data per person and req. PTR at each stage (outreach &rarr; HM screen &rarr; technical &rarr; onsite &rarr; offer) is compared to tier-adjusted targets and flagged green, amber, or red. Coaching signal only &mdash; not scored.</div></div>
+    <div class="sc" onclick="goStep(3)"><div class="sc-num">Step 4</div><div class="sc-title">Reference</div><div class="sc-desc">Full model documentation: point values by tier, team-level complexity floors, role-level overrides, PTR targets, weekly outreach targets for sourcers, and stalled search buffer rules.</div></div>
+  </div>
+  <div class="gmeta">
+    <div class="gmc"><h3>Tier model &amp; point values</h3>
+      <div class="tier-row"><div class="t-pip" style="background:var(--gbg);border:1px solid var(--green)"></div><span style="color:var(--gtx);font-weight:500">Tier 1</span>&nbsp;<span style="color:var(--tx2)">Score 5&ndash;10 &middot; Broad pool &middot; Rec 1.0 pt &middot; Src 1.5 pts</span></div>
+      <div class="tier-row"><div class="t-pip" style="background:var(--bbg);border:1px solid var(--blue)"></div><span style="color:var(--btx);font-weight:500">Tier 2</span>&nbsp;<span style="color:var(--tx2)">Score 11&ndash;15 &middot; Domain specific &middot; Rec 1.5 pts &middot; Src 2.0 pts</span></div>
+      <div class="tier-row"><div class="t-pip" style="background:var(--abg);border:1px solid var(--amber)"></div><span style="color:var(--atx);font-weight:500">Tier 3</span>&nbsp;<span style="color:var(--tx2)">Score 16&ndash;20 &middot; Scarce talent &middot; Rec 2.5 pts &middot; Src 3.5 pts</span></div>
+      <div class="tier-row"><div class="t-pip" style="background:var(--rbg);border:1px solid var(--red)"></div><span style="color:var(--rtx);font-weight:500">Tier 4</span>&nbsp;<span style="color:var(--tx2)">Score 21&ndash;25 &middot; Sub-100 candidates &middot; Rec 4.0 pts &middot; Src 5.0 pts</span></div>
+      <div style="font-size:11px;color:var(--tx3);margin-top:8px">Recruiter and sourcer point values differ because sourcers influence the outcome earlier in the funnel and across more reqs simultaneously.</div>
+    </div>
+    <div class="gmc"><h3>Key rules</h3>
+      <div class="grule">&middot; <strong>Quarterly target: 9 pts</strong> for both recruiters and sourcers (editable per person)</div>
+      <div class="grule">&middot; <strong>Recruiters</strong>: 9 pts = 3 hires/month at Tier 1. Higher-tier closes count proportionally more</div>
+      <div class="grule">&middot; <strong>Sourcers</strong>: credit applies to offer extends from sourcer-originated pipeline only</div>
+      <div class="grule">&middot; <strong>Attribution</strong>: first touch + Ashby &ldquo;sourced&rdquo; tag. Credit follows the candidate regardless of team or recruiter change</div>
+      <div class="grule">&middot; <strong>Stall buffer</strong>: 0.5 pts per stalled req outside TA control, capped at 1.0 pts/qtr. Requires a logged reason code</div>
+      <div class="grule">&middot; <strong>Diagnostics</strong> (Step 3) are coaching signals only &mdash; they do not affect point totals</div>
+      <div class="grule">&middot; <strong>Team floors</strong>: Foundations &ge;16 &middot; Network Eng &amp; Managed AI &ge;13 &middot; All other Cloud Eng &ge;11</div>
+    </div>
+  </div>
+  <div class="g-foot"><span>All data saves automatically to your browser. Export CSV on any tab to share with your team. Use &ldquo;Clear all progress data&rdquo; on the Progress tab to reset.</span><button class="btn sm" onclick="toggleGuide()">Got it, close</button></div>
+</div>
+
+<!-- STEP PROGRESS -->
+<div class="stepper">
+  <div class="sp"><button class="spb active" id="sp0" onclick="goStep(0)"><span class="spn">1</span>Score roles</button></div>
+  <div class="connector"></div>
+  <div class="sp"><button class="spb" id="sp1" onclick="goStep(1)"><span class="spn">2</span>Progress</button></div>
+  <div class="connector"></div>
+  <div class="sp"><button class="spb" id="sp2" onclick="goStep(2)"><span class="spn">3</span>Diagnose</button></div>
+  <div class="connector"></div>
+  <div class="sp"><button class="spb" id="sp3" onclick="goStep(3)"><span class="spn">4</span>Reference</button></div>
+</div>
+
+<!-- PANE 0: SCORE ROLES -->
+<div id="pane-0" class="pane on">
+  <div id="scoreBanner" class="warn-note" style="display:none">Live roles unavailable. Enter a role title and paste the JD below. <span style="cursor:pointer;text-decoration:underline" onclick="initAshby()">Retry</span></div>
+  <div class="score-layout">
+    <div>
+      <p class="slabel">Role details</p>
+      <input type="text" id="mTitle" placeholder="Role title (e.g. Staff SWE, Networking)" style="margin-bottom:8px" oninput="document.getElementById('autoBtn').disabled=false" />
+      <input type="text" id="mDept" placeholder="Department (e.g. Foundations, Cloud Availability)" style="margin-bottom:8px" />
+      <div id="liveRow" style="display:none;margin-bottom:8px"><div style="font-size:11px;color:var(--tx3);margin-bottom:4px">Or pick a live Ashby role:</div><select id="roleSelect" onchange="onRoleSelect(this.value)" style="width:100%"><option value="">-- select --</option></select></div>
+      <div id="roleMeta" style="font-size:11px;color:var(--tx3);margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap"></div>
+      <textarea id="jdPaste" rows="5" placeholder="Paste the job description here, then click Auto-score. Claude will read the JD and score each dimension with reasoning." style="margin-bottom:8px;font-size:12px;line-height:1.5"></textarea>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1rem">
+        <button class="btn p" id="autoBtn" onclick="autoScore()">Auto-score with Claude</button>
+        <button class="btn" onclick="resetScore()">Reset</button>
+        <span id="scoreStatus" style="font-size:12px;color:var(--tx3)"></span>
+      </div>
+      <p class="slabel">Dimension scores <span style="font-weight:400;font-size:10px;text-transform:none;letter-spacing:0;color:var(--tx3)">adjust sliders to override</span></p>
+      <div class="dim-row"><div class="dim-hdr"><span class="dim-name">Talent scarcity (30%)</span><span class="dim-val" id="v0">3</span></div><input type="range" min="1" max="5" value="3" step="1" id="r0" oninput="updScore()"><div class="dim-reason" id="reason0"></div></div>
+      <div class="dim-row"><div class="dim-hdr"><span class="dim-name">Technical depth (25%)</span><span class="dim-val" id="v1">3</span></div><input type="range" min="1" max="5" value="3" step="1" id="r1" oninput="updScore()"><div class="dim-reason" id="reason1"></div></div>
+      <div class="dim-row"><div class="dim-hdr"><span class="dim-name">Calibration difficulty (20%)</span><span class="dim-val" id="v2">3</span></div><input type="range" min="1" max="5" value="3" step="1" id="r2" oninput="updScore()"><div class="dim-reason" id="reason2"></div></div>
+      <div class="dim-row"><div class="dim-hdr"><span class="dim-name">Search ambiguity (15%)</span><span class="dim-val" id="v3">3</span></div><input type="range" min="1" max="5" value="3" step="1" id="r3" oninput="updScore()"><div class="dim-reason" id="reason3"></div></div>
+      <div class="dim-row"><div class="dim-hdr"><span class="dim-name">Stakeholder complexity (10%)</span><span class="dim-val" id="v4">3</span></div><input type="range" min="1" max="5" value="3" step="1" id="r4" oninput="updScore()"><div class="dim-reason" id="reason4"></div></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn p" onclick="saveScore()">Save role score</button>
+        <button class="btn ghost" onclick="goStep(1)">Next: Progress &rarr;</button>
+        <span class="fb" id="scoreFb"></span>
+      </div>
+    </div>
+    <div>
+      <div class="score-big"><div class="num" id="scoreNum">15.0</div><div class="sub">Complexity score (out of 25)</div><div class="stb" id="scoreTier">Tier 2 &mdash; Moderate</div></div>
+      <p class="slabel">Dimension breakdown</p>
+      <div id="scoreBars"></div>
+      <div id="assessBox" style="display:none;margin-top:1rem;background:var(--bg2);border-radius:var(--rl);padding:1rem"><p class="slabel">Claude's assessment</p><p id="assessText" style="font-size:12px;color:var(--tx2);line-height:1.6"></p></div>
+      <div id="floorNote" style="display:none;margin-top:8px" class="note"></div>
+    </div>
+  </div>
+  <div style="margin-top:1.75rem">
+
+    <!-- Bulk upload toolbar -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <p class="slabel" style="margin:0">Saved role scores</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn p" onclick="showScoreUpload()" style="font-size:11px;padding:5px 12px">Upload CSV</button>
+        <button class="btn sm" onclick="dlScoreTemplate()">Download template</button>
+        <button class="btn sm" onclick="exportScoresCSV()">Export CSV</button>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border-radius:var(--r);padding:8px 12px;margin-bottom:1rem;font-size:12px;color:var(--tx2);line-height:1.6">
+      <strong>Bulk upload:</strong> Download the template, fill in dimension scores (1–5 each), then click Upload CSV to import all roles at once. You can also upload the pre-scored <code style="font-size:11px;background:var(--bg3);padding:1px 4px;border-radius:3px">role_scores.csv</code> file directly.
+      Required columns: <code style="font-size:11px;background:var(--bg3);padding:1px 4px;border-radius:3px">title, department, scarcity, tech_depth, calibration, ambiguity, stakeholder</code>
+    </div>
+
+    <!-- Score upload modal -->
+    <div class="modal-wrap" id="scoreUploadModal">
+      <div class="modal" style="max-width:600px">
+        <div class="modal-title">Bulk upload role scores</div>
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:1rem;line-height:1.6">
+          Upload a CSV with role titles, departments, and dimension scores (1–5 each).
+          The tool calculates the final weighted score and tier automatically, applying all team floors and role-level overrides.
+          Supports both raw dimension CSVs and pre-scored export files.
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tx2);margin-bottom:1rem;cursor:pointer">
+          <input type="checkbox" id="scoreOverwrite" style="width:auto;margin:0" />
+          Overwrite existing scores with the same title
+        </label>
+        <div id="scoreDropZone"
+          style="border:1.5px dashed var(--bd2);border-radius:var(--rl);padding:1.5rem;text-align:center;cursor:pointer;margin-bottom:1rem;transition:background .15s"
+          onclick="document.getElementById('scoreCsvInput').click()"
+          ondragover="event.preventDefault();this.style.background='var(--bg2)'"
+          ondragleave="this.style.background=''"
+          ondrop="handleScoreFileDrop(event)">
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px">Click to choose a file or drag and drop</div>
+          <div style="font-size:11px;color:var(--tx3)">CSV files only</div>
+          <input type="file" id="scoreCsvInput" accept=".csv" style="display:none" onchange="handleScoreFileSelect(this)" />
+        </div>
+        <div id="scoreUploadPreview" style="display:none;margin-bottom:1rem">
+          <p class="slabel">Preview <span id="scorePreviewCount"></span></p>
+          <div style="max-height:220px;overflow-y:auto;border:0.5px solid var(--bd);border-radius:var(--r)">
+            <table class="tbl" id="scorePreviewTable" style="font-size:11px"></table>
+          </div>
+          <div id="scoreUploadWarnings" style="margin-top:8px;font-size:11px;color:var(--atx)"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" onclick="closeScoreUpload()">Cancel</button>
+          <button class="btn p" id="scoreImportBtn" onclick="importScoreCSV()" disabled>Import</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="savedScoresTable"></div>
+  </div>
+</div>
+
+<!-- PANE 1: SET GOALS -->
+<!-- PANE 1: PROGRESS -->
+<div id="pane-1" class="pane">
+  <div class="note">Log offer accepts (recruiters) and offer extends from sourcer-originated pipeline (sourcers). Weighted points update in real time. Recruiter quarterly target: <strong>9 pts</strong> (= 3 hires/month at Tier 1). Sourcer target: <strong>9 pts</strong> (placeholder — adjust once calibrated).</div>
+
+  <!-- Team summary dashboard -->
+  <div class="team-dash" id="teamDash"></div>
+  <div id="teamProgress" style="margin-bottom:1.25rem"></div>
+
+  <!-- Toolbar -->
+  <div style="display:flex;gap:8px;margin-bottom:.75rem;flex-wrap:wrap;align-items:center">
+    <button class="btn p" onclick="showLogModal()">+ Log offer accept / extend</button>
+    <button class="btn" onclick="showUploadModal()">Upload CSV</button>
+    <button class="btn sm" onclick="exportTrackerCSV()">Export CSV</button>
+    <button class="btn sm" onclick="downloadTemplate()">Download template</button>
+    <button class="btn sm" onclick="clearProgressData()" style="color:var(--red);border-color:var(--red);margin-left:auto">Clear all progress data</button>
+  </div>
+  <div style="background:var(--bg2);border-radius:var(--r);padding:8px 12px;margin-bottom:1rem;font-size:12px;color:var(--tx2);line-height:1.6">
+    <strong>Bulk upload:</strong> Download the template, fill it in, upload to import all at once.
+    Columns: <code style="font-size:11px;background:var(--bg3);padding:1px 4px;border-radius:3px">name, role, type, role_title, tier, date, notes</code>
+    &nbsp;&middot;&nbsp; type = <code style="font-size:11px;background:var(--bg3);padding:1px 4px;border-radius:3px">accept</code> or <code style="font-size:11px;background:var(--bg3);padding:1px 4px;border-radius:3px">extend</code>
+    &nbsp;&middot;&nbsp; tier = 1&ndash;4
+  </div>
+
+  <!-- Log modal -->
+  <div class="modal-wrap" id="logModal">
+    <div class="modal">
+      <div class="modal-title">Log offer accept or extend</div>
+      <div class="modal-ctx" id="logCtx" style="display:none"></div>
+      <div class="form-row"><label class="form-lbl">Person name</label><input type="text" id="logPersonName" placeholder="e.g. Jane Smith" /></div>
+      <div class="form-row"><label class="form-lbl">Role</label><select id="logPersonRole" style="width:100%"><option value="recruiter">Recruiter</option><option value="sourcer">Sourcer</option></select></div>
+      <div class="form-row"><label class="form-lbl">Type</label><select id="logType" style="width:100%" onchange="updatePtsPreview()"><option value="accept">Offer accept (recruiter north star)</option><option value="extend">Offer extend &mdash; sourcer-originated (sourcer north star)</option></select></div>
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Role title</label><input type="text" id="logRole" placeholder="e.g. Staff SWE, Networking" /></div>
+        <div class="form-row"><label class="form-lbl">Tier</label><select id="logTier" style="width:100%" onchange="updatePtsPreview()"><option value="1">Tier 1 &nbsp;(rec 1.0 / src 1.5 pts)</option><option value="2" selected>Tier 2 &nbsp;(rec 1.5 / src 2.0 pts)</option><option value="3">Tier 3 &nbsp;(rec 2.5 / src 3.5 pts)</option><option value="4">Tier 4 &nbsp;(rec 4.0 / src 5.0 pts)</option></select></div>
+      </div>
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Date</label><input type="text" id="logDate" /></div>
+        <div class="form-row"><label class="form-lbl">Notes (optional)</label><input type="text" id="logNotes" placeholder="Any context..." /></div>
+      </div>
+      <div id="logPtsPreview" style="font-size:12px;color:var(--green);margin-bottom:8px;font-weight:500"></div>
+      <div class="modal-footer"><button class="btn" onclick="closeLogModal()">Cancel</button><button class="btn p" onclick="submitLog()">Log it</button></div>
+    </div>
+  </div>
+
+  <!-- Upload modal -->
+  <div class="modal-wrap" id="uploadModal">
+    <div class="modal" style="max-width:540px">
+      <div class="modal-title">Upload progress data</div>
+      <div style="font-size:12px;color:var(--tx2);margin-bottom:1rem;line-height:1.6">Import historical offer accepts and extends in bulk. New people are created automatically — no setup required first.</div>
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('csvInput').click()" ondragover="event.preventDefault();this.style.background='var(--bg2)'" ondragleave="this.style.background=''" ondrop="handleDrop(event)">
+        <div style="font-size:13px;font-weight:500;margin-bottom:4px">Click to choose a file or drag and drop</div>
+        <div style="font-size:11px;color:var(--tx3)">CSV files only</div>
+        <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="handleFileSelect(this)" />
+      </div>
+      <div id="uploadPreview" style="display:none;margin-bottom:1rem">
+        <p class="slabel">Preview <span id="previewCount"></span></p>
+        <div style="max-height:180px;overflow-y:auto;border:0.5px solid var(--bd);border-radius:var(--r)"><table class="tbl" id="previewTable" style="font-size:11px"></table></div>
+        <div id="uploadWarnings" style="margin-top:8px;font-size:11px;color:var(--atx)"></div>
+      </div>
+      <div class="modal-footer"><button class="btn" onclick="closeUploadModal()">Cancel</button><button class="btn p" id="importBtn" onclick="importCSV()" disabled>Import</button></div>
+    </div>
+  </div>
+
+  <!-- Edit log entry modal -->
+  <div class="modal-wrap" id="editLogModal">
+    <div class="modal">
+      <div class="modal-title">Edit log entry</div>
+      <input type="hidden" id="editLogId" />
+      <div class="form-row"><label class="form-lbl">Person name</label><input type="text" id="editPersonName" /></div>
+      <div class="form-row"><label class="form-lbl">Role</label><select id="editPersonRole" style="width:100%"><option value="recruiter">Recruiter</option><option value="sourcer">Sourcer</option></select></div>
+      <div class="form-row"><label class="form-lbl">Type</label><select id="editType" style="width:100%"><option value="accept">Offer accept (recruiter north star)</option><option value="extend">Offer extend &mdash; sourcer-originated (sourcer north star)</option></select></div>
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Role title</label><input type="text" id="editRole" /></div>
+        <div class="form-row"><label class="form-lbl">Tier</label><select id="editTier" style="width:100%"><option value="1">Tier 1 &nbsp;(rec 1.0 / src 1.5 pts)</option><option value="2">Tier 2 &nbsp;(rec 1.5 / src 2.0 pts)</option><option value="3">Tier 3 &nbsp;(rec 2.5 / src 3.5 pts)</option><option value="4">Tier 4 &nbsp;(rec 4.0 / src 5.0 pts)</option></select></div>
+      </div>
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Date</label><input type="text" id="editDate" /></div>
+        <div class="form-row"><label class="form-lbl">Notes</label><input type="text" id="editNotes" /></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeEditLogModal()">Cancel</button>
+        <button class="btn p" onclick="saveEditLog()">Save changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename person modal -->
+  <div class="modal-wrap" id="renameModal">
+    <div class="modal" style="max-width:400px">
+      <div class="modal-title">Rename person</div>
+      <input type="hidden" id="renameOldName" />
+      <div class="form-row">
+        <label class="form-lbl">Current name</label>
+        <input type="text" id="renameOldDisplay" disabled style="background:var(--bg2);color:var(--tx3)" />
+      </div>
+      <div class="form-row">
+        <label class="form-lbl">New name</label>
+        <input type="text" id="renameNewName" placeholder="Enter new name..." />
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeRenameModal()">Cancel</button>
+        <button class="btn p" onclick="saveRename()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="trackerCards"></div>
+  <div id="trackerEmpty" class="empty-state" style="display:none">
+    <div style="font-size:32px;margin-bottom:12px">&#127919;</div>
+    <h3>No progress logged yet</h3>
+    <p>Click "+ Log offer accept / extend" to record your first close, or upload a CSV to import historical data in bulk.</p>
+    <button class="btn p" onclick="showLogModal()">Log first entry &rarr;</button>
+  </div>
+  <div class="nav-row"><button class="btn" onclick="goStep(0)">&larr; Score roles</button><button class="btn ghost" onclick="goStep(2)">Next: Diagnose &rarr;</button></div>
+</div>
+
+<!-- PANE 3: DIAGNOSTICS -->
+<div id="pane-2" class="pane">
+  <div class="note">Supplementary coaching data &mdash; tracks bottlenecks, not point totals. <span style="color:var(--gtx);font-weight:500">Green</span> = at or above target &nbsp;&middot;&nbsp; <span style="color:var(--atx);font-weight:500">Amber</span> = within 10% below &nbsp;&middot;&nbsp; <span style="color:var(--rtx);font-weight:500">Red</span> = below target.</div>
+  <div style="display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap">
+    <button class="btn p" onclick="showDiagModal()">+ Log funnel data</button>
+    <select id="diagPF" class="btn" style="padding:7px 10px" onchange="renderDiagnostics()"><option value="">All people</option></select>
+    <select id="diagRF" class="btn" style="padding:7px 10px" onchange="renderDiagnostics()"><option value="">All roles</option></select>
+  </div>
+
+  <div class="modal-wrap" id="diagModal">
+    <div class="modal">
+      <div class="modal-title">Log funnel data</div>
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Person</label><select id="diagPerson" style="width:100%"><option value="">Select...</option></select></div>
+        <div class="form-row"><label class="form-lbl">Role / req</label><input type="text" id="diagRole" placeholder="Role title" /></div>
+        <div class="form-row"><label class="form-lbl">Tier</label><select id="diagTier" style="width:100%"><option value="1">Tier 1</option><option value="2" selected>Tier 2</option><option value="3">Tier 3</option><option value="4">Tier 4</option></select></div>
+        <div class="form-row"><label class="form-lbl">Week of</label><input type="text" id="diagWeek" /></div>
+      </div>
+      <p class="slabel" style="margin-top:4px">Funnel counts</p>
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Outreach sent</label><input type="number" id="dOut" placeholder="0" /></div>
+        <div class="form-row"><label class="form-lbl">Responses</label><input type="number" id="dRes" placeholder="0" /></div>
+        <div class="form-row"><label class="form-lbl">Recruiter screens</label><input type="number" id="dRec" placeholder="0" /></div>
+        <div class="form-row"><label class="form-lbl">HM screens</label><input type="number" id="dHM" placeholder="0" /></div>
+        <div class="form-row"><label class="form-lbl">Technical screens</label><input type="number" id="dTech" placeholder="0" /></div>
+        <div class="form-row"><label class="form-lbl">Onsites</label><input type="number" id="dOn" placeholder="0" /></div>
+        <div class="form-row"><label class="form-lbl">Offers extended</label><input type="number" id="dOff" placeholder="0" /></div>
+        <div class="form-row"><label class="form-lbl">Offer accepts</label><input type="number" id="dAcc" placeholder="0" /></div>
+      </div>
+      <div class="form-row"><label class="form-lbl">SLA violations (comma-separated)</label><input type="text" id="dSLA" placeholder="none" /></div>
+      <div class="form-row"><label class="form-lbl">Stall reason</label><select id="dStall" style="width:100%"><option value="">None</option><option value="reorg">Active reorg</option><option value="hold">Headcount on hold / scope change</option><option value="comp">Comp band not approved</option><option value="rescope">Re-scoped mid-search</option><option value="new_hm">New HM assigned</option><option value="escalation">Stall escalation triggered</option></select></div>
+      <div class="modal-footer"><button class="btn" onclick="closeDiagModal()">Cancel</button><button class="btn p" onclick="submitDiag()">Save</button></div>
+    </div>
+  </div>
+
+  <div id="diagCards"></div>
+  <div id="diagEmpty" class="empty-state" style="display:none"><h3>No diagnostic data yet</h3><p>Log weekly funnel data to start seeing PTR against tier-adjusted targets.</p><button class="btn p" onclick="showDiagModal()">Log your first entry</button></div>
+  <div class="nav-row"><button class="btn" onclick="goStep(1)">&larr; Progress</button><button class="btn ghost" onclick="goStep(3)">Reference guide &rarr;</button></div>
+</div>
+
+<!-- PANE 4: REFERENCE -->
+<div id="pane-3" class="pane">
+  <div class="g2" style="margin-bottom:1rem">
+    <div class="card"><p class="slabel">Recruiter point values</p><table class="tbl"><tbody>
+      <tr><td>Offer accept &mdash; <span class="tip-wrap"><span class="tb t1b">Tier 1</span><span class="tip">Score 5-10. Broadly available. ~80% close probability.</span></span></td><td style="text-align:right;font-weight:500">1.0 pts</td></tr>
+      <tr><td>Offer accept &mdash; <span class="tip-wrap"><span class="tb t2b">Tier 2</span><span class="tip">Score 11-15. Domain specific. ~60% close probability.</span></span></td><td style="text-align:right;font-weight:500">1.5 pts</td></tr>
+      <tr><td>Offer accept &mdash; <span class="tip-wrap"><span class="tb t3b">Tier 3</span><span class="tip">Score 16-20. Scarce talent. ~35% close probability.</span></span></td><td style="text-align:right;font-weight:500">2.5 pts</td></tr>
+      <tr><td>Offer accept &mdash; <span class="tip-wrap"><span class="tb t4b">Tier 4</span><span class="tip">Score 21-25. Sub-100 global candidates. ~20% close probability.</span></span></td><td style="text-align:right;font-weight:500">4.0 pts</td></tr>
+      <tr><td style="color:var(--tx3);font-size:12px">Stalled search credit (per eligible req)</td><td style="text-align:right;font-size:12px;color:var(--tx3);font-weight:500">0.5 pts</td></tr>
+      <tr><td style="color:var(--tx3);font-size:12px">Stall credit cap / quarter</td><td style="text-align:right;font-size:12px;color:var(--tx3);font-weight:500">1.0 pts max</td></tr>
+      <tr><td style="color:var(--tx3);font-size:12px">Min Tier 1-2 floor</td><td style="text-align:right;font-size:12px;color:var(--tx3);font-weight:500">40% of target</td></tr>
+    </tbody></table></div>
+    <div class="card"><p class="slabel">Sourcer point values (sourcer-originated)</p><table class="tbl"><tbody>
+      <tr><td>Offer extend &mdash; <span class="tip-wrap"><span class="tb t1b">Tier 1</span><span class="tip">~70% offer-to-extend expected for Tier 1 pipeline.</span></span></td><td style="text-align:right;font-weight:500">1.5 pts</td></tr>
+      <tr><td>Offer extend &mdash; <span class="tip-wrap"><span class="tb t2b">Tier 2</span><span class="tip">~55% offer-to-extend expected for Tier 2 pipeline.</span></span></td><td style="text-align:right;font-weight:500">2.0 pts</td></tr>
+      <tr><td>Offer extend &mdash; <span class="tip-wrap"><span class="tb t3b">Tier 3</span><span class="tip">~30% offer-to-extend expected for Tier 3 pipeline.</span></span></td><td style="text-align:right;font-weight:500">3.5 pts</td></tr>
+      <tr><td>Offer extend &mdash; <span class="tip-wrap"><span class="tb t4b">Tier 4</span><span class="tip">~15% offer-to-extend expected for Tier 4 pipeline.</span></span></td><td style="text-align:right;font-weight:500">5.0 pts</td></tr>
+      <tr><td style="color:var(--tx3);font-size:12px">Attribution</td><td style="text-align:right;font-size:12px;color:var(--tx3);font-weight:500">First touch + Ashby sourced tag</td></tr>
+      <tr><td style="color:var(--tx3);font-size:12px">Cool-down period</td><td style="text-align:right;font-size:12px;color:var(--tx3);font-weight:500">3 months</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="card" style="margin-bottom:1rem"><p class="slabel">Team-level complexity floors</p><table class="tbl"><tbody>
+    <tr><td><strong>Foundations</strong></td><td>Floor: <span class="tip-wrap"><span class="tb t3b">Tier 3</span><span class="tip">Most niche org. Kernel, hypervisor, hardware-specific. Very limited transferable pool.</span></span> &mdash; score never below 16</td></tr>
+    
+    <tr><td><strong>Managed AI Services</strong></td><td>Floor: High <span class="tip-wrap"><span class="tb t2b">Tier 2</span><span class="tip">Growing pool but fast-moving bar and competitive comp environment.</span></span> &mdash; score never below 13</td></tr>
+    <tr><td><strong>Cloud Management</strong></td><td>Floor: <span class="tip-wrap"><span class="tb t2b">Tier 2</span><span class="tip">Platform / data engineers more broadly available in market.</span></span> &mdash; score never below 11</td></tr>
+    <tr><td><strong>Cloud Availability, SRE</strong></td><td>Floor: <span class="tip-wrap"><span class="tb t2b">Tier 2</span><span class="tip">Wider transferable pool from cloud infra and SRE backgrounds.</span></span> &mdash; score never below 11</td></tr>
+    <tr><td><strong>Developer Experience, CAPE</strong></td><td>Floor: <span class="tip-wrap"><span class="tb t2b">Tier 2</span><span class="tip">Accessible talent. Let JD specifics drive score up if warranted.</span></span> &mdash; score never below 11</td></tr>
+  </tbody></table></div>
+  <div class="card" style="margin-bottom:1rem"><p class="slabel">Role-level overrides</p><table class="tbl"><tbody>
+    <tr><td><strong>Principal or Staff+ title</strong></td><td>Minimum <span class="tip-wrap"><span class="tb t3b">Tier 3</span><span class="tip">Seniority drives scarcity and stakeholder complexity regardless of team.</span></span> (score &ge; 16)</td></tr>
+    <tr><td><strong>JD requires XDP/eBPF, QEMU/KVM, DPU/SmartNIC, NCCL, P4/gNMI</strong></td><td>Push toward <span class="tip-wrap"><span class="tb t4b">Tier 4</span><span class="tip">These skills have sub-100 global candidates meeting the full stack requirement.</span></span></td></tr>
+    <tr><td><strong>Director+ title</strong></td><td>+2 points on stakeholder complexity</td></tr>
+    <tr><td><strong>Entry-level or Associate title</strong></td><td>Can drop one tier below the team floor</td></tr>
+  </tbody></table></div>
+  <div class="card" style="margin-bottom:1rem"><p class="slabel">PTR targets by tier</p><table class="tbl">
+    <thead><tr><th>Stage</th><th>Tier 1</th><th>Tier 2</th><th>Tier 3</th><th>Tier 4</th></tr></thead>
+    <tbody>
+      <tr><td>Outreach response rate</td><td>30%+</td><td>25%+</td><td>20%+</td><td>17%+</td></tr>
+      <tr><td>Recruiter Screen &rarr; HM Screen</td><td>60%+</td><td>55%+</td><td>45%+</td><td>35%+</td></tr>
+      <tr><td>HM Screen &rarr; Technical Screen</td><td>55%+</td><td>50%+</td><td>40%+</td><td>30%+</td></tr>
+      <tr><td>Technical Screen &rarr; Onsite</td><td>60%+</td><td>55%+</td><td>45%+</td><td>35%+</td></tr>
+      <tr><td>Onsite &rarr; Offer</td><td>50%+</td><td>45%+</td><td>35%+</td><td>25%+</td></tr>
+    </tbody>
+  </table></div>
+  <div class="card" style="margin-bottom:1rem"><p class="slabel">Weekly outreach targets (sourcers)</p><table class="tbl">
+    <thead><tr><th>Tier</th><th>Outreach / week</th><th>Response rate</th><th>Pipeline</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tb t1b">Tier 1</span></td><td>60-75</td><td>30%+</td><td>1.5x required pipeline</td></tr>
+      <tr><td><span class="tb t2b">Tier 2</span></td><td>55-70</td><td>25%+</td><td>1.5x required pipeline</td></tr>
+      <tr><td><span class="tb t3b">Tier 3</span></td><td>45-60</td><td>20%+</td><td>1.5x required pipeline</td></tr>
+      <tr><td><span class="tb t4b">Tier 4</span></td><td>35-50</td><td>17%+</td><td>1.5x required pipeline</td></tr>
+    </tbody>
+  </table></div>
+  <div class="card"><p class="slabel">Stalled search buffer &mdash; eligible reasons</p><table class="tbl"><tbody>
+    <tr><td>Active reorg within supported engineering org</td></tr>
+    <tr><td>Headcount on hold or scope change by engineering leadership</td></tr>
+    <tr><td>Compensation band not approved or under revision</td></tr>
+    <tr><td>Role re-scoped after sourcing was already underway</td></tr>
+    <tr><td>New HM assigned mid-search requiring re-calibration</td></tr>
+    <tr><td>Pipeline stall escalation triggered per partnership framework</td></tr>
+  </tbody></table><div style="font-size:11px;color:var(--tx3);margin-top:8px">All stall credits require a logged reason code. Cap: 1.0 pts per recruiter per quarter.</div></div>
+</div>
+
+</div><!-- .wrap -->
+<div class="credit">Designed by Nicole Shiu &middot; Talent Intelligence</div>
+
+
+</div>
+
+<!-- ── SOURCING ENGINE VIEW ── -->
+<div class="tiq-view" id="tiq-view-engine">
+
+<!-- SAVE/LOAD BAR -->
+
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    
+    <div>
+      <div class="htitle">Sourcing <span>Decision Engine</span></div>
+      <div class="hsub">Allocation queue &middot; Sourcer capacity &middot; Domain-matched allocation</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="toggle-group">
+      <span class="toggle-lbl">Tier 2 reqs:</span>
+      <label class="toggle-sw"><input type="checkbox" id="tog1" onchange="applyToggles()"><span class="slider"></span></label>
+      <span class="toggle-val" id="tog1lbl" style="color:var(--tx3)">Recruiter-led</span>
+    </div>
+    <!-- Toggle 2: Sourcer at capacity -->
+    <div class="toggle-group">
+      <span class="toggle-lbl">Sourcer at capacity:</span>
+      <label class="toggle-sw"><input type="checkbox" id="tog2" onchange="applyToggles()"><span class="slider"></span></label>
+      <span class="toggle-val" id="tog2lbl" style="color:var(--tx3)">Recruiter-led</span>
+    </div>
+    <button class="btn p" onclick="showAddReqModal()">+ Add req</button>
+    <button class="btn" onclick="autoAllocate()">Auto-allocate all</button>
+    <button class="btn" onclick="clearAllAllocations()" style="color:var(--red);border-color:rgba(192,68,74,0.4)">Clear all</button>
+    <button class="btn sm" onclick="exportAllocation()">Export CSV</button>
+  </div>
+</div>
+
+<!-- CAPACITY STRIP -->
+<div class="cap-strip">
+  <div class="cap-card"><div class="cap-num" id="cap-total" style="color:var(--amber)">0</div><div class="cap-lbl">Total reqs</div></div>
+  <div class="cap-card"><div class="cap-num" id="cap-assigned" style="color:#5bc49b">0</div><div class="cap-lbl">Assigned</div></div>
+  <div class="cap-card"><div class="cap-num" id="cap-unassigned" style="color:#f8a8a7">0</div><div class="cap-lbl">Unassigned</div></div>
+  <div class="cap-card"><div class="cap-num" id="cap-capacity" style="color:var(--blue)">0</div><div class="cap-lbl">Total capacity remaining</div></div>
+</div>
+
+  <div class="gap-banner-txt">
+    <div class="gap-assign">
+      <input type="text" id="leadershipAssignName" placeholder="Sourcer name..." />
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" onclick="switchTab('queue')">Allocation queue</button>
+  <button class="tab" onclick="switchTab('board')">Sourcer board</button>
+  <button class="tab" onclick="switchTab('setup')">Sourcer setup</button>
+</div>
+
+<!-- QUEUE PANE -->
+<div id="pane-queue" class="pane on">
+  <div class="filter-row">
+    <span style="font-size:11px;color:var(--tx3);margin-right:4px">Filter:</span>
+    <button class="filter-chip on" onclick="setFilter('all',this)">All</button>
+    <button class="filter-chip" onclick="setFilter('unassigned',this)">Unassigned</button>
+    <button class="filter-chip" onclick="setFilter('dedicated',this)">Dedicated sourcer</button>
+    <button class="filter-chip" onclick="setFilter('queue',this)">Queued</button>
+    <button class="filter-chip" onclick="setFilter('recruiter',this)">Recruiter-led</button>
+    <button class="filter-chip" onclick="setFilter('gap',this)">Coverage gap</button>
+    <input type="text" id="queueSearch" placeholder="Search by role or recruiter..." oninput="renderQueue()" style="width:200px;font-size:11px;padding:4px 8px;margin-left:auto" />
+  </div>
+  <div class="qtbl-wrap">
+    <table class="qtbl">
+      <thead><tr>
+        
+        <th>Role</th>
+        <th>Dept / Subteam</th>
+        <th>Tier</th>
+        <th>Recruiter</th>
+        
+        <th>Complexity</th>
+        <th>Recommendation</th>
+        
+        <th>Assigned sourcer</th>
+        <th style="width:60px"></th>
+      </tr></thead>
+      <tbody id="queueTbody"></tbody>
+    </table>
+  </div>
+  <div id="queueEmpty" style="display:none;text-align:center;padding:3rem;color:var(--tx3);font-size:13px">
+    No reqs yet. Click "+ Add req" to add your first one, or pull from saved role scores.
+    <br><br>
+    <button class="btn p" onclick="pullFromScores()">Pull from saved role scores</button>
+  </div>
+</div>
+
+<!-- BOARD PANE -->
+<div id="pane-board" class="pane">
+  <div id="boardGapNote" style="display:none" class="warn"></div>
+  <div class="sourcers-grid" id="sourcerCards"></div>
+</div>
+
+<!-- SETUP PANE -->
+<div id="pane-setup" class="pane">
+  <div class="note">Configure sourcer profiles. Primary and Dedicated domains drive allocation priority. Secondary and Flex domains allow cross-assignment when capacity allows. All settings are saved automatically.</div>
+  <div style="display:flex;gap:8px;margin-bottom:1rem">
+    <button class="btn p" onclick="showAddSourcerModal()">+ Add sourcer</button>
+    <button class="btn sm ghost" onclick="resetToDefaults()">Reset to team defaults</button>
+  </div>
+  <div id="setupCards" class="sourcers-grid"></div>
+</div>
+
+<!-- ADD REQ MODAL -->
+<div class="modal-wrap" id="addReqModal">
+  <div class="modal">
+    <div class="modal-title">Add req to queue</div>
+    <div class="g2">
+      <div class="form-row"><label class="form-lbl">Role title</label><input type="text" id="reqTitle" placeholder="e.g. Staff SWE, Networking" /></div>
+      <div class="form-row"><label class="form-lbl">Department / Domain</label>
+        <select id="reqDept">
+          <option value="">Select domain...</option>
+          <option>Foundations</option><option>Cloud Availability</option>
+          <option>Managed AI Services</option><option>Cloud Management</option><option>Data</option>
+          <option>Developer Experience</option><option>IT</option><option>Security</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row"><label class="form-lbl">Sub-team (optional)</label><input type="text" id="reqSubteam" placeholder="e.g. Storage, Compute, SRE, CAPE..." /></div>
+    <div class="g3">
+      <div class="form-row"><label class="form-lbl">Tier</label>
+        <select id="reqTier">
+          <option value="1">Tier 1</option><option value="2" selected>Tier 2</option><option value="3">Tier 3</option><option value="4">Tier 4</option>
+        </select>
+      </div>
+
+      <div class="form-row"><label class="form-lbl">Complexity score</label>
+        <input type="number" id="reqComplexity" min="5" max="25" placeholder="5&#8211;25" style="width:100%" oninput="syncTierFromComplexity()" />
+        <div style="font-size:10px;color:var(--tx3);margin-top:3px">From Performance System &middot; auto-sets tier</div>
+      </div>
+    </div>
+    <div class="form-row"><label class="form-lbl">Recruiter</label><input type="text" id="reqRecruiter" placeholder="Recruiter name" /></div>
+    <div class="modal-footer">
+      <button class="btn ghost" onclick="closeAddReqModal()">Cancel</button>
+      <button class="btn p" onclick="saveReq()">Add to queue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ASSIGN SOURCER MODAL -->
+<div class="modal-wrap" id="assignModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">Assign sourcer</div>
+    <input type="hidden" id="assignReqId" />
+    <div id="assignReqInfo" style="background:var(--bg3);border-radius:var(--r);padding:10px;margin-bottom:1rem;font-size:12px;color:var(--tx2)"></div>
+    <p class="slabel">Sourcer recommendations</p>
+    <div id="assignOptions" style="max-height:300px;overflow-y:auto"></div>
+    <div class="form-row" style="margin-top:12px">
+      <label class="form-lbl">Or assign manually</label>
+      <select id="assignManual" style="width:100%"><option value="">Select sourcer...</option></select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn ghost" onclick="closeAssignModal()">Cancel</button>
+      <button class="btn p" onclick="confirmAssign()">Confirm assignment</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD SOURCER MODAL -->
+<div class="modal-wrap" id="addSourcerModal">
+  <div class="modal">
+    <div class="modal-title" id="addSourcerTitle">Add sourcer</div>
+    <input type="hidden" id="editSourcerKey" />
+    <div class="g2">
+      <div class="form-row"><label class="form-lbl">Name</label><input type="text" id="srcName" placeholder="Full name" /></div>
+      <div class="form-row"><label class="form-lbl">Type</label>
+        <select id="srcType">
+          <option value="embedded">Embedded</option><option value="dedicated">Dedicated</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-lbl">Primary domain(s)</label>
+      <div id="primaryTags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px"></div>
+      <div style="display:flex;gap:6px">
+        <select id="primaryAddSel" style="flex:1;font-size:12px;padding:5px 8px">
+          <option value="">+ Add primary domain...</option>
+          <option>Foundations</option><option>Cloud Availability</option>
+          <option>Managed AI Services</option><option>Cloud Management</option><option>Data</option>
+          <option>Developer Experience</option><option>IT</option><option>Security</option>
+        </select>
+        <input type="text" id="primaryAddCustom" placeholder="Or type custom..." style="flex:1;font-size:12px;padding:5px 8px" />
+        <button class="btn sm" onclick="addDomainTag('primary')" style="white-space:nowrap">Add</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-lbl">Secondary domain</label>
+      <div id="secondaryTags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px"></div>
+      <div style="display:flex;gap:6px">
+        <select id="secondaryAddSel" style="flex:1;font-size:12px;padding:5px 8px">
+          <option value="">+ Add secondary domain...</option>
+          <option>Foundations</option><option>Cloud Availability</option>
+          <option>Managed AI Services</option><option>Cloud Management</option><option>Data</option>
+          <option>Developer Experience</option><option>IT</option><option>Security</option>
+        </select>
+        <input type="text" id="secondaryAddCustom" placeholder="Or type custom..." style="flex:1;font-size:12px;padding:5px 8px" />
+        <button class="btn sm" onclick="addDomainTag('secondary')" style="white-space:nowrap">Add</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-lbl">Flex domains</label>
+      <div id="flexTags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px"></div>
+      <div style="display:flex;gap:6px">
+        <select id="flexAddSel" style="flex:1;font-size:12px;padding:5px 8px">
+          <option value="">+ Add flex domain...</option>
+          <option>Foundations</option><option>Cloud Availability</option>
+          <option>Managed AI Services</option><option>Cloud Management</option><option>Data</option>
+          <option>Developer Experience</option><option>IT</option><option>Security</option>
+        </select>
+        <input type="text" id="flexAddCustom" placeholder="Or type custom..." style="flex:1;font-size:12px;padding:5px 8px" />
+        <button class="btn sm" onclick="addDomainTag('flex')" style="white-space:nowrap">Add</button>
+      </div>
+    </div>
+    <div class="form-row"><label class="form-lbl">Capacity cap</label>
+      <input type="number" id="srcCap" min="7" max="15" value="8" style="width:100px" />
+      <span style="font-size:11px;color:var(--tx3);margin-left:8px">reqs (7–10 typical)</span>
+    </div>
+    <div class="modal-footer">
+      <button class="btn ghost" onclick="closeAddSourcerModal()">Cancel</button>
+      <button class="btn p" onclick="saveSourcer()">Save sourcer</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- .wrap -->
+<footer style="text-align:center;padding:1.5rem;font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:.04em;position:relative;z-index:1">Designed by Nicole Shiu &middot; Talent Intelligence</footer>
+
+
+
+</div>
+
+<script>
+'use strict';
+
+// ── ROUTER ──
+var _view = 'home';
+var SK = 'crusoe_ta_v3';
+var state = {jobs:[],roleScores:{},goals:{},tracker:[],diagnostics:[],allocation:{},sourcers:{},allocReqs:{}};
+function showView(v) {
+  _view = v;
+  ['home','perf','engine'].forEach(function(id) {
+    document.getElementById('tiq-view-'+id).classList.toggle('tiq-active', id===v);
+    document.getElementById('ntab-'+id).classList.toggle('active-tab', id===v);
+  });
+  window.scrollTo({top:0,behavior:'instant'});
+  if(v==='home'){ try{loadStats();}catch(e){} }
+  if(v==='perf'){
+    try{renderSavedScores();}catch(e){}
+    try{renderTracker();}catch(e){}
+    try{renderTeamDash();}catch(e){}
+  }
+  if(v==='engine'){
+    try{renderQueue();}catch(e){}
+    try{renderCapStrip();}catch(e){}
+    
+    try{renderBoard();}catch(e){}
+  }
+}
+
+// ── SAVE / LOAD ──
+var _saveTimer = null;
+function markUnsaved(){
+  var d=document.getElementById('gDot');
+  if(d) d.className='sdot stale';
+  clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(function(){
+    try{localStorage.setItem(SK,JSON.stringify(state));}catch(e){}
+    var d2=document.getElementById('gDot');
+    if(d2) d2.className='sdot';
+  },1500);
+}
+function saveSnapshot(){
+  try{
+    var data = JSON.stringify(state, null, 2);
+    var blob = new Blob([data], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'talentiq_' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }catch(e){alert('Save error: '+e.message);}
+}
+function loadSnapshot(input){
+  var file=input.files[0]; if(!file) return;
+  var r=new FileReader();
+  r.onload=function(e){
+    try{
+      var loaded=JSON.parse(e.target.result);
+      Object.keys(loaded).forEach(function(k){state[k]=loaded[k];});
+      localStorage.setItem(SK,JSON.stringify(state));
+      showView(_view);
+      try{loadStats();}catch(ex){}
+    }catch(err){alert('Invalid snapshot: '+err.message);}
+    input.value='';
+  };
+  r.readAsText(file);
+}
+
+// ── PERFORMANCE SYSTEM ──
+var W=[.30,.25,.20,.15,.10];
+var COLS=['#D85A30','#1D9E75','#185FA5','#BA7517','#884EB7'];
+var DNAMES=['Talent scarcity','Technical depth','Calibration difficulty','Search ambiguity','Stakeholder complexity'];
+var REC_PTS={1:1.0,2:1.5,3:2.5,4:4.0};
+var SRC_PTS={1:1.5,2:2.0,3:3.5,4:5.0};
+var CLOSE_P={1:.80,2:.60,3:.35,4:.20};
+var EXTEND_P={1:.70,2:.55,3:.30,4:.15};
+var PTR_T={rr:{1:.30,2:.25,3:.20,4:.17},rh:{1:.60,2:.55,3:.45,4:.35},ht:{1:.55,2:.50,3:.40,4:.30},to:{1:.60,2:.55,3:.45,4:.35},oo:{1:.50,2:.45,3:.35,4:.25}};
+var SCORE_SYS='You are a talent intelligence analyst for an AI infrastructure company. Score job roles on 5 recruiting complexity dimensions (each 1-5):\n1. Talent scarcity (30%): 1=broadly available, 5=sub-100 global candidates\n2. Technical depth (25%): 1=generalist, 5=3+ cliff-edge domains required simultaneously\n3. Calibration difficulty (20%): 1=clear scope, 5=novel R&D multi-stakeholder no internal bar\n4. Search ambiguity (15%): 1=clear LinkedIn signals, 5=obscure domain requiring deep judgment\n5. Stakeholder complexity (10%): 1=IC with 1 HM standard comp, 5=Director+ exec sign-off\nTeam floors: Foundations>=16, Network Eng & Managed AI>=13, other Cloud Eng>=11.\nOverrides: Principal/Staff+>=16; XDP/eBPF/QEMU/KVM/DPU/NCCL/P4/gNMI push toward 21+; Director+ adds 2 to stakeholder; Entry/Associate can drop one tier.\nReturn ONLY valid JSON: {"scores":[s1,s2,s3,s4,s5],"reasons":["r1","r2","r3","r4","r5"],"summary":"1-2 sentence assessment","floor_applied":"team name or null"}';
+
+// state declared above in router section
+var recReqs=[],srcReqs=[],recStalls=[],parsedRows=[],curStep=0;
+
+function loadState(){
+  // Clear all old storage keys from previous versions
+  ['crusoe_ta_v1','crusoe_ta_v2'].forEach(function(k){try{localStorage.removeItem(k);}catch(e){}});
+  try{
+    var s=localStorage.getItem(SK);
+    if(s){var p=JSON.parse(s);Object.keys(p).forEach(function(k){state[k]=p[k];});}
+  }catch(e){}
+}
+function saveState(){try{localStorage.setItem(SK,JSON.stringify(state));markUnsaved();}catch(e){}}
+
+function calcScore(v){return v.reduce(function(s,x,i){return s+Math.min(5,Math.max(1,x))*W[i]*5;},0);}
+function tier(sc){
+  if(sc<=10)return{n:1,l:'Tier 1 - Low',c:'#3B6D11',bg:'#EAF3DE'};
+  if(sc<=15)return{n:2,l:'Tier 2 - Moderate',c:'#185FA5',bg:'#E6F1FB'};
+  if(sc<=20)return{n:3,l:'Tier 3 - High complexity',c:'#854F0B',bg:'#FAEEDA'};
+  return{n:4,l:'Tier 4 - Extreme / niche',c:'#A32D2D',bg:'#FCEBEB'};
+}
+function getVals(){return[0,1,2,3,4].map(function(i){return Math.min(5,Math.max(1,parseInt(document.getElementById('r'+i).value)||1));});}
+
+function updScore(){
+  var v=getVals(),sc=calcScore(v),t=tier(sc);
+  v.forEach(function(x,i){document.getElementById('v'+i).textContent=x;});
+  document.getElementById('scoreNum').textContent=sc.toFixed(1);
+  var te=document.getElementById('scoreTier');te.textContent=t.l;te.style.color=t.c;te.style.background=t.bg;
+  document.getElementById('scoreBars').innerHTML=DNAMES.map(function(name,i){
+    var c=v[i]*W[i]*5,pct=Math.round(c/25*100);
+    return '<div class="bar-row"><div class="bar-lbl">'+name+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+COLS[i]+'"></div></div><div class="bar-val">'+c.toFixed(1)+'</div></div>';
+  }).join('');
+}
+function resetScore(){[0,1,2,3,4].forEach(function(i){document.getElementById('r'+i).value=3;document.getElementById('reason'+i).textContent='';});document.getElementById('assessBox').style.display='none';document.getElementById('floorNote').style.display='none';updScore();}
+
+async function initAshby(){
+  var dot=document.getElementById('dot'),lbl=document.getElementById('synclbl'),rb=document.getElementById('refreshBtn');
+  dot.className='dot spin';lbl.textContent='Connecting...';rb.style.display='none';
+  try{
+    var res=await fetch('https://api.ashbyhq.com/posting-api/job-board/Crusoe');
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    var data=await res.json();
+    state.jobs=(data.jobs||[]).filter(function(j){return j.isListed!==false;}).map(function(j){return{id:j.id,title:j.title,department:j.departmentName||j.team||'',location:j.locationName||'',jobUrl:j.jobUrl||'',descriptionPlain:(j.descriptionPlain||'').slice(0,3000)};}).sort(function(a,b){return a.title.localeCompare(b.title);});
+    var sel=document.getElementById('roleSelect'),byDept={},html='<option value="">-- select --</option>';
+    state.jobs.forEach(function(j){var d=j.department||'Other';if(!byDept[d])byDept[d]=[];byDept[d].push(j);});
+    Object.keys(byDept).sort().forEach(function(dept){html+='<optgroup label="'+dept+'">';byDept[dept].forEach(function(j){html+='<option value="'+j.id+'">'+j.title+'</option>';});html+='</optgroup>';});
+    sel.innerHTML=html;
+    document.getElementById('liveRow').style.display='block';
+    document.getElementById('scoreBanner').style.display='none';
+    dot.className='dot ok';lbl.textContent=state.jobs.length+' live roles';rb.style.display='inline-block';
+  }catch(e){
+    dot.className='dot warn';lbl.textContent='Manual mode';rb.style.display='inline-block';
+    document.getElementById('scoreBanner').style.display='block';
+    document.getElementById('autoBtn').disabled=false;
+  }
+}
+
+function onRoleSelect(id){
+  var j=state.jobs.find(function(x){return x.id===id;});if(!j)return;
+  document.getElementById('mTitle').value=j.title;document.getElementById('mDept').value=j.department||'';
+  var parts=[];if(j.department)parts.push(j.department);if(j.location)parts.push(j.location);
+  if(j.jobUrl)parts.push('<a href="'+j.jobUrl+'" target="_blank" style="color:var(--tx3);border-bottom:1px solid var(--bd)">View on Ashby</a>');
+  document.getElementById('roleMeta').innerHTML=parts.join(' &middot; ');
+  document.getElementById('jdPaste').value=j.descriptionPlain||'';
+  if(state.roleScores[id]){var s=state.roleScores[id];s.vals.forEach(function(v,i){document.getElementById('r'+i).value=v;document.getElementById('reason'+i).textContent=s.reasons&&s.reasons[i]?s.reasons[i]:'';});if(s.summary){document.getElementById('assessText').textContent=s.summary;document.getElementById('assessBox').style.display='block';}}else{resetScore();}
+  updScore();
+}
+
+async function autoScore(){
+  var jd=document.getElementById('jdPaste').value.trim(),title=document.getElementById('mTitle').value.trim(),dept=document.getElementById('mDept').value.trim();
+  if(!jd&&!title){setSS('Enter a role title or paste a JD first');return;}
+  document.getElementById('autoBtn').disabled=true;setSS('Analyzing...',true);
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:SCORE_SYS,messages:[{role:'user',content:'Role: '+title+'\nDepartment: '+dept+'\n\nJob Description:\n'+(jd||title).slice(0,4000)+'\n\nReturn JSON only.'}]})});
+    var data=await res.json();
+    var text='';(data.content||[]).forEach(function(b){if(b.type==='text')text+=b.text;});
+    var m=text.replace(/```json|```/g,'').trim().match(/\{[\s\S]*\}/);
+    if(!m)throw new Error('No JSON in response');
+    var parsed=JSON.parse(m[0]);
+    parsed.scores.forEach(function(v,i){document.getElementById('r'+i).value=Math.max(1,Math.min(5,Math.round(v)));document.getElementById('reason'+i).textContent=parsed.reasons&&parsed.reasons[i]?parsed.reasons[i]:'';});
+    if(parsed.summary){document.getElementById('assessText').textContent=parsed.summary;document.getElementById('assessBox').style.display='block';}
+    if(parsed.floor_applied&&parsed.floor_applied!=='null'){var fn=document.getElementById('floorNote');fn.textContent='Team floor applied: '+parsed.floor_applied;fn.style.display='block';}
+    updScore();setSS('Scored by Claude - adjust sliders to override');
+  }catch(e){setSS('Error: '+e.message);}
+  document.getElementById('autoBtn').disabled=false;
+}
+function setSS(msg,loading){document.getElementById('scoreStatus').innerHTML=loading?'<span class="spinner"></span>'+msg:msg;}
+
+function saveScore(){
+  var selVal=document.getElementById('roleSelect').value,job=state.jobs.find(function(j){return j.id===selVal;});
+  var title=job?job.title:(document.getElementById('mTitle').value.trim()||'Unnamed role');
+  var dept=job?job.department:(document.getElementById('mDept').value.trim()||'');
+  var v=getVals(),sc=calcScore(v),id=selVal||'m_'+Date.now();
+  state.roleScores[id]={id:id,title:title,department:dept,location:job?job.location||'':'',jobUrl:job?job.jobUrl||'':'',vals:v,score:parseFloat(sc.toFixed(1)),tier:tier(sc).n,reasons:[0,1,2,3,4].map(function(i){return document.getElementById('reason'+i).textContent;}),summary:document.getElementById('assessText').textContent,savedAt:new Date().toISOString()};
+  saveState();flash('scoreFb','Saved');renderSavedScores();updateStepper();
+}
+function renderSavedScores(){
+  var items=Object.values(state.roleScores).sort(function(a,b){return b.score-a.score;});
+  var t=document.getElementById('savedScoresTable');
+  if(!items.length){t.innerHTML='<div style="font-size:13px;color:var(--tx3);padding:.75rem 0">No saved scores yet. Score a role above and click Save.</div>';return;}
+  t.innerHTML='<table class="tbl"><thead><tr><th>Role</th><th>Department</th><th>Score</th><th>Tier</th><th>Saved</th><th></th></tr></thead><tbody>'+items.map(function(s){var ti=tier(s.score);return'<tr><td>'+s.title+'</td><td style="color:var(--tx3)">'+(s.department||'-')+'</td><td style="font-weight:500">'+s.score+'</td><td><span class="tb t'+ti.n+'b">T'+ti.n+'</span></td><td style="color:var(--tx3)">'+new Date(s.savedAt).toLocaleDateString([],{month:'short',day:'numeric'})+'</td><td><span style="cursor:pointer;color:var(--red);font-size:11px" onclick="delScore(\''+s.id+'\')">Remove</span></td></tr>';}).join('')+'</tbody></table>';
+}
+function delScore(id){delete state.roleScores[id];saveState();renderSavedScores();}
+
+// ── BULK SCORE UPLOAD ──
+var parsedScoreRows = [];
+
+function dlScoreTemplate(){
+  dlCSV([
+    ['title','department','score','tier','scarcity','tech_depth','calibration','ambiguity','stakeholder','reasoning','floor_applied'],
+    ['Staff SWE, Networking','Foundations','','','5','5','4','5','3','XDP/EBPF/DPDK required','Network Engineering'],
+    ['Senior Backend SWE','Cloud Management','','','2','2','2','2','2','Accessible backend pool',''],
+    ['Principal Systems SWE','Foundations','','','5','5','4','5','4','Hyperscale provenance required','Foundations']
+  ], 'talentiq_score_template');
+}
+
+function showScoreUpload(){
+  parsedScoreRows=[];
+  document.getElementById('scoreUploadPreview').style.display='none';
+  document.getElementById('scoreImportBtn').disabled=true;
+  document.getElementById('scoreCsvInput').value='';
+  document.getElementById('scoreOverwrite').checked=false;
+  document.getElementById('scoreUploadModal').classList.add('show');
+}
+function closeScoreUpload(){document.getElementById('scoreUploadModal').classList.remove('show');}
+
+function handleScoreFileDrop(e){
+  e.preventDefault();
+  document.getElementById('scoreDropZone').style.background='';
+  var f=e.dataTransfer.files[0]; if(f) readScoreFile(f);
+}
+function handleScoreFileSelect(input){var f=input.files[0]; if(f) readScoreFile(f);}
+
+function readScoreFile(file){
+  if(!file.name.endsWith('.csv')){alert('Please upload a CSV file.');return;}
+  var reader=new FileReader();
+  reader.onload=function(e){parseScoreCSV(e.target.result);};
+  reader.readAsText(file);
+}
+
+function parseScoreCSV(text){
+  var lines=text.replace(/\r/g,"").split("\n").map(function(l){
+    var result=[],cur='',inQ=false;
+    for(var i=0;i<l.length;i++){var c=l[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){result.push(cur.trim());cur='';}else{cur+=c;}}
+    result.push(cur.trim()); return result;
+  });
+  if(lines.length<2){
+    document.getElementById('scoreUploadWarnings').innerHTML='<div>! File appears empty or has only a header row.</div>';
+    document.getElementById('scoreUploadPreview').style.display='block';
+    document.getElementById('scoreImportBtn').disabled=true; return;
+  }
+
+  var firstRow=lines[0].map(function(h){return h.toLowerCase().replace(/[^a-z_0-9]/g,'');});
+  var hasHeader=firstRow.some(function(h){return ['title','scarcity','tier','score'].includes(h);});
+  var dataLines=hasHeader?lines.slice(1):lines;
+
+  // Column index mapping — supports both pre-scored export and raw dimension CSV
+  var idx={title:0,department:1,score:2,tier:3,scarcity:4,tech_depth:5,calibration:6,ambiguity:7,stakeholder:8,reasoning:9,floor_applied:10};
+  if(hasHeader){
+    firstRow.forEach(function(h,i){
+      if(h==='title') idx.title=i;
+      else if(h==='department'||h==='dept') idx.department=i;
+      else if(h==='score') idx.score=i;
+      else if(h==='tier') idx.tier=i;
+      else if(h==='scarcity') idx.scarcity=i;
+      else if(h==='tech_depth'||h==='tech'||h==='techdepth') idx.tech_depth=i;
+      else if(h==='calibration') idx.calibration=i;
+      else if(h==='ambiguity') idx.ambiguity=i;
+      else if(h==='stakeholder') idx.stakeholder=i;
+      else if(h==='reasoning'||h==='summary') idx.reasoning=i;
+      else if(h==='floor_applied'||h==='floor') idx.floor_applied=i;
+    });
+  }
+
+  var W=[0.30,0.25,0.20,0.15,0.10];
+  function calcSc(v){return v.reduce(function(s,x,i){return s+x*W[i]*5;},0);}
+  function applyFloors(raw,title,dept){
+    var floor=11,fname='';
+    var dl=dept.toLowerCase(),tl=title.toLowerCase();
+    if(dl.includes('foundation')) {floor=16;fname='Foundations';}
+    else if(dl.includes('network')||dl.includes('managed ai')||dl.includes('managed_ai')){floor=13;fname=dept;}
+    var isStaff=/(staff|principal|director|senior staff)/i.test(title);
+    var isEntry=/(associate|junior|new college|engineer i[,\s]|engineer ii[,\s])/i.test(title+' ');
+    if(isStaff){floor=Math.max(floor,16);fname=fname||'Staff+ override';}
+    if(isEntry&&floor>11) floor=Math.max(11,floor-5);
+    return {score:Math.max(raw,floor),floor:fname};
+  }
+  function tierN(s){return s<=10?1:s<=15?2:s<=20?3:4;}
+
+  var existingTitles=new Set(Object.values(state.roleScores).map(function(s){return s.title.toLowerCase();}));
+  var warnings=[]; parsedScoreRows=[];
+
+  dataLines.forEach(function(row,i){
+    var rowNum=i+(hasHeader?2:1);
+    if(!row||row.every(function(c){return !c;})) return;
+
+    var title=(row[idx.title]||'').trim();
+    var dept=(row[idx.department]||'').trim();
+
+    if(!title){warnings.push('Row '+rowNum+': missing title — skipped');return;}
+
+    // Parse dimension scores — if provided use them, otherwise try to use pre-calc score
+    var dims=[
+      parseInt(row[idx.scarcity])||0,
+      parseInt(row[idx.tech_depth])||0,
+      parseInt(row[idx.calibration])||0,
+      parseInt(row[idx.ambiguity])||0,
+      parseInt(row[idx.stakeholder])||0
+    ];
+
+    var hasDims=dims.every(function(d){return d>=1&&d<=5;});
+    var preScore=parseFloat(row[idx.score]);
+    var preTier=parseInt(row[idx.tier]);
+
+    var finalScore, finalTier, floorApplied='';
+
+    if(hasDims){
+      // Calculate from dimensions (preferred — applies floors and overrides)
+      var raw=calcSc(dims);
+      var fl=applyFloors(raw,title,dept);
+      finalScore=parseFloat(fl.score.toFixed(1));
+      floorApplied=fl.floor;
+      finalTier=tierN(finalScore);
+    } else if(!isNaN(preScore)&&preScore>0){
+      // Use pre-calculated score directly
+      finalScore=preScore;
+      finalTier=!isNaN(preTier)&&preTier>0?preTier:tierN(preScore);
+      dims=[3,3,3,3,3]; // placeholder dims
+    } else {
+      warnings.push('Row '+rowNum+' ('+title+'): no valid scores — need dimension scores (1-5) or a pre-calculated score column');
+      return;
+    }
+
+    parsedScoreRows.push({
+      title:title, department:dept, vals:dims,
+      score:finalScore, tier:finalTier,
+      reasoning:(row[idx.reasoning]||'').trim(),
+      floorApplied:floorApplied,
+      id:'bulk_'+title.toLowerCase().replace(/[^a-z0-9]/g,'_').slice(0,40)+'_'+Date.now()
+    });
+  });
+
+  // Build preview table
+  var tbodyRows=parsedScoreRows.map(function(r){
+    var tc={1:'t1b',2:'t2b',3:'t3b',4:'t4b'};
+    var skip=!document.getElementById('scoreOverwrite').checked&&Object.values(state.roleScores).some(function(s){return s.title.toLowerCase()===r.title.toLowerCase();});
+    return '<tr'+(skip?' style="opacity:.4;text-decoration:line-through" title="Already exists — check Overwrite to replace"':'')+'>'+
+      '<td>'+r.title+'</td>'+
+      '<td style="color:var(--tx3)">'+r.department+'</td>'+
+      '<td style="font-weight:500">'+r.score+'</td>'+
+      '<td><span class="tb '+tc[r.tier]+'">T'+r.tier+'</span></td>'+
+      '<td style="color:var(--tx3);font-size:10px">'+r.floorApplied+'</td>'+
+      '</tr>';
+  }).join('');
+
+  document.getElementById('scorePreviewTable').innerHTML=
+    '<thead><tr><th>Title</th><th>Department</th><th>Score</th><th>Tier</th><th>Floor applied</th></tr></thead><tbody>'+tbodyRows+'</tbody>';
+  document.getElementById('scorePreviewCount').textContent='— '+parsedScoreRows.length+' role'+(parsedScoreRows.length!==1?'s':'')+' ready to import';
+  document.getElementById('scoreUploadWarnings').innerHTML=warnings.map(function(w){return '<div>! '+w+'</div>';}).join('');
+  document.getElementById('scoreUploadPreview').style.display='block';
+  document.getElementById('scoreImportBtn').disabled=parsedScoreRows.length===0;
+}
+
+function importScoreCSV(){
+  if(!parsedScoreRows.length) return;
+  var overwrite=document.getElementById('scoreOverwrite').checked;
+  var imported=0, skipped=0;
+  var existingByTitle={};
+  Object.values(state.roleScores).forEach(function(s){existingByTitle[s.title.toLowerCase()]=s.id;});
+
+  parsedScoreRows.forEach(function(r){
+    var existId=existingByTitle[r.title.toLowerCase()];
+    if(existId&&!overwrite){skipped++;return;}
+    var id=existId&&overwrite?existId:r.id;
+    state.roleScores[id]={
+      id:id, title:r.title, department:r.department,
+      location:'', jobUrl:'', vals:r.vals,
+      score:r.score, tier:r.tier,
+      reasons:['','','','',''],
+      summary:r.reasoning,
+      savedAt:new Date().toISOString()
+    };
+    imported++;
+  });
+
+  saveState(); closeScoreUpload(); renderSavedScores(); updateStepper(); parsedScoreRows=[];
+  if(skipped>0) setTimeout(function(){alert('Imported '+imported+' roles. '+skipped+' skipped (already exist). Check "Overwrite" to replace them.');},100);
+}
+function exportScoresCSV(){var rows=[['Title','Dept','Score','Tier','Scarcity','Tech','Calibration','Ambiguity','Stakeholder','Summary','Saved']];Object.values(state.roleScores).forEach(function(s){rows.push([s.title,s.department||'',s.score,s.tier].concat(s.vals||[]).concat([s.summary||'',s.savedAt]));});dlCSV(rows,'role_scores');}
+
+function addReqRow(listId,arr,who){
+  var id='req_'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
+  arr.push({id:id,title:'',tier:2});
+  var div=document.createElement('div');div.className='req-row';div.id=id;
+  div.innerHTML='<input type="text" placeholder="Role title" oninput="updReqTitle(\''+listId+'\',\''+id+'\',this.value,\''+who+'\')" style="flex:1;font-size:12px;padding:5px 8px"/>'+
+    '<select onchange="updReqTier(\''+listId+'\',\''+id+'\',this.value,\''+who+'\')" style="width:95px;font-size:12px;padding:4px 6px"><option value="1">Tier 1</option><option value="2" selected>Tier 2</option><option value="3">Tier 3</option><option value="4">Tier 4</option></select>'+
+    '<span class="req-rm" onclick="rmReq(\''+listId+'\',\''+id+'\',\''+who+'\')">x</span>';
+  document.getElementById(listId).appendChild(div);calcGoals();
+}
+function addRecReq(){addReqRow('recReqList',recReqs,'rec');}
+function addSrcReq(){addReqRow('srcReqList',srcReqs,'src');}
+function updReqTitle(l,id,val,who){var a=who==='rec'?recReqs:srcReqs;var r=a.find(function(x){return x.id===id;});if(r)r.title=val;calcGoals();}
+function updReqTier(l,id,val,who){var a=who==='rec'?recReqs:srcReqs;var r=a.find(function(x){return x.id===id;});if(r)r.tier=parseInt(val);calcGoals();}
+function rmReq(l,id,who){var a=who==='rec'?recReqs:srcReqs;var i=a.findIndex(function(x){return x.id===id;});if(i>-1)a.splice(i,1);var el=document.getElementById(id);if(el)el.remove();calcGoals();}
+
+function addRecStall(){
+  var id='stall_'+Date.now();recStalls.push({id:id,title:'',reason:'reorg'});
+  var div=document.createElement('div');div.className='stall-row';div.id=id;
+  div.innerHTML='<input type="text" placeholder="Req title" oninput="updStall(\''+id+'\',\'title\',this.value)" style="font-size:12px;padding:5px 8px"/>'+
+    '<select onchange="updStall(\''+id+'\',\'reason\',this.value)" style="font-size:12px;padding:4px 6px"><option value="reorg">Reorg</option><option value="hold">Hold/scope change</option><option value="comp">Comp not approved</option><option value="rescope">Re-scoped</option><option value="new_hm">New HM</option><option value="escalation">Stall escalation</option></select>'+
+    '<span class="req-rm" onclick="rmStall(\''+id+'\')">x</span>';
+  document.getElementById('recStallList').appendChild(div);calcGoals();
+}
+function updStall(id,f,v){var s=recStalls.find(function(x){return x.id===id;});if(s)s[f]=v;}
+function rmStall(id){var i=recStalls.findIndex(function(x){return x.id===id;});if(i>-1)recStalls.splice(i,1);var el=document.getElementById(id);if(el)el.remove();calcGoals();}
+
+function calcGoals(){
+  var rt=0,r12=0,rb=[];
+  recReqs.forEach(function(r){var p=REC_PTS[r.tier]*CLOSE_P[r.tier];rt+=p;if(r.tier<=2)r12+=p;rb.push((r.title||'Untitled')+' (T'+r.tier+'): ~'+p.toFixed(2)+' pts');});
+  var sc=Math.min(recStalls.length*0.5,1.0);rt+=sc;if(sc>0)rb.push('Stall credit: +'+sc.toFixed(1)+' pts');
+  document.getElementById('recGoalNum').textContent=rt.toFixed(1);
+  document.getElementById('recGoalBreak').innerHTML=rb.map(function(l){return'<div>'+l+'</div>';}).join('');
+  document.getElementById('recFloorWarn').style.display=(rt>0&&r12/rt<0.4&&recReqs.length>0)?'block':'none';
+  var rls=document.getElementById('recLiveSum');
+  if(recReqs.length>0){var tc={1:0,2:0,3:0,4:0};recReqs.forEach(function(r){tc[r.tier]++;});var parts=[];[1,2,3,4].forEach(function(t){if(tc[t])parts.push(tc[t]+' T'+t);});rls.textContent='Book of '+recReqs.length+' req'+(recReqs.length!==1?'s':'')+': '+parts.join(', ')+'. Target: '+rt.toFixed(1)+' pts this quarter.';rls.style.display='block';}else{rls.style.display='none';}
+  var st=0,sb=[],tc2={1:0,2:0,3:0,4:0};
+  srcReqs.forEach(function(r){var p=SRC_PTS[r.tier]*EXTEND_P[r.tier];st+=p;tc2[r.tier]++;sb.push((r.title||'Untitled')+' (T'+r.tier+'): ~'+p.toFixed(2)+' pts');});
+  document.getElementById('srcGoalNum').textContent=st.toFixed(1);
+  document.getElementById('srcGoalBreak').innerHTML=sb.map(function(l){return'<div>'+l+'</div>';}).join('');
+  var out={1:'60-75',2:'55-70',3:'45-60',4:'35-50'},rr={1:'30%+',2:'25%+',3:'20%+',4:'17%+'};
+  var ol=[];[1,2,3,4].forEach(function(t){if(tc2[t]>0)ol.push('<div>T'+t+' ('+tc2[t]+'x): '+out[t]+'/wk &middot; '+rr[t]+' response rate</div>');});
+  document.getElementById('srcOutreach').innerHTML=ol.join('')||'<div style="color:var(--tx3)">Add reqs to see targets.</div>';
+  var sls=document.getElementById('srcLiveSum');
+  if(srcReqs.length>0){sls.textContent='Supporting '+srcReqs.length+' req'+(srcReqs.length!==1?'s':'')+'. Portfolio-adjusted target: '+st.toFixed(1)+' pts.';sls.style.display='block';}else{sls.style.display='none';}
+}
+
+function saveRecGoal(){
+  var name=document.getElementById('recName').value.trim();if(!name){flash('recGoalFb','Enter a name first');return;}
+  state.goals['rec_'+name]={name:name,role:'recruiter',target:parseFloat(document.getElementById('recGoalNum').textContent),reqs:recReqs.slice(),stalls:recStalls.slice(),savedAt:new Date().toISOString()};
+  saveState();flash('recGoalFb','Saved');renderSavedGoals();populatePersonSelects();updateStepper();
+}
+function saveSrcGoal(){
+  var name=document.getElementById('srcName').value.trim();if(!name){flash('srcGoalFb','Enter a name first');return;}
+  state.goals['src_'+name]={name:name,role:'sourcer',target:parseFloat(document.getElementById('srcGoalNum').textContent),reqs:srcReqs.slice(),savedAt:new Date().toISOString()};
+  saveState();flash('srcGoalFb','Saved');renderSavedGoals();populatePersonSelects();updateStepper();
+}
+function renderSavedGoals(){
+  var items=Object.values(state.goals).sort(function(a,b){return a.name.localeCompare(b.name);});
+  var t=document.getElementById('savedGoalsTable');
+  if(!items.length){t.innerHTML='<div style="font-size:13px;color:var(--tx3);padding:.75rem 0">No goals saved yet. Add reqs above and click Save.</div>';return;}
+  t.innerHTML='<table class="tbl"><thead><tr><th>Name</th><th>Role</th><th>Target</th><th>Reqs</th><th>Saved</th><th></th></tr></thead><tbody>'+items.map(function(g){return'<tr><td>'+g.name+'</td><td style="color:var(--tx3)">'+g.role+'</td><td style="font-weight:500">'+g.target.toFixed(1)+' pts</td><td style="color:var(--tx3)">'+(g.reqs||[]).length+'</td><td style="color:var(--tx3)">'+new Date(g.savedAt).toLocaleDateString([],{month:'short',day:'numeric'})+'</td><td><span style="cursor:pointer;color:var(--red);font-size:11px" onclick="delGoal(\''+g.name+'\',\''+g.role+'\')">Remove</span></td></tr>';}).join('')+'</tbody></table>';
+}
+function delGoal(name,role){delete state.goals[(role==='recruiter'?'rec':'src')+'_'+name];saveState();renderSavedGoals();}
+
+function renderTeamDash(){
+  var people=Object.values(state.goals);
+  if(!people.length&&!state.tracker.length){document.getElementById('teamDash').innerHTML='';document.getElementById('teamProgress').innerHTML='';return;}
+  var tp=0,tt=0,ot=0;
+  people.forEach(function(p){var e=state.tracker.filter(function(l){return l.name===p.name;}).reduce(function(s,l){return s+l.pts;},0);tp+=e;tt+=p.target;if(p.target>0&&e/p.target>=0.7)ot++;});
+  var pct=tt>0?Math.round(tp/tt*100):0;
+  document.getElementById('teamDash').innerHTML='<div class="dc"><div class="dn">'+people.length+'</div><div class="dl">People tracked</div></div><div class="dc"><div class="dn" style="color:var(--green)">'+tp.toFixed(1)+'</div><div class="dl">Team pts earned</div></div><div class="dc"><div class="dn">'+ot+'<span style="font-size:14px;color:var(--tx3)">/'+people.length+'</span></div><div class="dl">On track (70%+ of goal)</div></div><div class="dc"><div class="dn" style="color:var(--amber)">'+pct+'%</div><div class="dl">Team % to goal</div></div>';
+  document.getElementById('teamProgress').innerHTML='<p class="slabel" style="margin-bottom:8px">Individual progress</p>'+
+    people.sort(function(a,b){return a.name.localeCompare(b.name);}).map(function(p){
+      var e=state.tracker.filter(function(l){return l.name===p.name;}).reduce(function(s,l){return s+l.pts;},0);
+      var pct2=p.target>0?Math.min(100,Math.round(e/p.target*100)):0;
+      var col=pct2>=70?'var(--green)':'var(--blue)';
+      var badge=pct2>=100?'<span class="otbadge" style="background:var(--gbg);color:var(--gtx)">Goal met</span>':pct2>=70?'<span class="otbadge" style="background:var(--gbg);color:var(--gtx)">On track</span>':'<span class="otbadge" style="background:var(--bg2);color:var(--tx3)">In progress</span>';
+      return'<div class="person-row"><div class="pname">'+p.name+'</div><span class="prole">'+p.role+'</span><div class="pbar-wrap"><div class="pbar-track"><div class="pbar-fill" style="width:'+pct2+'%;background:'+col+'"></div></div><div class="pbar-lbl">'+e.toFixed(1)+' / '+p.target.toFixed(1)+' pts ('+pct2+'%)</div></div>'+badge+'</div>';
+    }).join('');
+}
+
+function populatePersonSelects(){
+  var people=Object.values(state.goals).sort(function(a,b){return a.name.localeCompare(b.name);});
+  var opts='<option value="">Select person...</option>'+people.map(function(p){return'<option value="'+p.name+'|'+p.role+'">'+p.name+' ('+p.role+')</option>';}).join('');
+  ['logPerson','diagPerson'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=opts;});
+  var pf=document.getElementById('diagPF');if(pf)pf.innerHTML='<option value="">All people</option>'+people.map(function(p){return'<option value="'+p.name+'">'+p.name+'</option>';}).join('');
+}
+
+function showLogModal(){
+  document.getElementById('logDate').value=new Date().toLocaleDateString([],{month:'short',day:'numeric'});
+  document.getElementById('logCtx').style.display='none';
+  document.getElementById('logPtsPreview').textContent='';
+  document.getElementById('logModal').classList.add('show');
+}
+function closeLogModal(){document.getElementById('logModal').classList.remove('show');}
+
+function updateLogCtx(){} // context now shown on cards, not in modal
+
+function updatePtsPreview(){
+  var tv=parseInt(document.getElementById('logTier').value);
+  var type=document.getElementById('logType').value;
+  var pts=type==='accept'?REC_PTS[tv]:SRC_PTS[tv];
+  document.getElementById('logPtsPreview').textContent='This entry will add +'+pts.toFixed(1)+' weighted points';
+}
+
+function submitLog(){
+  var name=document.getElementById('logPersonName').value.trim();
+  var prole=document.getElementById('logPersonRole').value;
+  var rt=document.getElementById('logRole').value.trim();
+  var tv=parseInt(document.getElementById('logTier').value);
+  var type=document.getElementById('logType').value;
+  if(!name||!rt){alert('Please fill in person name and role title.');return;}
+  var pts=type==='accept'?REC_PTS[tv]:SRC_PTS[tv];
+  // Auto-create a goal entry if person doesn't exist yet (9 pt default target)
+  var gkey=(prole==='recruiter'?'rec':'src')+'_'+name;
+  if(!state.goals[gkey]){
+    state.goals[gkey]={name:name,role:prole,target:9,reqs:[],savedAt:new Date().toISOString(),autoCreated:true};
+  }
+  state.tracker.push({id:'log_'+Date.now(),name:name,role:prole,type:type,roleTitle:rt,tier:tv,pts:pts,
+    date:document.getElementById('logDate').value||new Date().toLocaleDateString([],{month:'short',day:'numeric'}),
+    notes:document.getElementById('logNotes').value.trim(),loggedAt:new Date().toISOString()});
+  saveState();closeLogModal();renderTracker();renderTeamDash();updateStepper();
+  document.getElementById('logPersonName').value='';
+  document.getElementById('logRole').value='';document.getElementById('logNotes').value='';
+}
+
+function renderTracker(){
+  var people=Object.values(state.goals).sort(function(a,b){return a.name.localeCompare(b.name);});
+  var tc=document.getElementById('trackerCards'),te=document.getElementById('trackerEmpty');
+  if(!people.length&&!state.tracker.length){tc.innerHTML='';te.style.display='block';return;}
+  te.style.display='none';
+  // Include people from tracker even if no saved goal
+  var names=new Set(state.tracker.map(function(l){return l.name;}));
+  names.forEach(function(n){if(!state.goals['rec_'+n]&&!state.goals['src_'+n]){var role=state.tracker.find(function(l){return l.name===n;});if(role){state.goals[(role.role==='sourcer'?'src':'rec')+'_'+n]={name:n,role:role.role,target:9,reqs:[],savedAt:new Date().toISOString(),autoCreated:true};}}});
+  var people=Object.values(state.goals).sort(function(a,b){return a.name.localeCompare(b.name);});
+  if(!people.length){tc.innerHTML='';te.style.display='block';return;}
+  tc.innerHTML=people.map(function(p){
+    var logs=state.tracker.filter(function(l){return l.name===p.name;}).sort(function(a,b){return new Date(b.loggedAt)-new Date(a.loggedAt);});
+    var earned=logs.reduce(function(s,l){return s+l.pts;},0);
+    var pct=p.target>0?Math.min(100,Math.round(earned/p.target*100)):0;
+    var gkey=(p.role==='sourcer'?'src_':'rec_')+p.name;
+    var col=pct>=70?'var(--green)':'var(--blue)';
+    var badges={};logs.forEach(function(l){badges[l.tier]=(badges[l.tier]||0)+1;});
+    var bh=Object.entries(badges).map(function(e){return'<span class="tb t'+e[0]+'b">'+e[1]+'x T'+e[0]+'</span>';}).join(' ');
+    var lh=logs.length?logs.map(function(l){return'<div class="log-entry"><span class="log-pts">+'+l.pts.toFixed(1)+'</span><span class="tb t'+l.tier+'b">T'+l.tier+'</span><span style="flex:1">'+l.roleTitle+'</span><span style="color:var(--tx3);font-size:11px">'+(l.notes?'&middot; '+l.notes.slice(0,32):'')+'</span><span class="log-date">'+l.date+'</span><span class="log-edit" onclick="openEditLog(\''+l.id+'\')">&#9998;</span><span class="log-del" onclick="delLog(\''+l.id+'\')">x</span></div>';}).join(''):'<div style="font-size:12px;color:var(--tx3);padding:6px 0">No activity yet.</div>';
+    return'<div class="person-card"><div class="pc-hdr"><div><div class="pc-name">'+p.name+'</div><div class="pc-role">'+p.role+'</div><div style="display:flex;align-items:center;gap:5px;margin-top:3px"><span style="font-size:11px;color:var(--tx3)">Quarterly target:</span><input type="number" min="0" step="0.5" value="'+p.target+'" data-gk="'+gkey+'" onchange="updateTarget(this)" style="width:60px;font-size:11px;padding:2px 5px;border:0.5px solid var(--bd2);border-radius:4px" /><span style="font-size:11px;color:var(--tx3)"> pts</span></div></div><div style="text-align:right"><div style="font-size:22px;font-weight:500;color:'+col+'">'+earned.toFixed(1)+'</div><div style="font-size:11px;color:var(--tx3)">'+pct+'% of target &middot; '+logs.length+' close'+(logs.length!==1?'s':'')+'<button class="rm-person-btn" data-name="'+p.name+'" style="font-size:10px;color:var(--red);background:transparent;border:none;cursor:pointer;padding:2px 0;margin-top:4px;display:block">Remove person</button><button class="rename-person-btn" data-name="'+ p.name +'" style="font-size:10px;color:var(--tx3);background:transparent;border:none;cursor:pointer;padding:2px 0;margin-top:2px;display:block">Rename</button></div></div></div><div class="prog-wrap"><div class="prog-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'+(bh?'<div style="margin-bottom:8px;display:flex;gap:4px;flex-wrap:wrap">'+bh+'</div>':'')+lh+'</div>';
+  }).join('');
+}
+function delLog(id){state.tracker=state.tracker.filter(function(l){return l.id!==id;});saveState();renderTracker();renderTeamDash();}
+function openRenameModal(name){
+  document.getElementById('renameOldName').value = name;
+  document.getElementById('renameOldDisplay').value = name;
+  document.getElementById('renameNewName').value = name;
+  document.getElementById('renameModal').classList.add('show');
+  setTimeout(function(){ document.getElementById('renameNewName').select(); }, 50);
+}
+function closeRenameModal(){ document.getElementById('renameModal').classList.remove('show'); }
+function saveRename(){
+  var oldName = document.getElementById('renameOldName').value;
+  var newName = document.getElementById('renameNewName').value.trim();
+  if(!newName){ alert('Please enter a new name.'); return; }
+  if(newName === oldName){ closeRenameModal(); return; }
+  // Update all tracker entries
+  state.tracker.forEach(function(l){
+    if(l.name === oldName) l.name = newName;
+  });
+  // Update goals — rename the key and update the name field
+  Object.keys(state.goals).forEach(function(k){
+    if(state.goals[k].name === oldName){
+      var g = state.goals[k];
+      g.name = newName;
+      var newKey = (g.role === 'sourcer' ? 'src_' : 'rec_') + newName;
+      state.goals[newKey] = g;
+      delete state.goals[k];
+    }
+  });
+  try{ localStorage.setItem(SK, JSON.stringify(state)); }catch(e){}
+  closeRenameModal();
+  renderTracker();
+  renderTeamDash();
+}
+
+function updateTarget(input){
+  var gkey = input.getAttribute('data-gk');
+  var val = parseFloat(input.value);
+  if(!gkey || isNaN(val) || val < 0) return;
+  if(!state.goals[gkey]){
+    // Create goal entry if missing
+    var parts = gkey.split('_');
+    var role = parts[0] === 'src' ? 'sourcer' : 'recruiter';
+    var name = parts.slice(1).join('_');
+    state.goals[gkey] = {name:name, role:role, target:val, reqs:[], savedAt:new Date().toISOString(), autoCreated:true};
+  } else {
+    state.goals[gkey].target = val;
+  }
+  try{localStorage.setItem(SK, JSON.stringify(state));}catch(e){}
+  renderTeamDash();
+  renderTracker();
+}
+
+function removePerson(name){
+  if(!confirm('Remove all entries for "'+name+'"? This cannot be undone.')) return;
+  state.tracker=state.tracker.filter(function(l){
+    return l.name.toLowerCase()!==name.toLowerCase();
+  });
+  Object.keys(state.goals).forEach(function(k){
+    if(state.goals[k].name && state.goals[k].name.toLowerCase()===name.toLowerCase()){
+      delete state.goals[k];
+    }
+  });
+  try{localStorage.setItem(SK,JSON.stringify(state));}catch(e){}
+  renderTracker();
+  renderTeamDash();
+  updateStepper();
+}
+
+// Event delegation for remove person buttons (avoids inline onclick string escaping)
+document.addEventListener('click', function(e){
+  var rmBtn = e.target.closest('.rm-person-btn');
+  if(rmBtn){
+    var name = rmBtn.getAttribute('data-name');
+    if(name) removePerson(name);
+    return;
+  }
+  var rnBtn = e.target.closest('.rename-person-btn');
+  if(rnBtn){
+    var name = rnBtn.getAttribute('data-name');
+    if(name) openRenameModal(name);
+  }
+});
+function openEditLog(id){
+  var entry=state.tracker.find(function(l){return l.id===id;});
+  if(!entry) return;
+  document.getElementById('editLogId').value=id;
+  document.getElementById('editPersonName').value=entry.name||'';
+  document.getElementById('editPersonRole').value=entry.role||'recruiter';
+  document.getElementById('editType').value=entry.type||'accept';
+  document.getElementById('editRole').value=entry.roleTitle||'';
+  document.getElementById('editTier').value=entry.tier||2;
+  document.getElementById('editDate').value=entry.date||'';
+  document.getElementById('editNotes').value=entry.notes||'';
+  document.getElementById('editLogModal').classList.add('show');
+}
+function closeEditLogModal(){document.getElementById('editLogModal').classList.remove('show');}
+function saveEditLog(){
+  var id=document.getElementById('editLogId').value;
+  var entry=state.tracker.find(function(l){return l.id===id;});
+  if(!entry) return;
+  var type=document.getElementById('editType').value;
+  var tier=parseInt(document.getElementById('editTier').value);
+  entry.name=document.getElementById('editPersonName').value.trim()||entry.name;
+  entry.role=document.getElementById('editPersonRole').value;
+  entry.type=type;
+  entry.roleTitle=document.getElementById('editRole').value.trim()||entry.roleTitle;
+  entry.tier=tier;
+  entry.pts=type==='accept'?REC_PTS[tier]:SRC_PTS[tier];
+  entry.date=document.getElementById('editDate').value.trim()||entry.date;
+  entry.notes=document.getElementById('editNotes').value.trim();
+  saveState();closeEditLogModal();renderTracker();renderTeamDash();
+}
+
+function clearProgressData(){
+  if(!confirm('This will permanently delete all logged progress data. Saved role scores will not be affected. Continue?')) return;
+  state.tracker = [];
+  state.goals = {};
+  state.diagnostics = [];
+  // Wipe ALL known storage keys to guarantee nothing persists
+  ['crusoe_ta_v1','crusoe_ta_v2','crusoe_ta_v3'].forEach(function(k){
+    try{localStorage.removeItem(k);}catch(e){}
+  });
+  try{localStorage.setItem(SK,JSON.stringify(state));}catch(e){}
+  renderTeamDash();
+  renderTracker();
+  renderDiagnostics();
+  updateStepper();
+}
+function exportTrackerCSV(){var rows=[['Name','Role','Type','Role Title','Tier','Points','Date','Notes']];state.tracker.forEach(function(l){rows.push([l.name,l.role,l.type,l.roleTitle,l.tier,l.pts,l.date,l.notes||'']);});dlCSV(rows,'crusoe_ta_tracker');}
+
+function downloadTemplate(){dlCSV([['name','role','type','role_title','tier','date','notes'],['Jane Smith','recruiter','accept','Staff SWE Networking','3','Apr 14',''],['John Doe','sourcer','extend','Senior Network Engineer','2','Apr 10','Strong pipeline']],'talentiq_template');}
+function showUploadModal(){parsedRows=[];document.getElementById('uploadPreview').style.display='none';document.getElementById('importBtn').disabled=true;document.getElementById('csvInput').value='';document.getElementById('uploadModal').classList.add('show');}
+function closeUploadModal(){document.getElementById('uploadModal').classList.remove('show');}
+function handleDrop(e){e.preventDefault();document.getElementById('dropZone').style.background='';var f=e.dataTransfer.files[0];if(f)readCSV(f);}
+function handleFileSelect(inp){var f=inp.files[0];if(f)readCSV(f);}
+function readCSV(file){if(!file.name.endsWith('.csv')){alert('Please upload a CSV file.');return;}var r=new FileReader();r.onload=function(e){parseCSV(e.target.result);};r.readAsText(file);}
+
+function parseCSV(text){
+  var lines=text.trim().split(/\r?\n/).map(function(l){var res=[],cur='',inQ=false;for(var i=0;i<l.length;i++){var ch=l[i];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){res.push(cur.trim());cur='';}else{cur+=ch;}}res.push(cur.trim());return res;});
+  if(lines.length<2){document.getElementById('uploadWarnings').innerHTML='<div>File appears empty.</div>';document.getElementById('uploadPreview').style.display='block';document.getElementById('importBtn').disabled=true;return;}
+  var first=lines[0].map(function(h){return h.toLowerCase().replace(/[^a-z_0-9]/g,'');});
+  var hasH=first.some(function(h){return['name','type','tier','role'].indexOf(h)>=0;});
+  var data=hasH?lines.slice(1):lines;
+  var idx={name:0,role:1,type:2,role_title:3,tier:4,date:5,notes:6};
+  if(hasH){first.forEach(function(h,i){if(h==='name')idx.name=i;else if(h==='role')idx.role=i;else if(h==='type')idx.type=i;else if(h.indexOf('title')>=0)idx.role_title=i;else if(h==='tier')idx.tier=i;else if(h==='date')idx.date=i;else if(h==='notes')idx.notes=i;});}
+  var gbn={};Object.values(state.goals).forEach(function(g){gbn[g.name.toLowerCase()]=g;});
+  var warns=[];parsedRows=[];
+  data.forEach(function(row,i){
+    var rn=i+(hasH?2:1);if(!row||row.every(function(c){return!c;}))return;
+    var name=(row[idx.name]||'').trim(),rc=(row[idx.role]||'').trim().toLowerCase(),type=(row[idx.type]||'').trim().toLowerCase();
+    var rt=(row[idx.role_title]||'').trim(),ts=(row[idx.tier]||'').trim(),date=(row[idx.date]||'').trim(),notes=(row[idx.notes]||'').trim();
+    if(!name){warns.push('Row '+rn+': missing name');return;}
+    if(!rt){warns.push('Row '+rn+' ('+name+'): missing role title');return;}
+    if(type==='offer accept'||type==='accept')type='accept';
+    else if(type==='offer extend'||type==='extend'||type==='offer extended')type='extend';
+    else{warns.push('Row '+rn+' ('+name+'): type "'+type+'" invalid - use accept or extend');return;}
+    var tv=parseInt(ts);if([1,2,3,4].indexOf(tv)<0){warns.push('Row '+rn+' ('+name+'): tier "'+ts+'" invalid - must be 1-4');return;}
+    var pg=gbn[name.toLowerCase()];
+    if(!pg)warns.push('Row '+rn+' ('+name+'): no saved goal - imported anyway');
+    var prole=pg?pg.role:(rc||(type==='accept'?'recruiter':'sourcer'));
+    var pts=type==='accept'?REC_PTS[tv]:SRC_PTS[tv];
+    parsedRows.push({name:pg?pg.name:name,role:prole,type:type,roleTitle:rt,tier:tv,pts:pts,date:date||'Imported',notes:notes});
+  });
+  var tbody=parsedRows.map(function(r){return'<tr><td>'+r.name+'</td><td>'+r.type+'</td><td>'+r.roleTitle+'</td><td>'+r.tier+'</td><td style="font-weight:500;color:var(--green)">+'+r.pts.toFixed(1)+'</td><td>'+r.date+'</td></tr>';}).join('');
+  document.getElementById('previewTable').innerHTML='<thead><tr><th>Name</th><th>Type</th><th>Role</th><th>Tier</th><th>Pts</th><th>Date</th></tr></thead><tbody>'+tbody+'</tbody>';
+  document.getElementById('previewCount').textContent='- '+parsedRows.length+' row'+(parsedRows.length!==1?'s':'')+' ready';
+  document.getElementById('uploadWarnings').innerHTML=warns.map(function(w){return'<div>! '+w+'</div>';}).join('');
+  document.getElementById('uploadPreview').style.display='block';
+  document.getElementById('importBtn').disabled=parsedRows.length===0;
+}
+function importCSV(){
+  parsedRows.forEach(function(r){state.tracker.push({id:'log_'+Date.now()+'_'+Math.random().toString(36).slice(2,5),name:r.name,role:r.role,type:r.type,roleTitle:r.roleTitle,tier:r.tier,pts:r.pts,date:r.date,notes:r.notes,loggedAt:new Date().toISOString()});});
+  saveState();closeUploadModal();renderTracker();renderTeamDash();parsedRows=[];
+}
+
+function showDiagModal(){populatePersonSelects();document.getElementById('diagWeek').value=new Date().toLocaleDateString([],{month:'short',day:'numeric'});document.getElementById('diagModal').classList.add('show');}
+function closeDiagModal(){document.getElementById('diagModal').classList.remove('show');}
+function submitDiag(){
+  var pv=document.getElementById('diagPerson').value;if(!pv){alert('Select a person.');return;}
+  var name=pv.split('|')[0],role=pv.split('|')[1];
+  state.diagnostics.push({id:'diag_'+Date.now(),name:name,role:role,roleTitle:document.getElementById('diagRole').value.trim(),tier:parseInt(document.getElementById('diagTier').value),week:document.getElementById('diagWeek').value,outreach:parseInt(document.getElementById('dOut').value)||0,responses:parseInt(document.getElementById('dRes').value)||0,recScreen:parseInt(document.getElementById('dRec').value)||0,hmScreen:parseInt(document.getElementById('dHM').value)||0,techScreen:parseInt(document.getElementById('dTech').value)||0,onsite:parseInt(document.getElementById('dOn').value)||0,offers:parseInt(document.getElementById('dOff').value)||0,accepts:parseInt(document.getElementById('dAcc').value)||0,slaViolations:document.getElementById('dSLA').value.trim(),stallReason:document.getElementById('dStall').value,loggedAt:new Date().toISOString()});
+  saveState();closeDiagModal();renderDiagnostics();
+  ['dOut','dRes','dRec','dHM','dTech','dOn','dOff','dAcc'].forEach(function(id){document.getElementById(id).value='';});
+}
+
+function ptrSt(val,tgt){
+  if(val===null||isNaN(val))return{col:'var(--tx3)',sym:'-',bg:'transparent'};
+  if(val>=tgt)return{col:'var(--green)',sym:'&#10003;',bg:'var(--gbg)'};
+  if(val>=tgt*0.9)return{col:'var(--amber)',sym:'~',bg:'var(--abg)'};
+  return{col:'var(--red)',sym:'!',bg:'var(--rbg)'};
+}
+function pRow(label,val,tgt){
+  if(val===null)return'';
+  var st=ptrSt(val,tgt),pct=Math.round(val*100),tpct=Math.round(tgt*100);
+  return'<div class="ptr-row"><div class="ptr-stage">'+label+'</div><div class="ptr-track"><div class="ptr-fill" style="width:'+Math.min(100,pct)+'%;background:'+st.col+'"></div></div><div class="ptr-val" style="color:'+st.col+'">'+pct+'%</div><div class="ptr-tgt">'+tpct+'% target</div><div class="ptr-icon" style="background:'+st.bg+';color:'+st.col+'">'+st.sym+'</div></div>';
+}
+
+function renderDiagnostics(){
+  var pf=document.getElementById('diagPF').value||'',rf=document.getElementById('diagRF').value||'';
+  var entries=state.diagnostics.filter(function(d){return(!pf||d.name===pf)&&(!rf||d.roleTitle===rf);}).sort(function(a,b){return new Date(b.loggedAt)-new Date(a.loggedAt);});
+  var roles=[...new Set(state.diagnostics.map(function(d){return d.roleTitle;}).filter(Boolean))].sort();
+  var rfe=document.getElementById('diagRF'),cur=rfe.value;
+  rfe.innerHTML='<option value="">All roles</option>'+roles.map(function(r){return'<option value="'+r+'"'+(r===cur?' selected':'')+'>'+r+'</option>';}).join('');
+  var dc=document.getElementById('diagCards'),de=document.getElementById('diagEmpty');
+  if(!entries.length){dc.innerHTML='';de.style.display='block';return;}
+  de.style.display='none';
+  dc.innerHTML=entries.map(function(d){
+    var t=d.tier;
+    var rr=d.outreach>0?d.responses/d.outreach:null;
+    var p1=d.recScreen>0?d.hmScreen/d.recScreen:null;
+    var p2=d.hmScreen>0?d.techScreen/d.hmScreen:null;
+    var p3=d.techScreen>0?d.onsite/d.techScreen:null;
+    var p4=d.onsite>0?d.offers/d.onsite:null;
+    var sb=d.stallReason?'<span style="font-size:11px;background:var(--abg);color:var(--atx);padding:2px 8px;border-radius:4px;margin-left:8px">Stall: '+d.stallReason+'</span>':'';
+    var slab=d.slaViolations&&d.slaViolations!=='none'?'<div style="margin-top:6px;font-size:11px;color:var(--rtx);background:var(--rbg);padding:4px 8px;border-radius:var(--r)">SLA: '+d.slaViolations+'</div>':'';
+    return'<div class="card" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:6px"><div><div style="font-size:13px;font-weight:500">'+d.name+' <span style="color:var(--tx3);font-weight:400">&middot; '+(d.roleTitle||'-')+'</span>'+sb+'</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">'+d.role+' &middot; <span class="tb t'+t+'b">T'+t+'</span> &middot; Week of '+d.week+'</div></div><div style="display:flex;gap:12px;text-align:center;flex-wrap:wrap">'+(d.outreach?'<div><div style="font-size:16px;font-weight:500">'+d.outreach+'</div><div style="font-size:10px;color:var(--tx3)">outreach</div></div>':'')+(d.responses?'<div><div style="font-size:16px;font-weight:500">'+d.responses+'</div><div style="font-size:10px;color:var(--tx3)">responses</div></div>':'')+(d.offers?'<div><div style="font-size:16px;font-weight:500;color:var(--green)">'+d.offers+'</div><div style="font-size:10px;color:var(--tx3)">offers</div></div>':'')+'<span class="btn sm" style="color:var(--red);border-color:var(--red)" onclick="delDiag(\''+d.id+'\')">Remove</span></div></div>'+pRow('Response rate',rr,PTR_T.rr[t])+pRow('Rec screen &rarr; HM screen',p1,PTR_T.rh[t])+pRow('HM screen &rarr; Tech screen',p2,PTR_T.ht[t])+pRow('Tech screen &rarr; Onsite',p3,PTR_T.to[t])+pRow('Onsite &rarr; Offer',p4,PTR_T.oo[t])+slab+'</div>';
+  }).join('');
+}
+function delDiag(id){state.diagnostics=state.diagnostics.filter(function(d){return d.id!==id;});saveState();renderDiagnostics();}
+
+function goStep(n){
+  curStep=n;
+  [0,1,2,3].forEach(function(i){
+    var pane=document.getElementById('pane-'+i);
+    if(pane) pane.classList.toggle('on',i===n);
+    var btn=document.getElementById('sp'+i);
+    if(btn) btn.className='spb'+(i===n?' active':i<n?' done':'');
+  });
+  if(n===1){renderTracker();renderTeamDash();}
+  if(n===2){renderDiagnostics();}
+  window.scrollTo(0,0);
+}
+function updateStepper(){
+  var hasScores=Object.keys(state.roleScores).length>0;
+  var hasProgress=state.tracker.length>0;
+  if(hasScores&&curStep===0)document.getElementById('sp0').className='spb done';
+  if(hasProgress&&curStep===1)document.getElementById('sp1').className='spb done';
+}
+
+function toggleGuide(){var p=document.getElementById('guidePanel');p.classList.toggle('open');}
+function flash(id,msg){var el=document.getElementById(id);if(!el)return;el.textContent=msg;setTimeout(function(){el.textContent='';},2500);}
+function dlCSV(rows,name){var csv=rows.map(function(r){return r.map(function(v){return'"'+String(v||'').replace(/"/g,'""')+'"';}).join(',');}).join('\n');var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=name+'_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);}
+
+// Init
+updScore();
+renderSavedScores();
+initAshby();
+
+// ── SAVE / LOAD SNAPSHOT ──
+
+
+
+
+
+
+// ── SOURCING ENGINE ──
+
+'use strict';
+var DOMAINS = ['Foundations','Cloud Availability','Managed AI Services','Cloud Management','Data','Developer Experience','IT','Security'];
+var INBOUND_LABELS = {high:'High',medium:'Medium',low:'Low',none:'None'};
+var URGENCY_LABELS = {immediate:'Immediate',standard:'Standard',low:'Low'};
+var URGENCY_W = {immediate:30,standard:18,low:8};
+var TIER_W = {1:5,2:12,3:22,4:30};
+var DOMAIN_FIT = {primary:40,secondary:25,flex:10,none:0};
+
+// Default sourcer roster
+var DEFAULT_SOURCERS = {
+  'ali_aguayo':{name:'Ali Aguayo',type:'dedicated',primary:['Foundations'],secondary:'',flex:[],cap:8},
+  'troy_liebesman':{name:'Troy Liebesman',type:'dedicated',primary:['Foundations'],secondary:'',flex:[],cap:8},
+  'dan_dougherty':{name:'Dan Dougherty',type:'embedded',primary:['Cloud Availability'],secondary:'Foundations',flex:['Cloud Management'],cap:8},
+  'bianca_lucarelli':{name:'Bianca Lucarelli',type:'embedded',primary:['Cloud Availability'],secondary:'Developer Experience',flex:[],cap:8},
+  'jimmy_tran':{name:'Jimmy Tran',type:'embedded',primary:['Cloud Management'],secondary:'',flex:['Developer Experience'],cap:8},
+  'justin_lewis':{name:'Justin Lewis',type:'embedded',primary:['Managed AI Services'],secondary:'Data',flex:['Cloud Management'],cap:8},
+  'luis_valencia':{name:'Luis Valencia',type:'embedded',primary:['IT'],secondary:'Security',flex:[],cap:8},
+  'zachary_beecher':{name:'Zachary Beecher',type:'embedded',primary:['Security'],secondary:'IT',flex:['Foundations'],cap:8}
+};
+
+var currentFilter = 'all';
+var currentTab = 'queue';
+var assignReqId = null;
+var editSourcerKey = null;
+// ── PRIORITY SCORE ──
+function priorityScore(req){
+  var t = parseInt(req.tier)||2;
+  var complexity = req.complexity||0;
+  return (TIER_W[t]||12) + (complexity > 0 ? complexity : 12);
+}
+
+function domainFit(sourcerKey, domain){
+  var s = state.sourcers[sourcerKey];
+  if(!s) return 0;
+  if(s.primary && s.primary.indexOf(domain) >= 0) return DOMAIN_FIT.primary;
+  if(s.secondary && s.secondary === domain) return DOMAIN_FIT.secondary;
+  if(s.flex && s.flex.indexOf(domain) >= 0) return DOMAIN_FIT.flex;
+  return DOMAIN_FIT.none;
+}
+
+// ── RECOMMENDATION ENGINE ──
+function getRecommendation(req){
+  var t = parseInt(req.tier)||2;
+  var inbound = req.inbound||'medium';
+  var domain = req.department||'';
+  var tog1 = document.getElementById('tog1').checked; // Tier2 med/high → queue if true
+  var tog2 = document.getElementById('tog2').checked; // capacity overflow → queue if true
+
+  // Check if any sourcer has capacity for this domain
+  var capAvail = Object.keys(state.sourcers).some(function(sk){
+    var s = state.sourcers[sk];
+    var assigned = Object.values(state.allocation).filter(function(a){return a.sourcer===sk;}).length;
+    return assigned < s.cap;
+  });
+
+  if(t >= 3){
+    if(!capAvail){
+      return tog2 ? 'queue' : 'recruiter';
+    }
+    return 'dedicated';
+  }
+  if(t === 2){
+    if(inbound === 'low' || inbound === 'none'){
+      if(!capAvail) return tog2 ? 'queue' : 'recruiter';
+      return 'dedicated';
+    }
+    // medium or high inbound
+    if(!capAvail) return tog2 ? 'queue' : 'recruiter';
+    return tog1 ? 'queue' : 'recruiter';
+  }
+  // Tier 1
+  return 'recruiter';
+}
+
+function recLabel(rec){
+  if(rec==='dedicated') return '<span class="badge ded-badge">Dedicated sourcer</span>';
+  if(rec==='queue') return '<span class="badge queue-badge">Queue for sourcer</span>';
+  if(rec==='gap') return '<span class="badge gap-badge">Coverage gap</span>';
+  return '<span class="badge rec-badge">Recruiter-led</span>';
+}
+
+function fitLabel(score){
+  if(score>=40) return '<span class="fit-high">Primary ('+score+')</span>';
+  if(score>=25) return '<span class="fit-mid">Secondary ('+score+')</span>';
+  if(score>=10) return '<span class="fit-low">Flex ('+score+')</span>';
+  return '<span class="fit-none">No match (0)</span>';
+}
+
+// ── TOGGLES ──
+function applyToggles(){
+  var t1 = document.getElementById('tog1').checked;
+  var t2 = document.getElementById('tog2').checked;
+  document.getElementById('tog1lbl').textContent = t1 ? 'Queue for sourcer' : 'Recruiter-led';
+  document.getElementById('tog1lbl').style.color = t1 ? 'var(--amber)' : 'var(--tx3)';
+  document.getElementById('tog2lbl').textContent = t2 ? 'Queue for sourcer' : 'Recruiter-led';
+  document.getElementById('tog2lbl').style.color = t2 ? 'var(--amber)' : 'var(--tx3)';
+  renderQueue();
+  renderBoard();
+}
+
+// ── TAB SWITCHING ──
+function switchTab(tab){
+  currentTab = tab;
+  ['queue','board','setup'].forEach(function(t){
+    document.getElementById('pane-'+t).classList.toggle('on', t===tab);
+    document.querySelectorAll('.tab').forEach(function(b,i){
+      var tabs=['queue','board','setup'];
+      b.classList.toggle('on', tabs[i]===tab);
+    });
+  });
+  if(tab==='board') renderBoard();
+  if(tab==='setup') renderSetup();
+  if(tab==='queue') renderQueue();
+}
+
+// ── FILTER ──
+function setFilter(f, btn){
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(function(c){c.classList.remove('on');});
+  btn.classList.add('on');
+  renderQueue();
+}
+
+// ── PULL FROM SCORES ──
+function pullFromScores(){
+  try{
+    if(!state.allocReqs) state.allocReqs = {};
+    if(!state.roleScores) state.roleScores = {};
+    var scores = Object.values(state.roleScores);
+    if(!scores.length){
+      alert('No saved role scores found. Score some roles in the Performance System tab first.');
+      return;
+    }
+    var added = 0;
+    scores.forEach(function(s){
+      if(!s || typeof s !== 'object') return;
+      var rawId = s.id || (s.title||'role').toLowerCase().replace(/[^a-z0-9]/g,'_');
+      var id = 'score_' + rawId;
+      if(!state.allocReqs[id]){
+        state.allocReqs[id] = {
+          id: id,
+          title: s.title || 'Untitled',
+          department: s.department || '',
+          subteam: '',
+          tier: s.tier || 2,
+          complexity: s.score || null,
+          inbound: 'medium',
+          recruiter: '',
+          addedAt: new Date().toISOString()
+        };
+        added++;
+      }
+    });
+    saveState();
+    renderQueue();
+    renderCapStrip();
+    if(added > 0) alert('Imported ' + added + ' role' + (added !== 1 ? 's' : '') + ' from saved scores.');
+    else alert('All saved role scores are already in the queue.');
+  }catch(err){
+    alert('Error importing scores: ' + err.message);
+    console.error(err);
+  }
+}
+
+// ── CAPACITY STRIP ──
+function renderCapStrip(){
+  if(!state.allocReqs) state.allocReqs={};
+  if(!state.allocation) state.allocation={};
+  if(!state.sourcers) state.sourcers={};
+  var reqs = Object.values(state.allocReqs);
+  var assigned = reqs.filter(function(r){return state.allocation[r.id]&&state.allocation[r.id].sourcer;}).length;
+  var totalCap = Object.values(state.sourcers||{}).reduce(function(s,src){return s+src.cap;},0);
+  var usedCap = Object.values(state.allocation||{}).filter(function(a){return a.sourcer;}).length;
+  document.getElementById('cap-total').textContent = reqs.length;
+  document.getElementById('cap-assigned').textContent = assigned;
+  document.getElementById('cap-unassigned').textContent = reqs.length - assigned;
+  document.getElementById('cap-capacity').textContent = Math.max(0, totalCap - usedCap);
+}
+
+// ── LEADERSHIP GAP ──
+
+
+// ── RENDER QUEUE ──
+function renderQueue(){
+  if(!state.allocReqs) state.allocReqs={};
+  if(!state.allocation) state.allocation={};
+  var reqs = Object.values(state.allocReqs);
+  var search = (document.getElementById('queueSearch')?document.getElementById('queueSearch').value||'':'').toLowerCase();
+
+  // Apply search
+  if(search) reqs = reqs.filter(function(r){
+    return r.title.toLowerCase().includes(search)||(r.recruiter||'').toLowerCase().includes(search)||(r.department||'').toLowerCase().includes(search);
+  });
+
+  // Apply filter
+  reqs = reqs.filter(function(r){
+    if(currentFilter==='all') return true;
+    var rec = getRecommendation(r);
+    var assigned = state.allocation[r.id]&&state.allocation[r.id].sourcer;
+    if(currentFilter==='unassigned') return !assigned;
+    if(currentFilter==='dedicated') return rec==='dedicated';
+    if(currentFilter==='queue') return rec==='queue';
+    if(currentFilter==='recruiter') return rec==='recruiter';
+    if(currentFilter==='gap') return false;
+    return true;
+  });
+
+  // Sort by priority
+  reqs.sort(function(a,b){ return priorityScore(b)-priorityScore(a); });
+
+  var empty = document.getElementById('queueEmpty');
+  var tbl = document.querySelector('.qtbl-wrap');
+
+  if(!reqs.length && !Object.keys(state.allocReqs||{}).length){
+    empty.style.display='block'; tbl.style.display='none'; return;
+  }
+  empty.style.display='none'; tbl.style.display='block';
+
+  var tbody = document.getElementById('queueTbody');
+  var tierCls = {1:'priority-low',2:'priority-low',3:'priority-med',4:'priority-high'};
+  var tierBadge = {1:'t1b',2:'t2b',3:'t3b',4:'t4b'};
+
+  tbody.innerHTML = reqs.map(function(r){
+    var t = parseInt(r.tier)||2;
+    var rec = getRecommendation(r);
+    var alloc = state.allocation[r.id];
+    var srcName = alloc&&alloc.sourcer ? (state.sourcers[alloc.sourcer]?state.sourcers[alloc.sourcer].name:alloc.sourcer) : '';
+    var srcKey = alloc&&alloc.sourcer||'';
+    var ps = priorityScore(r);
+
+    return '<tr class="'+tierCls[t]+'">' +
+      '<td style="font-weight:500">'+r.title+(r.subteam?'<div style="font-size:10px;color:var(--tx3)">'+r.subteam+'</div>':'')+'</td>' +
+      '<td style="color:var(--tx2)">'+r.department+'</td>' +
+      '<td><span class="badge '+tierBadge[t]+'">T'+t+'</span></td>' +
+      '<td>' + '<input type="text" value="'+( r.recruiter||'' )+'" placeholder="Recruiter name" data-reqid="'+r.id+'" class="rec-inline-input" style="background:transparent;border:none;border-bottom:0.5px solid var(--bd2);color:var(--tx);font-family:var(--f);font-size:12px;width:120px;padding:2px 4px;outline:none;border-radius:0" onchange="updateReqRecruiter(this)" onblur="updateReqRecruiter(this)">' + '</td>' +
+      '<td style="color:var(--tx2)">'+( r.complexity ? r.complexity : '<span style="color:var(--tx3)">&#8212;</span>' )+'</td>' +
+      '<td>'+recLabel(rec)+'</td>' +
+      '<td>'+(srcName?'<span style="font-size:12px">'+srcName+'</span>':'<span style="color:var(--tx3);font-size:11px">Unassigned</span>')+'</td>' +
+      '<td style="white-space:nowrap">' +
+        '<button class="btn sm" data-assign="' + r.id + '" style="font-size:10px;padding:3px 8px">Assign</button>' +
+
+        '<span style="cursor:pointer;color:var(--tx3);font-size:11px" data-rm="' + r.id + '">&#10005;</span>' +
+      '</td>' +
+      '</tr>';
+  }).join('');
+
+  renderCapStrip();
+}
+
+// ── RENDER BOARD ──
+function renderBoard(){
+  var sourcers = Object.entries(state.sourcers||{});
+  var container = document.getElementById('sourcerCards');
+  if(!sourcers.length){container.innerHTML='<div style="color:var(--tx3);font-size:13px;padding:1rem">No sourcers configured. Go to Sourcer Setup to add your team.</div>';return;}
+
+  container.innerHTML = sourcers.map(function(entry){
+    var key = entry[0], s = entry[1];
+    var assignedReqs = Object.entries(state.allocation||{}).filter(function(a){return a[1].sourcer===key;});
+    var count = assignedReqs.length;
+    var pct = Math.min(100, Math.round(count/s.cap*100));
+    var barCol = pct>=90?'var(--red)':pct>=70?'var(--amber)':'#5bc49b';
+    var overCap = count > s.cap;
+    var isOver40 = checkSpread(key);
+
+    // Build domain tags
+    var domainTags = (s.primary||[]).map(function(d){return '<span class="domain-tag primary">'+d+'</span>';}).join('');
+    if(s.secondary) domainTags += '<span class="domain-tag secondary">'+s.secondary+'</span>';
+    (s.flex||[]).forEach(function(d){domainTags+='<span class="domain-tag flex">'+d+'</span>';});
+
+    // Build req list
+    var reqItems = assignedReqs.map(function(a){
+      var req = state.allocReqs[a[0]];
+      if(!req) return '';
+      var t = req.tier||2;
+      var badges = {1:'t1b',2:'t2b',3:'t3b',4:'t4b'};
+      return '<div class="sc-req-item">' +
+        '<span class="badge '+badges[t]+'" style="font-size:9px">T'+t+'</span>' +
+        '<span class="sc-req-title">'+req.title+'</span>' +
+        (req.recruiter?'<span style="font-size:10px;color:var(--tx3)">'+req.recruiter+'</span>':'') +
+        '<span class="sc-req-unassign" data-unassign="' + a[0] + '">&#10005;</span>' +
+      '</div>';
+    }).join('');
+
+    // Recruiter spread
+    var spread = getSpread(key);
+    var spreadHtml = '';
+    if(spread.length > 0){
+      var spreadTxt = spread.map(function(x){return x.name+' &times;'+x.count;}).join(', ');
+      spreadHtml = '<div style="font-size:10px;color:var(--tx3);margin-top:4px">'+spreadTxt+'</div>';
+    }
+
+    return '<div class="sc-card'+(overCap?' over-cap':'')+(isOver40?' warn-spread':'')+'">' +
+      '<div class="sc-hdr">' +
+        '<div>' +
+          '<div class="sc-name">'+s.name+'</div>' +
+          '<span class="sc-type '+s.type+'">'+s.type+'</span>' +
+        '</div>' +
+        '<div style="display:flex;gap:4px">' +
+        '<button class="btn sm ghost" data-editsrc="' + key + '" style="font-size:10px;padding:2px 7px">Edit</button>' +
+        '<button class="btn sm" data-rmsrc="' + key + '" style="font-size:10px;padding:2px 7px;color:var(--red);border-color:var(--rbd)">&#10005;</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="sc-domains">'+domainTags+'</div>' +
+      '<div class="cap-bar-wrap">' +
+        '<div class="cap-bar-lbl"><span>'+count+' / '+s.cap+' reqs'+(overCap?' <strong style="color:var(--red)">OVER CAP</strong>':'')+'</span><span>'+pct+'%</span></div>' +
+        '<div class="cap-bar-track"><div class="cap-bar-fill" style="width:'+pct+'%;background:'+barCol+'"></div></div>' +
+      '</div>' +
+      spreadHtml +
+      (isOver40?'<div class="spread-warn">&#9888; One recruiter represents &gt;40% of load</div>':'') +
+      (reqItems?'<div class="sc-reqs">'+reqItems+'</div>':'<div style="font-size:11px;color:var(--tx3);margin-top:8px">No reqs assigned</div>') +
+    '</div>';
+  }).join('');
+
+  // Board gap note
+  var gapNote = document.getElementById('boardGapNote');
+  var gaps = [];
+  var domainsCovered = new Set();
+  Object.values(state.sourcers||{}).forEach(function(s){
+    (s.primary||[]).forEach(function(d){domainsCovered.add(d);});
+    if(s.secondary) domainsCovered.add(s.secondary);
+  });
+    DOMAINS.forEach(function(d){if(!domainsCovered.has(d)) gaps.push(d);});
+  if(gaps.length){
+    gapNote.style.display='block';
+    gapNote.innerHTML='<strong>Coverage gaps:</strong> '+gaps.join(', ')+' — no sourcer has primary or secondary coverage.';
+  } else {
+    gapNote.style.display='none';
+  }
+}
+
+// ── SPREAD HELPERS ──
+function getSpread(sourcerKey){
+  var reqs = Object.entries(state.allocation||{}).filter(function(a){return a[1].sourcer===sourcerKey;});
+  var counts = {};
+  reqs.forEach(function(a){
+    var req = state.allocReqs[a[0]];
+    if(req&&req.recruiter){counts[req.recruiter]=(counts[req.recruiter]||0)+1;}
+  });
+  return Object.entries(counts).map(function(e){return {name:e[0],count:e[1]};}).sort(function(a,b){return b.count-a.count;});
+}
+function checkSpread(sourcerKey){
+  var total = Object.values(state.allocation||{}).filter(function(a){return a.sourcer===sourcerKey;}).length;
+  if(total<3) return false;
+  var spread = getSpread(sourcerKey);
+  if(!spread.length) return false;
+  return spread[0].count/total > 0.4;
+}
+
+// ── RENDER SETUP ──
+function renderSetup(){
+  var container = document.getElementById('setupCards');
+  var sourcers = Object.entries(state.sourcers||{});
+  if(!sourcers.length){container.innerHTML='<div style="color:var(--tx3);font-size:13px">No sourcers yet. Click "+ Add sourcer" to set up your team.</div>';return;}
+
+  container.innerHTML = sourcers.map(function(entry){
+    var key=entry[0],s=entry[1];
+    var domainTags = (s.primary||[]).map(function(d){return '<span class="domain-tag primary">'+d+'</span>';}).join('');
+    if(s.secondary) domainTags += '<span class="domain-tag secondary">'+s.secondary+'</span>';
+    (s.flex||[]).forEach(function(d){domainTags+='<span class="domain-tag flex">'+d+'</span>';});
+    var assigned = Object.values(state.allocation||{}).filter(function(a){return a.sourcer===key;}).length;
+    return '<div class="sc-card">' +
+      '<div class="sc-hdr">' +
+        '<div><div class="sc-name">'+s.name+'</div><span class="sc-type '+s.type+'">'+s.type+'</span></div>' +
+        '<div style="display:flex;gap:4px">' +
+        '<button class="btn sm ghost" data-editsrc="' + key + '" style="font-size:10px;padding:2px 7px">Edit</button>' +
+        '<button class="btn sm" data-rmsrc="' + key + '" style="font-size:10px;padding:2px 7px;color:var(--red);border-color:var(--rbd)">&#10005;</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="sc-domains" style="margin-bottom:8px">'+domainTags+'</div>' +
+      '<div style="font-size:11px;color:var(--tx3)">Cap: '+s.cap+' reqs &middot; '+assigned+' currently assigned</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── ADD / EDIT REQ ──
+function showAddReqModal(){document.getElementById('addReqModal').classList.add('show');}
+function closeAddReqModal(){document.getElementById('addReqModal').classList.remove('show');}
+function syncTierFromComplexity(){
+  var score = parseInt(document.getElementById('reqComplexity').value);
+  if(isNaN(score)) return;
+  var tier = score >= 21 ? 4 : score >= 16 ? 3 : score >= 11 ? 2 : 1;
+  document.getElementById('reqTier').value = tier;
+}
+
+function saveReq(){
+  var title = document.getElementById('reqTitle').value.trim();
+  var dept = document.getElementById('reqDept').value;
+  if(!title||!dept){alert('Please enter a role title and department.');return;}
+  var id = 'req_'+Date.now();
+  state.allocReqs[id] = {
+    id:id, title:title, department:dept,
+    subteam:document.getElementById('reqSubteam').value.trim(),
+    tier:parseInt(document.getElementById('reqTier').value),
+    inbound:document.getElementById('reqInbound').value,
+    complexity:parseInt(document.getElementById('reqComplexity').value)||null,
+    recruiter:document.getElementById('reqRecruiter').value.trim(),
+    addedAt:new Date().toISOString()
+  };
+  saveState(); closeAddReqModal(); renderQueue(); renderCapStrip();
+  document.getElementById('reqTitle').value=''; document.getElementById('reqSubteam').value=''; document.getElementById('reqRecruiter').value='';
+}
+function updateReqRecruiter(input){
+  var id = input.getAttribute('data-reqid');
+  if(!id || !state.allocReqs[id]) return;
+  state.allocReqs[id].recruiter = input.value.trim();
+  saveState();
+}
+
+function removeReq(id){
+  if(!confirm('Remove this req from the queue?')) return;
+  delete state.allocReqs[id]; delete state.allocation[id];
+  saveState(); renderQueue(); renderBoard();
+}
+
+// ── ASSIGN MODAL ──
+function openAssignModal(reqId){
+  assignReqId = reqId;
+  var req = state.allocReqs[reqId];
+  if(!req) return;
+  document.getElementById('assignReqId').value = reqId;
+  document.getElementById('assignReqInfo').innerHTML =
+    '<strong>'+req.title+'</strong> &middot; '+req.department+(req.subteam?' / '+req.subteam:'')+
+    ' &middot; <span class="badge '+(req.tier>=3?'t3b':req.tier===2?'t2b':'t1b')+'">T'+req.tier+'</span>'+
+    (req.recruiter?' &middot; Recruiter: '+req.recruiter:'');
+
+    var ranked = Object.entries(state.sourcers||{}).map(function(e){
+    var key=e[0],s=e[1];
+    var fit = domainFit(key, req.department);
+    var assigned = Object.values(state.allocation||{}).filter(function(a){return a.sourcer===key;}).length;
+    var capScore = (s.cap-assigned)/s.cap*20;
+    var spread = checkSpread(key) ? -10 : 0;
+    var isDedOnly = s.type==='dedicated' && (s.primary||[]).indexOf(req.department)<0;
+    var totalScore = fit + (TIER_W[req.tier]||12)*0.3 + capScore + spread;
+    var overCap = assigned >= s.cap;
+    return {key:key,name:s.name,fit:fit,totalScore:totalScore,assigned:assigned,cap:s.cap,overCap:overCap,type:s.type,isDedOnly:isDedOnly};
+  }).filter(function(x){return !x.isDedOnly;}).sort(function(a,b){return b.totalScore-a.totalScore;});
+
+  document.getElementById('assignOptions').innerHTML = ranked.map(function(r){
+    var capStatus = r.overCap?'<span style="color:var(--red);font-size:10px">&#9888; Over cap</span>':'<span style="color:var(--tx3);font-size:10px">'+r.assigned+'/'+r.cap+'</span>';
+    var cur = state.allocation[reqId]&&state.allocation[reqId].sourcer===r.key;
+    var borderCol = cur ? "var(--amber)" : "var(--bd)";
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r);background:var(--bg3);margin-bottom:6px;cursor:pointer;border:0.5px solid '+borderCol+'" data-qa="'+r.key+'">' +
+      '<div style="flex:1"><div style="font-size:13px;font-weight:500">'+r.name+'</div><div style="display:flex;gap:8px;margin-top:2px">'+fitBadge+capStatus+'<span class="sc-type '+r.type+'" style="font-size:9px">'+r.type+'</span></div></div>' +
+      '<div style="font-family:monospace;font-size:18px;font-weight:500;color:var(--amber)">'+Math.round(r.totalScore)+'</div>' +
+      (cur?'<span style="color:var(--amber);font-size:12px">&#10003; Current</span>':'') +
+    '</div>';
+  }).join('');
+
+  // Manual select
+  var manSel = document.getElementById('assignManual');
+  manSel.innerHTML = '<option value="">Select sourcer...</option>' + Object.entries(state.sourcers||{}).map(function(e){
+    return '<option value="'+e[0]+'">'+e[1].name+'</option>';
+  }).join('');
+  if(state.allocation[reqId]&&state.allocation[reqId].sourcer) manSel.value = state.allocation[reqId].sourcer;
+
+  document.getElementById('assignModal').classList.add('show');
+}
+function closeAssignModal(){document.getElementById('assignModal').classList.remove('show');assignReqId=null;}
+function quickAssign(srcKey){
+  if(!assignReqId) return;
+  state.allocation[assignReqId] = {sourcer:srcKey,assignedAt:new Date().toISOString()};
+  saveState(); closeAssignModal(); renderQueue(); renderBoard(); renderCapStrip();
+}
+function confirmAssign(){
+  var manual = document.getElementById('assignManual').value;
+  if(manual) quickAssign(manual);
+  else closeAssignModal();
+}
+function unassignReq(reqId){
+  delete state.allocation[reqId];
+  saveState(); renderBoard(); renderQueue(); renderCapStrip();
+}
+
+// ── AUTO-ALLOCATE ──
+function clearAllAllocations(){
+  state.allocation = {};
+  try{ localStorage.setItem(SK, JSON.stringify(state)); }catch(e){}
+  renderBoard();
+  renderQueue();
+  renderCapStrip();
+}
+
+function autoAllocate(){
+  var reqs = Object.values(state.allocReqs||{}).filter(function(r){
+    var rec = getRecommendation(r);
+    return rec==='dedicated' || rec==='queue';
+  }).sort(function(a,b){return priorityScore(b)-priorityScore(a);});
+
+  var assigned = 0;
+  reqs.forEach(function(req){
+    if(state.allocation[req.id]&&state.allocation[req.id].sourcer) return;
+    var best = null, bestScore = -1;
+    Object.entries(state.sourcers||{}).forEach(function(e){
+      var key=e[0],s=e[1];
+      var isDedOnly = s.type==='dedicated' && (s.primary||[]).indexOf(req.department)<0;
+      if(isDedOnly) return;
+      var curLoad = Object.values(state.allocation||{}).filter(function(a){return a.sourcer===key;}).length;
+      if(curLoad >= s.cap) return;
+      var fit = domainFit(key, req.department);
+      var capScore = (s.cap-curLoad)/s.cap*20;
+      var spread = checkSpread(key)?-10:0;
+      var score = fit + (TIER_W[req.tier]||12)*0.3 + capScore + spread;
+      if(score > bestScore){bestScore=score;best=key;}
+    });
+    if(best){
+      state.allocation[req.id]={sourcer:best,assignedAt:new Date().toISOString(),autoAssigned:true};
+      assigned++;
+    }
+  });
+  saveState(); renderQueue(); renderBoard(); renderCapStrip();
+  alert('Auto-allocated '+assigned+' req'+(assigned!==1?'s':'')+'. '+Object.values(reqs).filter(function(r){return !state.allocation[r.id]||!state.allocation[r.id].sourcer;}).length+' req(s) could not be assigned (capacity full).');
+}
+
+// ── ADD/EDIT SOURCER ──
+// ── DYNAMIC DOMAIN TAG SYSTEM ──
+var _modalPrimary = [];
+var _modalSecondary = [];
+var _modalFlex = [];
+
+function renderDomainTags(type){
+  var arr = type==='primary'?_modalPrimary:type==='secondary'?_modalSecondary:_modalFlex;
+  var colors = {primary:'var(--gbg)',secondary:'var(--bbg)',flex:'var(--bg3)'};
+  var borders = {primary:'var(--gbd)',secondary:'var(--bbd)',flex:'var(--bd2)'};
+  var txColors = {primary:'var(--gtx)',secondary:'var(--btx)',flex:'var(--tx2)'};
+  var container = document.getElementById(type+'Tags');
+  if(!container) return;
+  container.innerHTML = arr.map(function(d){
+    return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 10px;border-radius:20px;background:' + colors[type] + ';border:0.5px solid ' + borders[type] + ';color:' + txColors[type] + '">'
+      + d
+      + '<span class="rm-tag-btn" data-tagtype="' + type + '" data-tagval="' + d.replace(/"/g,'&quot;') + '" style="cursor:pointer;font-size:12px;opacity:0.7;line-height:1;margin-left:3px">&times;</span>'
+      + '</span>';
+  }).join('');
+}
+
+function removeDomainTag(type, domain){
+  var arr = type==='primary'?_modalPrimary:type==='secondary'?_modalSecondary:_modalFlex;
+  var idx = arr.indexOf(domain);
+  if(idx>=0) arr.splice(idx,1);
+  renderDomainTags(type);
+}
+
+function addDomainTag(type){
+  var sel = document.getElementById(type+'AddSel');
+  var custom = document.getElementById(type+'AddCustom');
+  var val = (custom&&custom.value.trim()) || (sel&&sel.value) || '';
+  if(!val) return;
+  var arr = type==='primary'?_modalPrimary:type==='secondary'?_modalSecondary:_modalFlex;
+  // Secondary can only have one
+  if(type==='secondary'){ _modalSecondary=[val]; }
+  else if(arr.indexOf(val)<0){ arr.push(val); }
+  if(sel) sel.value='';
+  if(custom) custom.value='';
+  renderDomainTags(type);
+}
+
+function buildDomainCheckboxes(){
+  _modalPrimary=[];_modalSecondary=[];_modalFlex=[];
+  renderDomainTags('primary');renderDomainTags('secondary');renderDomainTags('flex');
+}
+
+function showAddSourcerModal(){
+  editSourcerKey = null;
+  document.getElementById('addSourcerTitle').textContent = 'Add sourcer';
+  document.getElementById('editSourcerKey').value = '';
+  document.getElementById('srcName').value = '';
+  document.getElementById('srcType').value = 'embedded';
+  document.getElementById('srcSecondary').value = '';
+  document.getElementById('srcCap').value = '8';
+  buildDomainCheckboxes();
+  document.getElementById('addSourcerModal').classList.add('show');
+}
+
+function openEditSourcer(key){
+  var s = state.sourcers[key];
+  if(!s) return;
+  editSourcerKey = key;
+  document.getElementById('addSourcerTitle').textContent = 'Edit sourcer';
+  document.getElementById('editSourcerKey').value = key;
+  document.getElementById('srcName').value = s.name;
+  document.getElementById('srcType').value = s.type||'embedded';
+  document.getElementById('srcCap').value = s.cap||8;
+  buildDomainCheckboxes();
+  _modalPrimary = (s.primary||[]).slice();
+  _modalSecondary = s.secondary ? [s.secondary] : [];
+  _modalFlex = (s.flex||[]).slice();
+  renderDomainTags('primary');
+  renderDomainTags('secondary');
+  renderDomainTags('flex');
+  document.getElementById('addSourcerModal').classList.add('show');
+}
+
+function closeAddSourcerModal(){document.getElementById('addSourcerModal').classList.remove('show');editSourcerKey=null;}
+
+function saveSourcer(){
+  var name = document.getElementById('srcName').value.trim();
+  if(!name){alert('Enter a name.');return;}
+  var primary = _modalPrimary.slice();
+  var flex = _modalFlex.slice();
+  var key = editSourcerKey || name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z_]/g,'');
+  state.sourcers[key] = {
+    name:name, type:document.getElementById('srcType').value,
+    primary:primary, secondary:_modalSecondary[0]||'',
+    flex:flex, cap:parseInt(document.getElementById('srcCap').value)||8
+  };
+    saveState(); closeAddSourcerModal(); renderBoard(); renderSetup();
+}
+
+function removeSourcer(key){
+  if(!confirm('Remove this sourcer? Their assignments will be unassigned.')) return;
+  delete state.sourcers[key];
+  Object.keys(state.allocation||{}).forEach(function(rid){if(state.allocation[rid].sourcer===key)delete state.allocation[rid];});
+    saveState(); renderBoard(); renderSetup(); renderQueue();
+}
+
+function resetToDefaults(){
+  if(!confirm('Reset to default team roster? This will overwrite any custom changes to sourcer profiles.')) return;
+  state.sourcers = JSON.parse(JSON.stringify(DEFAULT_SOURCERS));
+    saveState(); renderBoard(); renderSetup(); renderQueue();
+}
+
+// ── EXPORT ──
+function exportAllocation(){
+  var rows = [['Role Title','Department','Subteam','Tier','Recruiter','Recommendation','Assigned Sourcer']];
+  Object.values(state.allocReqs||{}).sort(function(a,b){return priorityScore(b)-priorityScore(a);}).forEach(function(r){
+    var rec = getRecommendation(r);
+    var alloc = state.allocation[r.id];
+    var srcKey = alloc&&alloc.sourcer||'';
+    var srcName = srcKey&&state.sourcers[srcKey]?state.sourcers[srcKey].name:'Unassigned';
+    var fit = srcKey?domainFit(srcKey,r.department):0;
+    var fitLbl = fit>=40?'Primary':fit>=25?'Secondary':fit>=10?'Flex':'None';
+    rows.push([r.title,r.department,r.subteam||'',r.tier,r.recruiter||'',rec,srcName]);
+  });
+  var csv = rows.map(function(r){return r.map(function(c){return '"'+String(c||'').replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = 'crusoe_sourcing_allocation_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ── EVENT DELEGATION ──
+document.addEventListener('click', function(e){
+  // Tag removal always fires (inside modal)
+  var tagtype = e.target.getAttribute && e.target.getAttribute('data-tagtype');
+  if(tagtype){ removeDomainTag(tagtype, e.target.getAttribute('data-tagval')); return; }
+  // Block all other card-level handlers when a modal is open
+  if(e.target.closest && e.target.closest('.modal-wrap.show')) return;
+  var t = e.target.closest ? e.target.closest('[data-assign],[data-rm],[data-rmsrc],[data-editsrc],[data-unassign],[data-qa]') || e.target : e.target;
+  var assign = t.getAttribute && t.getAttribute('data-assign');
+  if(assign){ openAssignModal(assign); return; }
+  var rm = t.getAttribute && t.getAttribute('data-rm');
+  if(rm){ removeReq(rm); return; }
+  var rmsrc = t.getAttribute && t.getAttribute('data-rmsrc');
+  if(rmsrc){ removeSourcer(rmsrc); return; }
+  var editsrc = t.getAttribute && t.getAttribute('data-editsrc');
+  if(editsrc){ openEditSourcer(editsrc); return; }
+  var unassign = t.getAttribute && t.getAttribute('data-unassign');
+  if(unassign){ unassignReq(unassign); return; }
+  var qa = t.getAttribute && t.getAttribute('data-qa');
+  if(qa){ quickAssign(qa); return; }
+});
+
+// ── INIT ──
+applyToggles();
+renderQueue();
+renderCapStrip();
+
+// ── SAVE / LOAD SNAPSHOT ──
+
+
+
+
+
+
+// ── HOME ──
+
+function loadStats(){
+  try{
+    var s = localStorage.getItem(SK);
+    if(!s) return;
+    var state = JSON.parse(s);
+    var roles = Object.keys(state.roleScores||{}).length;
+    var people = Object.keys(state.goals||{}).length;
+    var pts = (state.tracker||[]).reduce(function(s,l){return s+l.pts;},0);
+    var reqs = Object.keys(state.allocation||{}).length;
+    var assigned = Object.values(state.allocation||{}).filter(function(a){return a.sourcer;}).length;
+    var sourcers = Object.keys(state.sourcers||{}).length || 8;
+
+    document.getElementById('roleCount').textContent = roles + ' role' + (roles!==1?'s':'') + ' scored';
+    document.getElementById('peopleCount').textContent = people + ' ' + (people!==1?'people':'person') + ' tracked';
+    document.getElementById('allocCount').textContent = assigned + ' req' + (assigned!==1?'s':'') + ' allocated';
+    document.getElementById('ps-roles').textContent = roles;
+    document.getElementById('ps-people').textContent = people;
+    document.getElementById('ps-pts').textContent = pts.toFixed(1);
+    document.getElementById('se-reqs').textContent = reqs;
+    document.getElementById('se-assigned').textContent = assigned;
+    document.getElementById('se-sourcers').textContent = sourcers;
+  }catch(e){}
+}
+loadStats();
+
+
+
+// ── PATCH HOME CARD LINKS ──
+document.addEventListener('DOMContentLoaded', function(){
+  var pc=document.querySelector('a.mod-card.perf');
+  var sc=document.querySelector('a.mod-card.src');
+  if(pc){pc.href='#';pc.onclick=function(e){e.preventDefault();showView('perf');};}
+  if(sc){sc.href='#';sc.onclick=function(e){e.preventDefault();showView('engine');};}
+});
+
+// ── BOOT ──
+// Load persisted state FIRST before any renders
+try{loadState();}catch(e){}
+// Seed role scores from project files if none saved yet
+(function(){
+  var SEED_SCORES = {
+  "associate_systems_software_engineer": {id:"associate_systems_software_engineer",title:"Associate Systems Software Engineer",department:"Foundations",score:16.0,tier:3,vals:[2, 3, 2, 2, 1],savedAt:"2026-05-04T00:00:00.000Z"},
+  "chief_of_staff": {id:"chief_of_staff",title:"Chief of Staff",department:"Cloud Management",score:14.2,tier:2,vals:[3, 2, 3, 3, 4],savedAt:"2026-05-04T00:00:00.000Z"},
+  "engineering_manager__billing_platform": {id:"engineering_manager__billing_platform",title:"Engineering Manager Billing Platform",department:"Cloud Management",score:15.5,tier:2,vals:[3, 3, 3, 3, 4],savedAt:"2026-05-04T00:00:00.000Z"},
+  "engineering_manager__production_engineering": {id:"engineering_manager__production_engineering",title:"Engineering Manager Production Engineering",department:"Cloud Availability",score:15.5,tier:2,vals:[3, 3, 3, 3, 4],savedAt:"2026-05-04T00:00:00.000Z"},
+  "hardware_systems_engineer_i": {id:"hardware_systems_engineer_i",title:"Hardware Systems Engineer I",department:"Foundations",score:16.0,tier:3,vals:[2, 3, 2, 2, 1],savedAt:"2026-05-04T00:00:00.000Z"},
+  "infrastructure_engineer__lab_manager": {id:"infrastructure_engineer__lab_manager",title:"Infrastructure Engineer Lab Manager",department:"Foundations",score:16.0,tier:3,vals:[3, 3, 3, 2, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "junior_infrastructure_engineer__lab": {id:"junior_infrastructure_engineer__lab",title:"Junior Infrastructure Engineer Lab",department:"Foundations",score:16.0,tier:3,vals:[1, 2, 1, 1, 1],savedAt:"2026-05-04T00:00:00.000Z"},
+  "network_engineer__new_college_graduate": {id:"network_engineer__new_college_graduate",title:"Network Engineer New College Graduate",department:"Cloud Availability",score:13.0,tier:2,vals:[1, 2, 1, 1, 1],savedAt:"2026-05-04T00:00:00.000Z"},
+  "principal_production_engineer": {id:"principal_production_engineer",title:"Principal Production Engineer",department:"Cloud Availability",score:21.5,tier:4,vals:[5, 4, 4, 4, 4],savedAt:"2026-05-04T00:00:00.000Z"},
+  "principal_software_engineer__sdn_networking": {id:"principal_software_engineer__sdn_networking",title:"Principal Software Engineer SDN Networking",department:"Cloud Availability",score:24.0,tier:4,vals:[5, 5, 5, 5, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "principal_systems_software_engineer": {id:"principal_systems_software_engineer",title:"Principal Systems Software Engineer",department:"Foundations",score:24.5,tier:4,vals:[5, 5, 5, 5, 4],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_backend_software_engineer_-_billing": {id:"senior_backend_software_engineer_-_billing",title:"Senior Backend Software Engineer - Billing",department:"Cloud Management",score:11.8,tier:2,vals:[2, 3, 2, 2, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_backend_software_engineer__cloud_management": {id:"senior_backend_software_engineer__cloud_management",title:"Senior Backend Software Engineer Cloud Management",department:"Cloud Management",score:11.8,tier:2,vals:[2, 3, 2, 2, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_backend_tooling_software_engineer": {id:"senior_backend_tooling_software_engineer",title:"Senior Backend Tooling Software Engineer",department:"Cloud Management",score:11.8,tier:2,vals:[2, 3, 2, 2, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_data_scientist": {id:"senior_data_scientist",title:"Senior Data Scientist",department:"Data",score:14.5,tier:2,vals:[3, 3, 3, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_director__ai_model_lifecycle": {id:"senior_director__ai_model_lifecycle",title:"Senior Director AI Model Lifecycle",department:"Managed AI Services",score:19.2,tier:3,vals:[4, 3, 4, 4, 5],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_director__cloud_engineering": {id:"senior_director__cloud_engineering",title:"Senior Director Cloud Engineering",department:"Cloud Management",score:19.2,tier:3,vals:[4, 3, 4, 4, 5],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_engineering_manager__compute": {id:"senior_engineering_manager__compute",title:"Senior Engineering Manager Compute",department:"Cloud Management",score:20.5,tier:3,vals:[4, 4, 4, 4, 5],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_engineering_manager__data_plane_systems": {id:"senior_engineering_manager__data_plane_systems",title:"Senior Engineering Manager Data Plane Systems",department:"Cloud Management",score:21.8,tier:4,vals:[4, 5, 4, 4, 5],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_hardware_systems_engineer": {id:"senior_hardware_systems_engineer",title:"Senior Hardware Systems Engineer",department:"Foundations",score:16.0,tier:3,vals:[3, 4, 3, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_network_engineer__deployment": {id:"senior_network_engineer__deployment",title:"Senior Network Engineer Deployment",department:"Cloud Availability",score:13.8,tier:2,vals:[3, 3, 3, 2, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_sdn_development_engineer__management_plane_": {id:"senior_sdn_development_engineer__management_plane_",title:"Senior SDN Development Engineer Management Plane",department:"Cloud Availability",score:18.8,tier:3,vals:[4, 4, 4, 3, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_software_engineer__data_platform": {id:"senior_software_engineer__data_platform",title:"Senior Software Engineer Data Platform",department:"Data",score:13.8,tier:2,vals:[3, 3, 3, 2, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_software_engineer__managed_ai_-_ai_model_lifecycle": {id:"senior_software_engineer__managed_ai_-_ai_model_lifecycle",title:"Senior Software Engineer Managed AI - AI Model LifeCycle",department:"Managed AI Services",score:14.5,tier:2,vals:[3, 3, 3, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_software_engineer__managed_orchestration__managed_kubernetes_": {id:"senior_software_engineer__managed_orchestration__managed_kubernetes_",title:"Senior Software Engineer Managed Orchestration Managed Kubernetes",department:"Managed AI Services",score:13.8,tier:2,vals:[3, 3, 3, 2, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_software_engineer__managed_services": {id:"senior_software_engineer__managed_services",title:"Senior Software Engineer Managed Services",department:"Managed AI Services",score:13.0,tier:2,vals:[2, 3, 2, 2, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_software_engineer__networking": {id:"senior_software_engineer__networking",title:"Senior Software Engineer Networking",department:"Cloud Availability",score:20.2,tier:3,vals:[4, 5, 4, 4, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_software_engineer__observability__backend_engineer_": {id:"senior_software_engineer__observability__backend_engineer_",title:"Senior Software Engineer Observability Backend Engineer",department:"Cloud Availability",score:13.8,tier:2,vals:[3, 3, 3, 2, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_software_engineer__storage": {id:"senior_software_engineer__storage",title:"Senior Software Engineer Storage",department:"Foundations",score:18.2,tier:3,vals:[4, 4, 4, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_software_engineer__streaming__backend_engineer_": {id:"senior_software_engineer__streaming__backend_engineer_",title:"Senior Software Engineer Streaming Backend Engineer",department:"Cloud Management",score:13.8,tier:2,vals:[3, 3, 3, 2, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_software_enginer__cape": {id:"senior_software_enginer__cape",title:"Senior Software Engineer CAPE",department:"Cloud Availability",score:15.8,tier:2,vals:[3, 4, 3, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_staff_software_engineer__ai_model_lifecycle": {id:"senior_staff_software_engineer__ai_model_lifecycle",title:"Senior Staff Software Engineer AI Model LifeCycle",department:"Managed AI Services",score:19.5,tier:3,vals:[4, 4, 4, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_staff_software_engineer__cape": {id:"senior_staff_software_engineer__cape",title:"Senior Staff Software Engineer CAPE",department:"Cloud Availability",score:19.5,tier:3,vals:[4, 4, 4, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_staff_software_engineer__managed_orchestration": {id:"senior_staff_software_engineer__managed_orchestration",title:"Senior Staff Software Engineer Managed Orchestration",department:"Managed AI Services",score:18.8,tier:3,vals:[4, 4, 4, 3, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_staff_software_engineer__model_lifecycle": {id:"senior_staff_software_engineer__model_lifecycle",title:"Senior Staff Software Engineer Model LifeCycle",department:"Managed AI Services",score:19.5,tier:3,vals:[4, 4, 4, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_staff_software_engineer__sdn_networking": {id:"senior_staff_software_engineer__sdn_networking",title:"Senior Staff Software Engineer SDN Networking",department:"Cloud Availability",score:24.0,tier:4,vals:[5, 5, 5, 5, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_staff_software_engineer__storage": {id:"senior_staff_software_engineer__storage",title:"Senior Staff Software Engineer Storage",department:"Foundations",score:23.2,tier:4,vals:[5, 5, 5, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_staff_systems_administrator": {id:"senior_staff_systems_administrator",title:"Senior Staff Systems Administrator",department:"Foundations",score:18.8,tier:3,vals:[4, 4, 4, 3, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "senior_virtualization_validation_engineer": {id:"senior_virtualization_validation_engineer",title:"Senior Virtualization Validation Engineer",department:"Foundations",score:18.2,tier:3,vals:[4, 4, 4, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "software_engineer_-_cloude_availability_platform_engineering__cape_": {id:"software_engineer_-_cloude_availability_platform_engineering__cape_",title:"Software Engineer - Cloud Availability Platform Engineering CAPE",department:"Cloud Availability",score:15.8,tier:2,vals:[3, 4, 3, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "software_engineer_ii__sdn_networking": {id:"software_engineer_ii__sdn_networking",title:"Software Engineer II SDN Networking",department:"Cloud Availability",score:20.2,tier:3,vals:[4, 5, 4, 4, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "software_engineer_ii__storage": {id:"software_engineer_ii__storage",title:"Software Engineer II Storage",department:"Foundations",score:16.0,tier:3,vals:[3, 4, 3, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "software_engineer__control_plane": {id:"software_engineer__control_plane",title:"Software Engineer Control Plane",department:"Cloud Availability",score:13.8,tier:2,vals:[3, 3, 3, 2, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_cloud_hypervisor_r_d": {id:"staff_cloud_hypervisor_r_d",title:"Staff Cloud Hypervisor R D",department:"Foundations",score:23.2,tier:4,vals:[5, 5, 5, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_cloud_infrastructure_engineer__vmware_": {id:"staff_cloud_infrastructure_engineer__vmware_",title:"Staff Cloud Infrastructure Engineer VMware",department:"Foundations",score:16.0,tier:3,vals:[3, 3, 3, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_hardware_systems_engineer": {id:"staff_hardware_systems_engineer",title:"Staff Hardware Systems Engineer",department:"Foundations",score:18.2,tier:3,vals:[4, 4, 4, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_network_deployment_engineer__lab": {id:"staff_network_deployment_engineer__lab",title:"Staff Network Deployment Engineer Lab",department:"Foundations",score:16.0,tier:3,vals:[3, 3, 3, 2, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_network_engineer__deployment": {id:"staff_network_engineer__deployment",title:"Staff Network Engineer Deployment",department:"Cloud Availability",score:13.8,tier:2,vals:[3, 3, 3, 2, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_production_engineer__operational_excellence_": {id:"staff_production_engineer__operational_excellence_",title:"Staff Production Engineer Operational Excellence",department:"Cloud Availability",score:18.8,tier:3,vals:[4, 4, 4, 3, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_software_engineer": {id:"staff_software_engineer",title:"Staff Software Engineer",department:"Foundations",score:16.0,tier:3,vals:[3, 4, 3, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_software_engineer__ai_model_lifecycle": {id:"staff_software_engineer__ai_model_lifecycle",title:"Staff Software Engineer AI Model LifeCycle",department:"Managed AI Services",score:19.5,tier:3,vals:[4, 4, 4, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_software_engineer__foundations__managed_ai_": {id:"staff_software_engineer__foundations__managed_ai_",title:"Staff Software Engineer Foundations Managed AI",department:"Managed AI Services",score:19.5,tier:3,vals:[4, 4, 4, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_software_engineer__model_lifecycle": {id:"staff_software_engineer__model_lifecycle",title:"Staff Software Engineer Model LifeCycle",department:"Managed AI Services",score:19.5,tier:3,vals:[4, 4, 4, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_software_engineer__networking": {id:"staff_software_engineer__networking",title:"Staff Software Engineer Networking",department:"Cloud Availability",score:24.0,tier:4,vals:[5, 5, 5, 5, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_software_engineer__slurm": {id:"staff_software_engineer__slurm",title:"Staff Software Engineer Slurm",department:"Foundations",score:18.2,tier:3,vals:[4, 4, 4, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_software_engineer__storage": {id:"staff_software_engineer__storage",title:"Staff Software Engineer Storage",department:"Foundations",score:23.2,tier:4,vals:[5, 5, 5, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_software_engineer__systems_engineering_focus": {id:"staff_software_engineer__systems_engineering_focus",title:"Staff Software Engineer Systems Engineering Focus",department:"Foundations",score:16.0,tier:3,vals:[3, 4, 3, 3, 2],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_storage_systems_administrator": {id:"staff_storage_systems_administrator",title:"Staff Storage Systems Administrator",department:"Foundations",score:18.8,tier:3,vals:[4, 4, 4, 3, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff_storage_systems_engineer": {id:"staff_storage_systems_engineer",title:"Staff Storage Systems Engineer",department:"Foundations",score:18.8,tier:3,vals:[4, 4, 4, 3, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff__software_engineer_-_cloud_availability_platform_engineering__cape_": {id:"staff__software_engineer_-_cloud_availability_platform_engineering__cape_",title:"Staff Software Engineer - Cloud Availability Platform Engineering CAPE",department:"Cloud Availability",score:19.5,tier:3,vals:[4, 4, 4, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "staff__software_engineer_-_cloud_availability_platform_engineering__observability_": {id:"staff__software_engineer_-_cloud_availability_platform_engineering__observability_",title:"Staff Software Engineer - Cloud Availability Platform Engineering Observability",department:"Cloud Availability",score:19.5,tier:3,vals:[4, 4, 4, 4, 3],savedAt:"2026-05-04T00:00:00.000Z"},
+  "storage_systems_administrator_ii": {id:"storage_systems_administrator_ii",title:"Storage Systems Administrator II",department:"Foundations",score:16.0,tier:3,vals:[3, 3, 3, 2, 2],savedAt:"2026-05-04T00:00:00.000Z"}
+};
+  if(!state.roleScores || Object.keys(state.roleScores).length === 0){
+    state.roleScores = SEED_SCORES;
+    try{localStorage.setItem(SK, JSON.stringify(state));}catch(e){}
+  }
+})();
+// Init engine defaults if first run
+if(!state.sourcers||Object.keys(state.sourcers).length===0){state.sourcers=JSON.parse(JSON.stringify(DEFAULT_SOURCERS));}
+if(!state.allocReqs)state.allocReqs={};
+if(!state.allocation)state.allocation={};
+// Render
+try{updScore();}catch(e){}
+try{renderSavedScores();}catch(e){}
+try{initAshby();}catch(e){}
+try{applyToggles();}catch(e){}
+try{loadStats();}catch(e){}
+</script>
+</body>
+</html>

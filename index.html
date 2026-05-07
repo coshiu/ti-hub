@@ -43,6 +43,10 @@
     --reporting-bg: #0f0a1a;
     --reporting-border: #2a1a4a;
 
+    --tools: #a3e635;
+    --tools-bg: #0f1a00;
+    --tools-border: #1f3300;
+
     --accent: #5b8fff;
   }
 
@@ -191,28 +195,11 @@
   }
 
   .sidebar-logo {
-    padding: 0 24px 32px;
+    padding: 20px 20px 24px;
     border-bottom: 1px solid var(--border);
   }
 
-  .logo-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-
-  .logo-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1.2;
-    color: var(--text);
-  }
-
-  .logo-name span { color: var(--accent); }
+  .sidebar-logo svg { width: 100%; height: auto; display: block; }
 
   .sidebar-nav {
     flex: 1;
@@ -254,6 +241,7 @@
   .nav-item.active[data-type="market"]  { border-left-color: var(--market); }
   .nav-item.active[data-type="partner"]   { border-left-color: var(--partner); }
   .nav-item.active[data-type="reporting"] { border-left-color: var(--reporting); }
+  .nav-item.active[data-type="tools"]     { border-left-color: var(--tools); }
 
   .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
@@ -393,6 +381,7 @@
   .pill.active-market  { background: rgba(240,122,74,0.1);  color: var(--market); border-color: rgba(240,122,74,0.3); }
   .pill.active-partner   { background: rgba(26,143,255,0.1);  color: var(--partner);border-color: rgba(26,143,255,0.3); }
   .pill.active-reporting { background: rgba(167,139,250,0.1); color: var(--reporting); border-color: rgba(167,139,250,0.3); }
+  .pill.active-tools     { background: rgba(163,230,53,0.1);  color: var(--tools);     border-color: rgba(163,230,53,0.3); }
 
   .sort-select {
     background: var(--surface); border: 1px solid var(--border2); border-radius: 7px;
@@ -422,6 +411,7 @@
   .artifact-card[data-type="market"]:hover   { border-color: var(--market-border);  box-shadow: 0 8px 32px rgba(240,122,74,0.07); }
   .artifact-card[data-type="partner"]:hover  { border-color: var(--partner-border); box-shadow: 0 8px 32px rgba(26,143,255,0.07); }
   .artifact-card[data-type="reporting"]:hover { border-color: var(--reporting-border); box-shadow: 0 8px 32px rgba(167,139,250,0.07); }
+  .artifact-card[data-type="tools"]:hover    { border-color: var(--tools-border);     box-shadow: 0 8px 32px rgba(163,230,53,0.07); }
 
   .card-accent-bar { height: 3px; width: 100%; }
   .card-body { padding: 20px 22px; }
@@ -439,10 +429,30 @@
   .badge-market   { background: var(--market-bg);   color: var(--market);   border: 1px solid var(--market-border); }
   .badge-partner  { background: var(--partner-bg);  color: var(--partner);  border: 1px solid var(--partner-border); }
   .badge-reporting{ background: var(--reporting-bg); color: var(--reporting); border: 1px solid var(--reporting-border); }
+  .badge-tools    { background: var(--tools-bg);     color: var(--tools);     border: 1px solid var(--tools-border); }
 
   .card-date { font-size: 11px; color: var(--text-dim); margin-left: auto; font-family: 'DM Mono', monospace; }
   .card-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; line-height: 1.3; color: var(--text); margin-bottom: 8px; }
   .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+
+  .card-owners {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
+
+  .card-owner-block {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .card-owner-label {
+    color: var(--text-dim); font-size: 9px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-right: 2px;
+  }
+
+  .card-owner-name { color: var(--text-muted); }
 
   .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
 
@@ -658,7 +668,7 @@
 <!-- PASSWORD GATE -->
 <div class="gate" id="gate">
   <div class="gate-card">
-    <div class="gate-eyebrow">Crusoe · Internal Tool</div>
+    <div class="gate-eyebrow">Internal Tool</div>
     <div class="gate-title">Talent<br><span>Intelligence</span> Hub</div>
     <p class="gate-subtitle">This is an internal resource. Enter the team password to continue.</p>
     <div class="gate-input-wrap">
@@ -674,8 +684,55 @@
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-label">Internal Tool</div>
-    <div class="logo-name">Talent<br><span>Intelligence</span></div>
+    <svg viewBox="0 0 200 72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Talent Intelligence">
+      <defs>
+        <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#f5c842" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#f5c842" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- ── ICON ── -->
+      <!-- Outer dashed ring -->
+      <circle cx="32" cy="36" r="26" fill="none" stroke="#1a8fff" stroke-width="0.6" stroke-dasharray="3 2.5" opacity="0.4"/>
+      <!-- Middle ring -->
+      <circle cx="32" cy="36" r="19" fill="none" stroke="#1a8fff" stroke-width="0.8" opacity="0.6"/>
+      <!-- Inner ring -->
+      <circle cx="32" cy="36" r="12" fill="none" stroke="#1a8fff" stroke-width="1" opacity="0.85"/>
+      <!-- Center crosshair circle -->
+      <circle cx="32" cy="36" r="5" fill="none" stroke="#1a8fff" stroke-width="1.2" opacity="1"/>
+      <!-- Center gold dot -->
+      <circle cx="32" cy="36" r="2.2" fill="#f5c842"/>
+      <circle cx="32" cy="36" r="3.5" fill="url(#coreGlow)" opacity="0.6"/>
+      <!-- Crosshair lines -->
+      <line x1="32" y1="31.5" x2="32" y2="28" stroke="#1a8fff" stroke-width="0.8" opacity="0.7"/>
+      <line x1="32" y1="40.5" x2="32" y2="44" stroke="#1a8fff" stroke-width="0.8" opacity="0.7"/>
+      <line x1="27.5" y1="36" x2="24" y2="36" stroke="#1a8fff" stroke-width="0.8" opacity="0.7"/>
+      <line x1="36.5" y1="36" x2="40" y2="36" stroke="#1a8fff" stroke-width="0.8" opacity="0.7"/>
+      <!-- Orbital nodes with lines -->
+      <!-- Top-right teal node -->
+      <line x1="38" y1="22" x2="32" y2="36" stroke="#38d9b0" stroke-width="0.7" opacity="0.5"/>
+      <circle cx="38" cy="22" r="2" fill="#38d9b0" opacity="0.9"/>
+      <!-- Right blue node -->
+      <line x1="50" y1="30" x2="32" y2="36" stroke="#1a8fff" stroke-width="0.7" opacity="0.5"/>
+      <circle cx="50" cy="30" r="1.8" fill="#1a8fff" opacity="0.9"/>
+      <!-- Bottom-right blue node -->
+      <line x1="46" y1="46" x2="32" y2="36" stroke="#1a8fff" stroke-width="0.7" opacity="0.5"/>
+      <circle cx="46" cy="46" r="1.5" fill="#1a8fff" opacity="0.7"/>
+
+      <!-- ── VERTICAL DIVIDER ── -->
+      <line x1="62" y1="16" x2="62" y2="58" stroke="#1a8fff" stroke-width="0.8" opacity="0.35"/>
+
+      <!-- ── TEXT ── -->
+      <!-- TALENT -->
+      <text x="69" y="46" font-family="Inter, DM Sans, sans-serif" font-size="16" font-weight="700" fill="#ffffff" text-anchor="start">TALENT</text>
+      <!-- INTELLIGENCE -->
+      <text x="69" y="59" font-family="Inter, DM Sans, sans-serif" font-size="10.5" font-weight="300" letter-spacing="3.5" fill="#38d9b0" text-anchor="start">INTELLIGENCE</text>
+
+      <!-- ── TAGLINE ── -->
+      <line x1="70" y1="64" x2="195" y2="64" stroke="#f5c842" stroke-width="0.4" opacity="0.4"/>
+      <text x="70" y="71" font-family="Inter, DM Sans, sans-serif" font-size="6.5" font-weight="500" letter-spacing="2.5" fill="#f5c842" opacity="0.75" text-anchor="start">HUMAN · AI · SIGNAL</text>
+    </svg>
   </div>
 
   <nav class="sidebar-nav">
@@ -708,6 +765,10 @@
       <span class="nav-dot" style="background:var(--reporting)"></span> Reporting
       <span class="nav-count" id="count-reporting">0</span>
     </a>
+    <a class="nav-item" data-type="tools" onclick="setFilter('tools', this)">
+      <span class="nav-dot" style="background:var(--tools)"></span> Tools
+      <span class="nav-count" id="count-tools">0</span>
+    </a>
 
     <div class="nav-section-label" style="margin-top:8px;">Views</div>
     <a class="nav-item" onclick="showRecent()">
@@ -737,7 +798,7 @@
       <div class="page-header-top">
         <h1 class="page-title" id="pageTitle">All Artifacts</h1>
       </div>
-      <p class="page-subtitle" id="pageSubtitle">Your complete Talent Intelligence library — sourcing strategy, competitive intel, learning resources, and more.</p>
+      <p class="page-subtitle" id="pageSubtitle">Your complete Talent Intelligence library: sourcing strategy, competitive intel, learning resources, and more.</p>
     </div>
 
     <!-- ABOUT SECTION -->
@@ -753,13 +814,13 @@
         </div>
       </div>
       <div class="about-collapsed-preview">
-        Sourcing is not just about filling pipelines — it's about shaping the future of the company through talent strategy, market understanding, and long-term business outcomes.
+        Sourcing is not just about filling pipelines - it's about shaping the future of the company through talent strategy, market understanding, and long-term business outcomes.
       </div>
       <div class="about-body" id="aboutBody">
         <div class="about-grid">
           <div class="about-block about-block-wide">
             <div class="about-block-label">Why this function matters</div>
-            <p class="about-block-text">Crusoe hires in domains like kernel, storage, compute, virtualization, GPU infrastructure, and SDN — areas that demand senior calibration and technical fluency. The Talent Intelligence Team bridges engineering complexity with recruiting execution, ensuring every hire meets both the bar and the business need.</p>
+            <p class="about-block-text">Company hires in domains like kernel, storage, compute, virtualization, GPU infrastructure, and SDN - areas that demand senior calibration and technical fluency. The Talent Intelligence Team bridges engineering complexity with recruiting execution, ensuring every hire meets both the bar and the business need.</p>
             <div class="about-quote">"Within tech, the sourcing role has evolved into a strategic talent intelligence function that partners directly with engineering to drive clarity, alignment, and sustained hiring performance."</div>
           </div>
           <div class="about-block">
@@ -795,7 +856,7 @@
           </div>
           <div class="about-vision">
             <div class="about-vision-label">Long-term vision</div>
-            <div class="about-vision-text">A technical sourcing function that matches the rigor, strategy, and technical depth of the teams it supports — powered by an AI-forward mindset. We operate as true partners to engineering, aligned to signal, impact, and the trust we build with hiring teams.</div>
+            <div class="about-vision-text">A technical sourcing function that matches the rigor, strategy, and technical depth of the teams it supports - powered by an AI-forward mindset. We operate as true partners to engineering, aligned to signal, impact, and the trust we build with hiring teams.</div>
           </div>
         </div>
       </div>
@@ -808,19 +869,19 @@
         <div class="stat-sub">across all categories</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Sourcing Strategy</div>
-        <div class="stat-value" id="stat-job" style="color:var(--job)">0</div>
-        <div class="stat-sub">frameworks & models</div>
+        <div class="stat-label">Categories</div>
+        <div class="stat-value" id="stat-categories" style="color:var(--pipeline)">0</div>
+        <div class="stat-sub">active in the library</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Competitive Intel</div>
-        <div class="stat-value" id="stat-market" style="color:var(--market)">0</div>
-        <div class="stat-sub">battle cards & maps</div>
+        <div class="stat-label">Added This Quarter</div>
+        <div class="stat-value" id="stat-quarter" style="color:#c084fc">0</div>
+        <div class="stat-sub">new artifacts this quarter</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Public Assets</div>
-        <div class="stat-value" id="stat-comp" style="color:var(--comp)">0</div>
-        <div class="stat-sub">shareable resources</div>
+        <div class="stat-label">Newest Artifact</div>
+        <div class="stat-value" id="stat-newest" style="font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;line-height:1.3;margin-top:4px">-</div>
+        <div class="stat-sub" id="stat-newest-date">-</div>
       </div>
     </div>
 
@@ -833,6 +894,7 @@
         <button class="pill" onclick="setFilterPill('comp', this)">Public Assets</button>
         <button class="pill" onclick="setFilterPill('partner', this)">Partnerships</button>
         <button class="pill" onclick="setFilterPill('reporting', this)">Reporting</button>
+        <button class="pill" onclick="setFilterPill('tools', this)">Tools</button>
       </div>
       <select class="sort-select" id="sortSelect" onchange="renderCards()">
         <option value="newest">Newest first</option>
@@ -875,128 +937,150 @@
     comp:     { label: 'Public Assets',            color: '#60c8f0', barColor: '#60c8f0' },
     market:   { label: 'Competitive Intelligence', color: '#f07a4a', barColor: '#f07a4a' },
     partner:   { label: 'Partnerships', color: '#1a8fff', barColor: '#1a8fff' },
-    reporting: { label: 'Reporting',    color: '#a78bfa', barColor: '#a78bfa' },
+    reporting: { label: 'Reporting', color: '#a78bfa', barColor: '#a78bfa' },
+    tools:     { label: 'Tools',     color: '#a3e635', barColor: '#a3e635' },
   };
 
   const SAMPLE_DATA = [
     {
       id: 'real11', type: 'reporting',
       title: 'YTD Sourcing Impact',
-      desc: 'A year-to-date reporting dashboard tracking sourcing impact across key recruiting metrics. Surfaces pipeline contribution, conversion rates, and sourcing performance to support data-driven team reviews.',
+      desc: 'Your go-to for showing sourcing\'s contribution to the business. Tracks hiring outcomes year-to-date, built for team reviews and leadership conversations.',
       content: `Year-to-date sourcing impact dashboard.\n\nDesigned to help talent teams:\n→ Track sourcing contribution to pipeline and hires YTD\n→ Surface conversion rates across sourcing stages\n→ Measure and communicate sourcing performance\n→ Support quarterly and annual team reviews with data`,
       tags: ['YTD', 'sourcing impact', 'reporting', 'pipeline', 'metrics', 'dashboard'],
       status: 'live',
-      link: 'https://asdf/85a71bf0-b072-4b82-a936-ab01a5f39898',
+      owner: 'Nicole Shiu',
+      link: '',
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
     {
+      id: 'real12', type: 'tools',
+      title: 'Interview Prep Factory',
+      desc: 'Generate role-specific interview prep for your candidates in seconds. Helps candidates show up more confident and informed, which means better signal for interviewers and a stronger candidate experience.',
+      content: `Interview preparation generation tool for the Talent Intelligence team.\n\nDesigned to help sourcers and recruiters:\n→ Generate tailored interview prep materials by role and level\n→ Equip candidates with relevant context before interviews\n→ Improve candidate experience and interview performance\n→ Standardize prep content across the sourcing team`,
+      tags: ['interview prep', 'candidate experience', 'tools', 'recruiting', 'preparation'],
+      status: 'live',
+      owner: 'Dan',
+      link:  undefined,
+      createdAt: Date.now() + 1000,
+      updatedAt: Date.now() + 1000
+    },
+    {
       id: 'real10', type: 'reporting',
       title: 'Hiring Pace Simulator',
-      desc: 'An interactive simulator for modeling hiring pace and forecasting recruiting outcomes. Helps talent teams visualize pipeline velocity, headcount targets, and time-to-fill projections.',
+      desc: 'Planning headcount conversations with your HM or VP? Run scenarios here to model hiring pace, forecast time-to-fill, and show what it takes to hit the target before the meeting.',
       content: `Interactive hiring pace simulation and forecasting tool.\n\nDesigned to help talent teams:\n→ Model hiring pace against headcount targets\n→ Forecast pipeline velocity and time-to-fill\n→ Visualize recruiting outcomes across different scenarios\n→ Support data-driven planning conversations with stakeholders`,
       tags: ['hiring pace', 'forecasting', 'pipeline velocity', 'headcount', 'reporting'],
       status: 'live',
-      link: 'https://asdf/bdfbd997-c69b-436e-ac8d-002b11fee166',
+      owner: 'Nicole Shiu',
+      link:  undefined,
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
     {
       id: 'real1', type: 'market',
       title: 'Talent Intelligence - Competitive Intel Tool',
-      desc: 'Interactive battle card system comparing Crusoe against 15 competitors — Google, Amazon, Microsoft, Meta, OpenAI, Anthropic, CoreWeave, Lambda, Nutanix, NetApp, Cisco, AMD, and more. Includes comp snapshots, inbound level matrices, level crosswalks, and recruiter talk tracks. Styled in Crusoe brand colors.',
-      content: `Coverage: 15 competitors\n• Google, Amazon, Microsoft, Meta, OpenAI, Anthropic\n• CoreWeave, Lambda, FluidStack, Together AI\n• Nutanix, NetApp, Cisco, AMD + more\n\nSections:\n→ Battle Cards — strategic positioning vs. each competitor\n→ Recruiter Talk Tracks — conversation scripts & objection handling\n→ Inbound Level Matrix — level alignment by company\n→ Comp Snapshots — market compensation by level\n→ Level Crosswalks — mapping Crusoe levels to competitor levels\n\nData note: Compensation figures are approximations based on market data and should be used as directional guidance only.`,
+      desc: 'Before your next outreach or offer conversation, pull this up. Battle cards for 15 competitors including Google, Meta, OpenAI, and CoreWeave, with comp snapshots, level crosswalks, and talk tracks built for objection handling in real time.',
+      content: `Coverage: 15 competitors\n• Google, Amazon, Microsoft, Meta, OpenAI, Anthropic\n• CoreWeave, Lambda, FluidStack, Together AI\n• Nutanix, NetApp, Cisco, AMD + more\n\nSections:\n→ Battle Cards - strategic positioning vs. each competitor\n→ Recruiter Talk Tracks - conversation scripts & objection handling\n→ Inbound Level Matrix - level alignment by company\n→ Comp Snapshots - market compensation by level\n→ Level Crosswalks - mapping company levels to competitor levels\n\nData note: Compensation figures are approximations based on market data and should be used as directional guidance only.`,
       tags: ['battle cards', 'competitive intel', 'comp data', 'talk tracks', 'level crosswalk'],
       status: 'live',
-      link: 'https://asdf/222dfb36-da09-4ca3-891a-279f3794fe4f',
+      owner: 'Nicole Shiu',
+      producer: 'Ali',
+      link:  undefined,
       createdAt: Date.now() - 86400000 * 4,
-      updatedAt: Date.now() - 86400000 * 4
+      updatedAt: Date.now()
     },
     {
       id: 'real7', type: 'job',
       title: 'Talent Intelligence - Req Intake',
-      desc: 'A structured, fillable calibration intake form for sourcers and recruiters. Covers business context, position overview, qualifications & calibration, interview plan, HM/recruiter commitments, and boolean search strings. Downloadable as a completed doc.',
-      content: `6-section fillable calibration intake:\n01 → Business Context & Org Structure — team mission, gaps, HM pain points & success signals\n02 → Position Overview — title, leveling, scope, location, reason for opening\n03 → Qualifications & Calibration — must-haves, nice-to-haves, target companies, keywords, ideal profile, archetypes, anti-signals, tech stack, screening questions\n04 → Interview Plan — stage-by-stage table with focus areas, duration, interviewers\n05 → HM & Recruiter/Sourcer Commitments — three-column commitment tracker + agreed SLAs\n06 → Boolean Search Strings — two templates + custom field\n\nFeatures: tabbed navigation, fillable fields, download to .txt, Crusoe brand styling\nAuthored by: Nicole Shiu`,
+      desc: 'Use this at the start of every new req. A structured intake that walks you through business context, must-haves, interview plan, and boolean strings so you start sourcing with full alignment, not assumptions.',
+      content: `6-section fillable calibration intake:\n01 → Business Context & Org Structure - team mission, gaps, HM pain points & success signals\n02 → Position Overview - title, leveling, scope, location, reason for opening\n03 → Qualifications & Calibration - must-haves, nice-to-haves, target companies, keywords, ideal profile, archetypes, anti-signals, tech stack, screening questions\n04 → Interview Plan - stage-by-stage table with focus areas, duration, interviewers\n05 → HM & Recruiter/Sourcer Commitments - three-column commitment tracker + agreed SLAs\n06 → Boolean Search Strings - two templates + custom field\n\nFeatures: tabbed navigation, fillable fields, download to .txt\nAuthored by: Nicole Shiu`,
       tags: ['intake', 'calibration', 'req intake', 'boolean', 'interview plan', 'downloadable'],
       status: 'live',
-      link: 'https://asdf/8a87ffee-db7d-430b-9c60-a712967c3cf4',
+      link:  undefined,
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
     {
       id: 'real6', type: 'job',
       title: 'Talent Intelligence: Sourcing SOP',
-      desc: 'Best practices, rules of engagement, communication standards, and sourcing credit guidelines for the Talent Intelligence team. Authored by Nicole Shiu (July 2025).',
-      content: `Rules of Engagement:\n01 → Cool Down Period — avoid re-engaging candidates contacted within past 3 months; past-year interviewees require HM buy-in\n02 → Candidate History — always check Ashby notes before reaching out; acknowledge prior interviews in messaging\n03 → Respect the Outreach Commitment — if they respond with interest, we owe them a conversation\n04 → Ashby Data Hygiene — mark statuses accurately, log InMails, tag context throughout\n\nBest Practices:\n→ Calibrate Early, Calibrate Often\n→ Quality Over Quantity — curated shortlist beats mass outreach\n→ Candidate Experience Comes First — every message reflects Crusoe's brand\n→ Lead with Data — influence decisions with market intel, not assumptions\n\nCommunication Standards:\n→ Respect seniority — tailor tone by experience level\n→ Always personalize — lead with why them and why us\n→ Follow-up cadence: 3–4 follow-ups at 3–5 business day intervals\n→ Never go dark — send "no update" updates to keep candidates informed\n\nSourcing Credit:\n→ First-to-find-and-engage keeps credit, even across team moves\n→ Credit stays with original sourcer while candidate is active in ATS\n→ 3+ months archived = fair game for new sourcing`,
+      desc: 'The team\'s rules of the road. Reference this when you\'re unsure about re-engaging a candidate, logging in Ashby, or handing off sourcing credit. Keeps the team consistent and compliant.',
+      content: `Rules of Engagement:\n01 → Cool Down Period - avoid re-engaging candidates contacted within past 3 months; past-year interviewees require HM buy-in\n02 → Candidate History - always check Ashby notes before reaching out; acknowledge prior interviews in messaging\n03 → Respect the Outreach Commitment - if they respond with interest, we owe them a conversation\n04 → Ashby Data Hygiene - mark statuses accurately, log InMails, tag context throughout\n\nBest Practices:\n→ Calibrate Early, Calibrate Often\n→ Quality Over Quantity - curated shortlist beats mass outreach\n→ Candidate Experience Comes First\n→ Lead with Data - influence decisions with market intel, not assumptions\n\nCommunication Standards:\n→ Respect seniority - tailor tone by experience level\n→ Always personalize - lead with why them and why us\n→ Follow-up cadence: 3–4 follow-ups at 3–5 business day intervals\n→ Never go dark - send "no update" updates to keep candidates informed\n\nSourcing Credit:\n→ First-to-find-and-engage keeps credit, even across team moves\n→ Credit stays with original sourcer while candidate is active in ATS\n→ 3+ months archived = fair game for new sourcing`,
       tags: ['SOP', 'rules of engagement', 'Ashby', 'cool down', 'sourcing credit', 'best practices'],
       status: 'live',
-      link: 'https://asdf/88468561-2663-4b02-9245-4680b2ddb9e7',
+      owner: 'Nicole Shiu',
+      link:  undefined,
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
     {
       id: 'real2', type: 'job',
       title: 'Technical Sourcing Alignment Framework',
-      desc: 'Technical recruiting alignment model for Crusoe\'s Cloud Engineering org (Foundations, CMD/CXX, Cloud Availability, Managed AI, Security & IT). Maps each org to three sourcing swimlanes — The Metal, The Fabric, The Shield — with routing logic, overlap areas, and sourcer archetypes.',
-      content: `Three Swimlanes:\n🟢 The Metal — Hardware-close candidates. Latency, physics, raw performance.\n   → Foundations (primary), Cloud Availability (partial), Managed AI (partial)\n\n🔵 The Fabric — Platform/product candidates. Scalability, APIs, UX.\n   → CMD/CXX (primary), Cloud Availability (partial), Managed AI (partial)\n\n🔴 The Shield — Security-only. Tight-knit community. No overlap.\n   → Security & IT (primary)\n\nSplit Orgs (require careful routing at intake):\n• Foundations → mostly Metal; route to Fabric only for software-layer roles\n• Cloud Availability → SRE straddles Metal/Fabric; key question is hardware vs. software focus\n• Managed AI → Fabric-dominant but requires Metal fluency (GPU topology, NVLink, RDMA)\n\nCrusoe Differentiators: Energy-efficient GPU infra, purpose-built for AI/HPC, fast-moving high-ownership, direct hardware access.`,
-      tags: ['sourcing', 'alignment model', 'swimlanes', 'cloud engineering', 'routing'],
+      desc: 'Not sure who owns which org or how to route a new req? This model maps sourcer ownership across all nine technical orgs, with domain profiles and a live assignment matrix so everyone knows their lane.',
+      content: `Technical Sourcing Operating Model - structured ownership across nine technical orgs.\n\nKey components:\n→ Clear sourcer ownership per domain with primary and flex assignments\n→ Complexity-based effort prioritization by role scarcity and business criticality\n→ Flex capacity layer that absorbs hiring spikes without breaking continuity\n→ Sourcing profiles per domain (signals, communities, routing notes)\n→ Live assignment matrix reflecting the current team\n\nDomains covered:\nFoundations & Infrastructure · Managed AI & Cloud Management · IT & Security · Data · and more\n\nDesign principles: Depth without siloing · Clear ownership & accountability · Flexibility without chaos · Candidate continuity · Scalability & stability · Impact over equal distribution`,
+      tags: ['sourcing', 'operating model', 'swimlanes', 'assignment matrix', 'cloud engineering', 'routing'],
       status: 'live',
-      link: 'https://asdf/e6c091b0-02c5-4807-b88e-b6fe9a0cb523',
+      owner: 'Nicole Shiu',
+      link:  undefined,
       createdAt: Date.now() - 86400000 * 3,
-      updatedAt: Date.now() - 86400000 * 3
-    },
-    {
-      id: 'real3', type: 'comp',
-      title: 'Cloud Engineering Content Library',
-      desc: 'Curated library of articles, podcasts, and journals that positively reflect Crusoe\'s mission. Built for PM, TPM, and Design teams to use for their own knowledge and to share with candidates. Includes filterable interactive table by content type, topic, and team.',
-      content: `Content types covered:\n→ Podcasts (Acquired, Not Boring Founders, Age of Miracles, others)\n→ Articles & press coverage\n→ Journals & research\n\nKey highlights:\n• "Saving the Planet with Better AI Data Centers" — Acquired Podcast (Chase Lochmiller)\n• "Not Boring Founders: Crusoe Energy" — Age of Miracles / Spotify\n\nTopics: Sustainable AI, GPU cloud, energy-efficient compute, HPC for AI, founding story, product vision, design culture\n\nAudience: PM, TPM, Design — for team learning and candidate sharing\nFormat: Interactive filterable table with search and date sort`,
-      tags: ['content library', 'mission', 'podcasts', 'PM', 'TPM', 'design', 'candidate sharing'],
-      status: 'live',
-      link: 'https://asdf/f3dc9135-a54e-49c0-afd7-66c2e75995cd',
-      createdAt: Date.now() - 86400000 * 2,
-      updatedAt: Date.now() - 86400000 * 2
+      updatedAt: Date.now()
     },
     {
       id: 'real9', type: 'pipeline',
       title: 'Talent Intelligence - AI-assisted Evaluator',
-      desc: 'An AI-powered tool for evaluating candidate-to-role fit. Assesses alignment across must-haves, nice-to-haves, and role-specific criteria to surface signal and support faster, more consistent screening decisions.',
+      desc: 'Drop in a candidate profile and a role description. This tool evaluates fit across must-haves, nice-to-haves, and role-specific signals so you can move faster on screening decisions.',
       content: `AI-powered candidate-to-role matching and evaluation tool.\n\nDesigned to help sourcers and recruiters:\n→ Assess candidate fit against role criteria\n→ Surface signal across must-haves and nice-to-haves\n→ Support faster, more consistent screening decisions\n→ Reduce false positives in the pipeline`,
       tags: ['AI', 'role matching', 'candidate evaluation', 'screening', 'signal'],
       status: 'live',
-      link: 'https://coshiu.github.io/ti-hub/learning-modules/ai-assisted-cand-match.html',
+      owner: 'Nicole Shiu',
+      link:  'learning_modules/ai_assisted_evaluator.html',
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
     {
       id: 'real8', type: 'pipeline',
       title: 'Talent Intelligence Onboarding',
-      desc: 'Onboarding resource for new members of the Talent Intelligence team at Crusoe. Covers team structure, core responsibilities, tools, workflows, and how to get up to speed quickly.',
-      content: `Onboarding guide for the Talent Intelligence team at Crusoe.\n\nCovers:\n→ Team structure and core responsibilities\n→ Tools and systems (Ashby, LinkedIn, etc.)\n→ Key workflows and processes\n→ How to partner with recruiters and hiring managers\n→ First 30/60/90 day expectations`,
+      desc: 'New to the TI team? Start here. Covers the tools you\'ll use, how we work, and what good looks like in your first 30, 60, and 90 days.',
+      content: `Onboarding guide for the Talent Intelligence team.\n\nCovers:\n→ Team structure and core responsibilities\n→ Tools and systems (Ashby, LinkedIn, etc.)\n→ Key workflows and processes\n→ How to partner with recruiters and hiring managers\n→ First 30/60/90 day expectations`,
       tags: ['onboarding', 'L&D', 'new hire', 'talent intelligence', 'training'],
       status: 'live',
-      link: 'https://asdf/8beec24b-1987-4117-aa53-a5523228cf3a',
+      link:  undefined,
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
     {
       id: 'real4', type: 'pipeline',
       title: 'Talent Intelligence - Sourcing with AI',
-      desc: 'Interactive guide covering how to use AI across all 7 stages of the technical sourcing workflow. Includes copyable example prompts per stage, best practices, expected results, and a "next steps" framework. Built from an uploaded Talent Intelligence deck.',
-      content: `7 Sourcing Stages with AI integration:\n01 → Define the Role — use AI to sharpen intake, identify must-haves vs. nice-to-haves\n02 → Build the Sourcing Strategy — AI-assisted market mapping and channel selection\n03 → Source Candidates — AI for Boolean string generation, profile pattern matching\n04 → Outreach & Engagement — AI-drafted personalized outreach at scale\n05 → Screening & Assessment — AI-assisted resume review and screening frameworks\n06 → Calibration — AI to synthesize feedback and surface patterns\n07 → Offer & Close — AI for comp benchmarking and closing talk tracks\n\nEach stage includes:\n→ Primary goal\n→ How to use AI (3 methods per stage)\n→ Copyable example prompt (terminal-style)\n→ Expected results\n\nCore philosophy: "Amplify judgment, not replace it."\nClosing quote: "The craft still matters. AI just gives you more room to master it."`,
+      desc: 'Want to work faster without sacrificing quality? This guide shows you exactly how to use AI at each stage of the sourcing workflow, with copyable prompts you can use immediately.',
+      content: `7 Sourcing Stages with AI integration:\n01 → Define the Role - use AI to sharpen intake, identify must-haves vs. nice-to-haves\n02 → Build the Sourcing Strategy - AI-assisted market mapping and channel selection\n03 → Source Candidates - AI for Boolean string generation, profile pattern matching\n04 → Outreach & Engagement - AI-drafted personalized outreach at scale\n05 → Screening & Assessment - AI-assisted resume review and screening frameworks\n06 → Calibration - AI to synthesize feedback and surface patterns\n07 → Offer & Close - AI for comp benchmarking and closing talk tracks\n\nEach stage includes:\n→ Primary goal\n→ How to use AI (3 methods per stage)\n→ Copyable example prompt (terminal-style)\n→ Expected results\n\nCore philosophy: "Amplify judgment, not replace it."\nClosing quote: "The craft still matters. AI just gives you more room to master it."`,
       tags: ['AI sourcing', 'prompts', 'workflow', '7 stages', 'playbook'],
       status: 'live',
-      link: 'https://coshiu.github.io/ti-hub/learning-modules/sourcing-with-ai.html',
+      link: 'learning_modules/sourcing_with_ai.html',
       createdAt: Date.now() - 86400000 * 1,
       updatedAt: Date.now() - 86400000 * 1
     },
     {
       id: 'real5', type: 'partner',
       title: 'Recruiter & Sourcer Partnership Framework',
-      desc: 'Working agreement and training guide defining how Recruiters and Sourcers partner at Crusoe. Covers the four-phase collaboration flow, mandatory SLAs, primary ownership areas, and the philosophies that govern both functions.',
+      desc: 'The working agreement between sourcers and recruiters. Use this to align on SLAs, handoff expectations, and who owns what. Especially useful when onboarding a new recruiter partner or resetting a partnership.',
       content: `Philosophy: Sourcing and recruiting operate as equal strategic partners. Sourcing drives market intelligence, discovery, and early-stage strategy, while recruiting leads stakeholder alignment, candidate experience, and closing.\n\nFour-Phase Collaboration Flow:\nA → Intake, Role Discovery, Kickoff & Strategy Alignment\nB → Pipeline Generation & Handoff\nC → Continuous Feedback & Triage\nD → Process Management & Closing\n\nMandatory SLAs:\n→ New sourced lead: initial outreach within 48 hrs\n→ Qualified lead confirmed: move to next stage within 24 hrs\n→ Active candidates: stage movement within 48 hrs\n→ Interview feedback: submitted within 24-48 hrs of completion\n→ Pipeline stall: ad-hoc sync within 24-48 hrs\n\nSourcer owns: calibration, top-of-funnel, pipeline health, market data & insights\nRecruiter owns: intake meetings, job postings, stakeholder mgmt, offer/closing\n\nSourcing philosophy: Strategy first, search second.\nRecruiting philosophy: Precision first, process second.`,
       tags: ['partnership', 'SLAs', 'collaboration', 'recruiter', 'sourcer', 'framework'],
       status: 'live',
-      link: 'https://coshiu.github.io/ti-hub/learning-modules/partnership.html',
+      owner: 'Nicole Shiu',
+      link:  'learning_modules/partnership.html',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    },
+    {
+      id: 'real0', type: 'job',
+      title: 'Weighted Model',
+      desc: 'TBD',
+      content: `TBD...`,
+      tags: ['partnership', 'SLAs', 'collaboration', 'recruiter', 'sourcer', 'framework'],
+      status: 'live',
+      owner: 'Nicole Shiu',
+      link:  'other_modules/weighted_system.html',
       createdAt: Date.now(),
       updatedAt: Date.now()
     }
@@ -1011,7 +1095,7 @@
       const stored = localStorage.getItem('ti_hub_v17');
       if (stored) {
         const parsed = JSON.parse(stored);
-        const realIds = ['real1','real2','real3','real4','real5','real6','real7','real8','real9','real10','real11'];
+        const realIds = ['real1','real2','real3','real4','real5','real6','real7','real8','real9','real10','real11','real12', 'real0'];
         const hasReal = realIds.every(id => parsed.some(a => a.id === id));
         if (hasReal) {
           artifacts = parsed;
@@ -1036,13 +1120,14 @@
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     el.classList.add('active');
     const titles = {
-      all:      ['All Artifacts', 'Your complete Talent Intelligence library — sourcing strategy, competitive intel, learning resources, and more.'],
+      all:      ['All Artifacts', 'Your complete Talent Intelligence library: sourcing strategy, competitive intel, learning resources, and more.'],
       job:      ['Sourcing Strategy', 'Alignment frameworks, swimlane models, and sourcing playbooks for technical recruiting.'],
       pipeline: ['Learning & Development', 'Guides, playbooks, and interactive tools for building sourcing craft and AI fluency.'],
       comp:     ['Public Assets', 'Shareable resources, content libraries, and materials built for candidate and team use.'],
       market:   ['Competitive Intelligence', 'Battle cards, competitor talent maps, comp snapshots, and recruiter talk tracks.'],
       partner:   ['Partnerships', 'Working agreements, collaboration frameworks, and SLAs that define how we partner across TA.'],
       reporting: ['Reporting', 'Dashboards, trackers, and reporting frameworks for measuring sourcing and recruiting performance.'],
+      tools:     ['Tools', 'Interactive tools, calculators, and utilities built for the Talent Intelligence team.'],
     };
     document.getElementById('pageTitle').textContent = titles[type][0];
     document.getElementById('pageSubtitle').textContent = titles[type][1];
@@ -1089,16 +1174,36 @@
   }
 
   function updateCounts() {
-    const types = ['job', 'pipeline', 'comp', 'market', 'partner', 'reporting'];
+    const types = ['job', 'pipeline', 'comp', 'market', 'partner', 'reporting', 'tools'];
     document.getElementById('count-all').textContent = artifacts.length;
     document.getElementById('stat-total').textContent = artifacts.length;
     types.forEach(t => {
       const c = artifacts.filter(a => a.type === t).length;
       const el = document.getElementById(`count-${t}`);
       if (el) el.textContent = c;
-      const st = document.getElementById(`stat-${t}`);
-      if (st) st.textContent = c;
     });
+
+    // Categories - count types that have at least one artifact
+    const activeCategories = types.filter(t => artifacts.some(a => a.type === t)).length;
+    const catEl = document.getElementById('stat-categories');
+    if (catEl) catEl.textContent = activeCategories;
+
+    // Added this quarter
+    const now = new Date();
+    const quarterStart = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1);
+    const thisQuarter = artifacts.filter(a => new Date(a.createdAt) >= quarterStart).length;
+    const qEl = document.getElementById('stat-quarter');
+    if (qEl) qEl.textContent = thisQuarter;
+
+    // Newest artifact
+    if (artifacts.length) {
+      const newest = artifacts.reduce((a, b) => a.createdAt > b.createdAt ? a : b);
+      const newestEl = document.getElementById('stat-newest');
+      const newestDateEl = document.getElementById('stat-newest-date');
+      const newestColor = TYPE_META[newest.type] ? TYPE_META[newest.type].color : 'var(--accent)';
+      if (newestEl) { newestEl.textContent = newest.title; newestEl.style.color = newestColor; }
+      if (newestDateEl) newestDateEl.textContent = 'Added ' + fmtDate(newest.createdAt);
+    }
   }
 
   function fmtDate(ts) {
@@ -1119,6 +1224,7 @@
     }
     grid.innerHTML = filtered.map(a => {
       const meta = TYPE_META[a.type];
+      const moreDetails = 'More Details';
       const tags = (a.tags || []).slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('');
       return `
         <div class="artifact-card" data-type="${a.type}" onclick="openDetail('${a.id}')">
@@ -1129,6 +1235,12 @@
               <span class="card-date">Last updated: ${fmtDate(a.updatedAt || a.createdAt)}</span>
             </div>
             <div class="card-title">${a.title}</div>
+            ${(a.owner || a.producer) ? `
+              <div class="card-owners">
+                ${a.owner ? `<div class="card-owner-block"><span class="card-owner-label">Owner</span><span class="card-owner-name">${a.owner}</span></div>` : ''}
+                ${a.owner && a.producer ? `<span style="color:var(--text-dim);font-size:10px">·</span>` : ''}
+                ${a.producer ? `<div class="card-owner-block"><span class="card-owner-label">Producer</span><span class="card-owner-name">${a.producer}</span></div>` : ''}
+              </div>` : ''}
             <div class="card-desc">${a.desc}</div>
             ${tags ? `<div class="card-tags">${tags}</div>` : ''}
             <div class="card-footer">
@@ -1137,7 +1249,7 @@
                 ${a.status === 'live' ? 'Live' : a.status === 'draft' ? 'Draft' : 'In Review'}
               </div>
               <div class="card-actions">
-                ${a.link ? `<a class="icon-btn" href="${a.link}" target="_blank" onclick="event.stopPropagation()" title="Open in asdf" style="font-size:10px;font-family:'DM Mono',monospace;width:auto;padding:0 8px;letter-spacing:0.05em;color:var(--accent);border-color:rgba(91,143,255,0.3)">↗ asdf</a>` : ''}
+                ${a.link ? `<a class="icon-btn" href="${a.link}" target="_blank" onclick="event.stopPropagation()" title="${moreDetails}" style="font-size:10px;font-family:'DM Mono',monospace;width:auto;padding:0 8px;letter-spacing:0.05em;color:var(--accent);border-color:rgba(91,143,255,0.3)">↗ ${moreDetails}</a>` : ''}
                 <div class="icon-btn" onclick="event.stopPropagation(); deleteArtifact('${a.id}')" title="Delete">🗑</div>
               </div>
             </div>
@@ -1171,13 +1283,21 @@
             <div class="detail-section-label">Last Updated</div>
             <div style="font-size:13px; color:var(--text-muted)">${fmtDate(a.updatedAt || a.createdAt)}</div>
           </div>
+          ${a.owner ? `<div>
+            <div class="detail-section-label">Owner</div>
+            <div style="font-size:13px; color:var(--text-muted)">${a.owner}</div>
+          </div>` : ''}
+          ${a.producer ? `<div>
+            <div class="detail-section-label">Producer</div>
+            <div style="font-size:13px; color:var(--text-muted)">${a.producer}</div>
+          </div>` : ''}
           <div>
             <div class="detail-section-label">Status</div>
             <div style="font-size:13px; color:var(--text-muted)">${a.status}</div>
           </div>
           ${a.link ? `<div>
             <div class="detail-section-label">Open Original</div>
-            <a href="${a.link}" target="_blank" style="font-size:13px; color:var(--accent); text-decoration:none">↗ Open in asdf</a>
+            <a href="${a.link}" target="_blank" style="font-size:13px; color:var(--accent); text-decoration:none">↗ More Details</a>
           </div>` : ''}
         </div>
       </div>
