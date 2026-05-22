@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Recruiter &amp; Sourcer Partnership Framework · Crusoe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:      #0d1b2e;
+  --navy2:     #0f2035;
+  --navy3:     #132540;
+  --navy4:     #1a3050;
+  --blue:      #1a8fff;
+  --teal:      #38d9b0;
+  --gold:      #f5c842;
+  --green:     #c8f000;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.13);
+  --text:      #dde6f5;
+  --muted:     #6b85a8;
+  --dim:       #2e4a6a;
+  --blue-bg:   rgba(26,143,255,0.08);
+  --blue-bd:   rgba(26,143,255,0.22);
+  --teal-bg:   rgba(56,217,176,0.08);
+  --teal-bd:   rgba(56,217,176,0.22);
+  --gold-bg:   rgba(245,200,66,0.08);
+  --gold-bd:   rgba(245,200,66,0.25);
+  --green-bg:  rgba(200,240,0,0.07);
+  --green-bd:  rgba(200,240,0,0.22);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--navy);color:var(--text);
+  font-family:'Roboto',sans-serif;
+  font-size:13px;line-height:1.6;font-weight:300;
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--navy)}
+::-webkit-scrollbar-thumb{background:var(--navy4);border-radius:4px}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(26,143,255,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(26,143,255,0.03) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0;
+}
+
+/* ── TITLE BAR ── */
+.page-inner{max-width:1040px;margin:0 auto;width:100%}
+.titlebar{
+  position:relative;z-index:10;
+  background:var(--navy3);border-bottom:1px solid var(--border);
+}
+.titlebar .page-inner{padding:11px 48px;display:flex;align-items:center;gap:10px}
+.titlebar-dots{display:flex;gap:5px;flex-shrink:0}
+.titlebar-dots span{
+  width:7px;height:7px;border-radius:50%;display:block;
+}
+.titlebar-dots .d1{background:var(--blue);  box-shadow:0 0 7px var(--blue)}
+.titlebar-dots .d2{background:var(--teal);  box-shadow:0 0 7px var(--teal)}
+.titlebar-dots .d3{background:var(--gold);  box-shadow:0 0 7px var(--gold)}
+.titlebar-dots .d4{background:var(--green); box-shadow:0 0 7px var(--green)}
+.titlebar-label{
+  font-family:'Roboto Mono',monospace;
+  font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--text);
+}
+
+/* ── HEADER ── */
+.header{
+  position:relative;z-index:1;
+  background:linear-gradient(135deg,var(--navy2) 0%,var(--navy) 70%);
+  border-bottom:1px solid var(--border);overflow:hidden;
+}
+.header .page-inner{position:relative;z-index:1;padding:56px 48px 52px}
+/* Four-color radial glows */
+.hg1{position:absolute;top:-100px;right:-60px;width:520px;height:520px;background:radial-gradient(circle,rgba(26,143,255,0.09) 0%,transparent 65%);pointer-events:none}
+.hg2{position:absolute;bottom:-60px;left:26%;width:360px;height:360px;background:radial-gradient(circle,rgba(56,217,176,0.07) 0%,transparent 65%);pointer-events:none}
+.hg3{position:absolute;top:10px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(245,200,66,0.055) 0%,transparent 65%);pointer-events:none}
+.hg4{position:absolute;bottom:10px;right:22%;width:220px;height:220px;background:radial-gradient(circle,rgba(200,240,0,0.04) 0%,transparent 65%);pointer-events:none}
+
+h1{font-size:44px;font-weight:700;line-height:1.06;letter-spacing:-0.025em;color:var(--text);margin-bottom:16px;max-width:660px}
+h1 span{color:var(--blue)}
+.header-desc{font-size:14px;color:var(--muted);line-height:1.75;max-width:500px;margin-bottom:32px;font-weight:300}
+.philosophy-box{
+  display:inline-flex;align-items:flex-start;gap:14px;
+  background:var(--blue-bg);border:1px solid var(--blue-bd);
+  border-radius:8px;padding:16px 20px;max-width:640px;
+}
+.philosophy-bar{width:3px;min-height:40px;border-radius:2px;background:linear-gradient(180deg,var(--blue),var(--teal));flex-shrink:0}
+.philosophy-text{font-size:13px;color:var(--text);line-height:1.7;font-style:italic;font-weight:400}
+.philosophy-text strong{font-weight:600;font-style:normal;color:var(--teal)}
+
+/* ── COLOR LEGEND PILLS ── */
+.legend{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.legend-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;border-radius:20px;font-size:10px;font-weight:500;
+  font-family:'Roboto Mono',monospace;letter-spacing:0.06em;
+}
+.legend-pill .dot{width:6px;height:6px;border-radius:50%}
+.lp-blue{background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue)}
+.lp-teal{background:var(--teal-bg);border:1px solid var(--teal-bd);color:var(--teal)}
+.lp-gold{background:var(--gold-bg);border:1px solid var(--gold-bd);color:var(--gold)}
+.lp-green{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green)}
+
+/* ── TABS ── */
+.tabs{
+  position:sticky;top:0;z-index:50;
+  background:rgba(13,27,46,0.93);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.tabs .page-inner{display:flex}
+.tab{
+  padding:13px 18px;
+  font-family:'Roboto Mono',monospace;font-size:10px;font-weight:500;
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);
+  border:none;background:none;cursor:pointer;
+  border-bottom:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;
+}
+.tab[data-tab="flow"].active    {color:var(--blue); border-bottom-color:var(--blue)}
+.tab[data-tab="ownership"].active{color:var(--teal); border-bottom-color:var(--teal)}
+.tab[data-tab="slas"].active    {color:var(--gold); border-bottom-color:var(--gold)}
+.tab[data-tab="philosophy"].active{color:var(--green);border-bottom-color:var(--green)}
+.tab:hover:not(.active){color:var(--muted)}
+
+/* ── CONTENT ── */
+.content{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:44px 48px 80px}
+.pane{display:none}
+.pane.active{display:block;animation:fadeUp 0.22s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION HEADER ── */
+.sec-eyebrow{
+  font-family:'Roboto Mono',monospace;font-size:9px;font-weight:600;
+  letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;
+}
+.pane-flow      .sec-eyebrow{color:var(--blue)}
+.pane-ownership .sec-eyebrow{color:var(--teal)}
+.pane-slas      .sec-eyebrow{color:var(--gold)}
+.pane-philosophy .sec-eyebrow{color:var(--green)}
+.sec-title{font-size:24px;font-weight:700;letter-spacing:-0.015em;color:var(--text);margin-bottom:8px}
+.sec-desc{font-size:13px;color:var(--muted);line-height:1.7;max-width:540px;font-weight:300;margin-bottom:28px}
+
+/* ── PHASE CARDS — each letter gets its own brand color ── */
+.phase-card{
+  background:var(--navy2);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;margin-bottom:10px;transition:border-color 0.2s;
+}
+.phase-card.open{border-color:var(--border2)}
+.phase-header{display:flex;align-items:center;gap:14px;padding:16px 22px;cursor:pointer;user-select:none;transition:background 0.15s}
+.phase-card.open .phase-header{background:rgba(255,255,255,0.02)}
+.phase-letter{
+  width:32px;height:32px;border-radius:6px;flex-shrink:0;
+  font-family:'Roboto Mono',monospace;font-size:13px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+}
+/* Per-phase colors */
+#phaseA .phase-letter{background:var(--blue-bg); border:1px solid var(--blue-bd); color:var(--blue)}
+#phaseB .phase-letter{background:var(--teal-bg); border:1px solid var(--teal-bd); color:var(--teal)}
+#phaseC .phase-letter{background:var(--gold-bg); border:1px solid var(--gold-bd); color:var(--gold)}
+#phaseD .phase-letter{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green)}
+#phaseA.open{border-color:var(--blue-bd)!important}
+#phaseB.open{border-color:var(--teal-bd)!important}
+#phaseC.open{border-color:var(--gold-bd)!important}
+#phaseD.open{border-color:var(--green-bd)!important}
+.phase-title{font-size:13.5px;font-weight:600;color:var(--text);letter-spacing:-0.01em}
+.phase-sub{font-size:11px;color:var(--dim);margin-top:2px;font-weight:300}
+.phase-chevron{margin-left:auto;color:var(--dim);font-size:12px;transition:transform 0.25s;flex-shrink:0}
+.phase-card.open .phase-chevron{transform:rotate(180deg)}
+.phase-body{border-top:1px solid var(--border);display:none;overflow-x:auto}
+.phase-card.open .phase-body{display:block}
+
+/* Phase-colored table header accents */
+#phaseA .phase-body{border-top-color:rgba(26,143,255,0.15)}
+#phaseB .phase-body{border-top-color:rgba(56,217,176,0.15)}
+#phaseC .phase-body{border-top-color:rgba(245,200,66,0.15)}
+#phaseD .phase-body{border-top-color:rgba(200,240,0,0.12)}
+
+/* ── STEP TABLE ── */
+.step-table{width:100%;border-collapse:collapse;font-size:12px;min-width:620px}
+.step-table thead th{
+  padding:10px 16px;text-align:left;
+  font-family:'Roboto Mono',monospace;font-size:9px;font-weight:600;
+  letter-spacing:0.15em;text-transform:uppercase;
+  background:var(--navy3);border-bottom:1px solid var(--border);white-space:nowrap;
+}
+.step-table thead th.col-step{color:var(--muted);width:140px}
+.step-table thead th.col-rec {color:var(--teal)}
+.step-table thead th.col-src {color:var(--blue)}
+.step-table thead th.col-out {color:var(--muted);width:180px}
+.step-table tbody td{padding:14px 16px;vertical-align:top;border-bottom:1px solid var(--border);line-height:1.65}
+.step-table tbody tr:last-child td{border-bottom:none}
+.step-num{
+  font-family:'Roboto Mono',monospace;font-size:9px;font-weight:500;
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:3px;
+}
+.step-label{font-size:13px;font-weight:600;color:var(--text);letter-spacing:-0.01em}
+.col-rec-cell{color:var(--teal);font-weight:400}
+.col-src-cell{color:var(--blue);font-weight:400}
+.col-out-cell{color:var(--muted);font-weight:300;font-size:11.5px}
+/* Chip color variants */
+.chip{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-family:'Roboto Mono',monospace;font-size:9px;font-weight:500;
+  letter-spacing:0.04em;margin-top:5px;
+}
+.chip,.chip-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+.chip-teal  {background:var(--teal-bg); color:var(--teal); border:1px solid var(--teal-bd)}
+.chip-gold  {background:var(--gold-bg); color:var(--gold); border:1px solid var(--gold-bd)}
+.chip-green {background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.chip+.chip,.chip+.chip-teal,.chip+.chip-gold,.chip+.chip-green{margin-left:4px}
+.note-italic{margin-top:5px;font-size:10.5px;font-style:italic;color:var(--dim)}
+
+/* ── OWNERSHIP ── */
+.ownership-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.own-card{background:var(--navy2);border-radius:10px;overflow:hidden}
+.own-card.sourcer {border:1px solid var(--blue-bd)}
+.own-card.recruiter{border:1px solid var(--teal-bd)}
+.own-header{padding:12px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.own-card.sourcer  .own-header{background:var(--blue-bg)}
+.own-card.recruiter .own-header{background:var(--teal-bg)}
+.own-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.own-role{font-family:'Roboto Mono',monospace;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase}
+.own-card.sourcer  .own-role{color:var(--blue)}
+.own-card.recruiter .own-role{color:var(--teal)}
+.own-body{padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.own-item{display:flex;gap:10px}
+.own-arrow{font-size:10px;flex-shrink:0;margin-top:2px}
+.own-card.sourcer  .own-arrow{color:var(--blue)}
+.own-card.recruiter .own-arrow{color:var(--teal)}
+.own-item-title{font-size:12.5px;font-weight:600;color:var(--text);display:block;margin-bottom:2px;letter-spacing:-0.01em}
+.own-item-desc{font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300}
+.own-note{font-size:11px;color:var(--dim);font-style:italic;border-top:1px solid var(--border);padding:10px 18px}
+
+/* ── SLAs ── */
+.sla-list{display:flex;flex-direction:column;gap:8px}
+.sla-row{
+  background:var(--navy2);border:1px solid var(--border);border-radius:10px;
+  padding:14px 18px;display:grid;grid-template-columns:1fr auto auto;gap:18px;align-items:center;
+}
+/* Left accent bar per row — alternates through brand colors */
+.sla-row:nth-child(1){border-left:3px solid var(--blue)}
+.sla-row:nth-child(2){border-left:3px solid var(--teal)}
+.sla-row:nth-child(3){border-left:3px solid var(--gold)}
+.sla-row:nth-child(4){border-left:3px solid #f87171}
+.sla-row:nth-child(5){border-left:3px solid var(--blue)}
+.sla-row:nth-child(6){border-left:3px solid var(--green)}
+.sla-row:nth-child(7){border-left:3px solid var(--gold)}
+.sla-scenario{font-size:13px;font-weight:600;color:var(--text);letter-spacing:-0.01em;margin-bottom:4px}
+.sla-action{font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300}
+.sla-notable{font-size:10.5px;color:var(--dim);margin-top:4px;font-style:italic}
+.owner-chip{
+  font-family:'Roboto Mono',monospace;font-size:9px;font-weight:600;
+  letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border-radius:4px;white-space:nowrap;
+}
+.owner-chip.both    {background:var(--blue-bg);color:var(--blue); border:1px solid var(--blue-bd)}
+.owner-chip.sourcer {background:var(--teal-bg);color:var(--teal); border:1px solid var(--teal-bd)}
+.owner-chip.recruiter{background:var(--gold-bg);color:var(--gold); border:1px solid var(--gold-bd)}
+.timer-chip{
+  font-family:'Roboto Mono',monospace;font-size:12px;font-weight:600;
+  padding:5px 12px;border-radius:6px;white-space:nowrap;
+  color:var(--blue);background:var(--blue-bg);border:1px solid var(--blue-bd);
+}
+.timer-chip.urgent{color:#f87171;background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.3)}
+.timer-chip.green {color:var(--green);background:var(--green-bg);border-color:var(--green-bd)}
+.timer-chip.teal  {color:var(--teal); background:var(--teal-bg); border-color:var(--teal-bd)}
+
+/* ── PHILOSOPHY ── */
+.philo-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.philo-card{background:var(--navy2);border-radius:10px;padding:24px 22px}
+.philo-card.sourcer  {border:1px solid var(--blue-bd)}
+.philo-card.recruiter{border:1px solid var(--teal-bd)}
+.philo-role{font-family:'Roboto Mono',monospace;font-size:9px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:10px}
+.philo-card.sourcer   .philo-role{color:var(--blue)}
+.philo-card.recruiter .philo-role{color:var(--teal)}
+.philo-headline{font-size:20px;font-weight:700;letter-spacing:-0.02em;line-height:1.18;color:var(--text);margin-bottom:18px}
+.philo-tenets{display:flex;flex-direction:column;gap:9px}
+.philo-tenet{display:flex;gap:9px;font-size:12.5px;color:var(--muted);line-height:1.55;font-weight:300;align-items:flex-start}
+.philo-bullet{font-size:6px;flex-shrink:0;margin-top:5px}
+.philo-card.sourcer  .philo-bullet{color:var(--blue)}
+.philo-card.recruiter .philo-bullet{color:var(--teal)}
+
+/* "What Good Partnership" — 6 items, each with a different color check */
+.closing-card{background:var(--navy2);border-radius:10px;padding:22px;margin-bottom:14px;border:1px solid var(--border2)}
+.closing-title{font-size:14px;font-weight:600;color:var(--text);letter-spacing:-0.01em;margin-bottom:14px}
+.closing-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.closing-item{display:flex;gap:8px;font-size:12px;color:var(--muted);line-height:1.6;font-weight:300;align-items:flex-start}
+.closing-check{font-size:10px;flex-shrink:0;margin-top:3px;font-weight:600}
+.closing-item:nth-child(1) .closing-check{color:var(--blue)}
+.closing-item:nth-child(2) .closing-check{color:var(--teal)}
+.closing-item:nth-child(3) .closing-check{color:var(--gold)}
+.closing-item:nth-child(4) .closing-check{color:var(--green)}
+.closing-item:nth-child(5) .closing-check{color:var(--blue)}
+.closing-item:nth-child(6) .closing-check{color:var(--teal)}
+
+.closing-thoughts{
+  background:linear-gradient(135deg,rgba(26,143,255,0.06) 0%,rgba(56,217,176,0.04) 100%);
+  border:1px solid var(--teal-bd);border-radius:10px;padding:22px 24px;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.closing-bar{
+  width:3px;min-height:48px;border-radius:2px;flex-shrink:0;
+  background:linear-gradient(180deg,var(--blue),var(--teal),var(--gold),var(--green));
+}
+.closing-text{font-size:13px;color:var(--text);line-height:1.75;font-style:italic;font-weight:400}
+</style>
+</head>
+<body>
+
+<!-- TITLE BAR -->
+<div class="titlebar">
+  <div class="page-inner">
+    <div class="titlebar-dots">
+      <span class="d1"></span><span class="d2"></span><span class="d3"></span><span class="d4"></span>
+    </div>
+    <span class="titlebar-label">Recruiter &amp; Sourcer Partnership Framework</span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="hg1"></div><div class="hg2"></div><div class="hg3"></div><div class="hg4"></div>
+  <div class="page-inner">
+  <h1>Recruiter &amp; Sourcer<br><span>Partnership Framework</span></h1>
+  <p class="header-desc">A working agreement and training guide defining how Recruiters and Sourcers partner at Crusoe to deliver world-class hiring outcomes.</p>
+  <div class="philosophy-box">
+    <div class="philosophy-bar"></div>
+    <p class="philosophy-text">Sourcing and recruiting operate as <strong>equal strategic partners</strong>. Sourcing drives market intelligence, discovery, and early-stage strategy, while recruiting leads stakeholder alignment, candidate experience, and closing. Together, this partnership is the engine behind our hiring strategy — translating business goals into world-class hires.</p>
+  </div>
+  <div class="legend">
+    <span class="legend-pill lp-blue"><span class="dot" style="background:var(--blue)"></span>Phase A · Sourcer</span>
+    <span class="legend-pill lp-teal"><span class="dot" style="background:var(--teal)"></span>Phase B · Recruiter</span>
+    <span class="legend-pill lp-gold"><span class="dot" style="background:var(--gold)"></span>Phase C · SLAs</span>
+    <span class="legend-pill lp-green"><span class="dot" style="background:var(--green)"></span>Phase D · Philosophy</span>
+  </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="page-inner">
+  <button class="tab active" data-tab="flow"       onclick="show('flow',this)">Collaboration Flow</button>
+  <button class="tab"         data-tab="ownership"  onclick="show('ownership',this)">Ownership</button>
+  <button class="tab"         data-tab="slas"       onclick="show('slas',this)">SLAs</button>
+  <button class="tab"         data-tab="philosophy" onclick="show('philosophy',this)">Philosophy</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- ── FLOW ── -->
+  <div class="pane pane-flow active" id="pane-flow">
+    <div class="sec-eyebrow">Four-Phase Process</div>
+    <div class="sec-title">The Collaboration Flow</div>
+    <p class="sec-desc">Full lifecycle from role open to close. Click any phase to expand the step-by-step breakdown.</p>
+
+    <!-- Phase A — blue -->
+    <div class="phase-card" id="phaseA">
+      <div class="phase-header" onclick="togglePhase('phaseA')">
+        <div class="phase-letter">A</div>
+        <div>
+          <div class="phase-title">Intake, Role Discovery, Kickoff &amp; Strategy Alignment</div>
+          <div class="phase-sub">Complete strategic alignment before the role opens</div>
+        </div>
+        <span class="phase-chevron">▾</span>
+      </div>
+      <div class="phase-body">
+        <table class="step-table">
+          <thead><tr>
+            <th class="col-step">Step</th>
+            <th class="col-rec">Recruiter Action</th>
+            <th class="col-src">Sourcer Action</th>
+            <th class="col-out">Output</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="step-num">Step 01</span><span class="step-label">Intake &amp; Role Discovery</span></td>
+              <td class="col-rec-cell">Schedule and lead intake with the hiring manager (30-min deep-dive); clarify scope, urgency, leveling, compensation, and interview plan.</td>
+              <td class="col-src-cell">Partner in Calibration: Define candidate archetypes, anti-signals, targeted companies, competencies, and selling points.</td>
+              <td class="col-out-cell">Alignment on ideal profile, interview plan + sourcing brief.<br><span class="chip chip-blue">Sourcing Brief</span></td>
+            </tr>
+            <tr>
+              <td><span class="step-num">Step 02</span><span class="step-label">HM Alignment</span></td>
+              <td class="col-rec-cell">Conduct a 15–30 min sync with the HM for final approval of job description and candidate profile.</td>
+              <td class="col-src-cell">Market Mapping: Build a data-informed market map showing talent availability, diversity reach, and competitor presence.</td>
+              <td class="col-out-cell">Finalized role requirements, external-facing JD, and interview plan + panel. Sourcer executes on search strategy.<br><span class="chip chip-blue">Market Map</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Phase B — teal -->
+    <div class="phase-card" id="phaseB">
+      <div class="phase-header" onclick="togglePhase('phaseB')">
+        <div class="phase-letter">B</div>
+        <div>
+          <div class="phase-title">Pipeline Generation &amp; Handoff</div>
+          <div class="phase-sub">Generating a healthy flow of qualified, engaged talent</div>
+        </div>
+        <span class="phase-chevron">▾</span>
+      </div>
+      <div class="phase-body">
+        <table class="step-table">
+          <thead><tr>
+            <th class="col-step">Step</th>
+            <th class="col-rec">Recruiter Action</th>
+            <th class="col-src">Sourcer Action</th>
+            <th class="col-out">SLA</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="step-num">Step 01</span><span class="step-label">Lead Identification</span></td>
+              <td class="col-rec-cell">Review inbound applications and referrals as primary owner. Support outbound as needed.</td>
+              <td class="col-src-cell">Execute outbound sourcing strategy; maintain 1.5× required pipeline volume. Support inbound review as needed.</td>
+              <td class="col-out-cell"><span class="chip chip-teal">Outreach within 48 hrs</span><div class="note-italic">Exceptions for niche / specialized roles</div></td>
+            </tr>
+            <tr>
+              <td><span class="step-num">Step 02</span><span class="step-label">Pre-Screen &amp; Pipeline Movement</span></td>
+              <td class="col-rec-cell">Conduct recruiter pre-screens. Keep stakeholders accountable on SLAs. Submit ATS feedback within 24 hrs.</td>
+              <td class="col-src-cell">Move qualified candidates through process up to full-loop. Provide detailed handoff notes: pre-screen summary, logistics, candidate nuances.</td>
+              <td class="col-out-cell"><span class="chip chip-teal">ATS feedback 24 hrs</span> <span class="chip chip-teal">HM review 48 hrs</span><div class="note-italic">Goal: earn trust to bypass HM review stage</div></td>
+            </tr>
+            <tr>
+              <td><span class="step-num">Step 03</span><span class="step-label">Feedback Loop with Hiring Team</span></td>
+              <td class="col-rec-cell">Monitor interview feedback for fairness and consistency in candidate evaluation.</td>
+              <td class="col-src-cell">Review feedback from interviewers. Adjust search strings, outreach messaging, and prioritization if needed.</td>
+              <td class="col-out-cell"><span class="chip chip-teal">Feedback 24–48 hrs</span></td>
+            </tr>
+            <tr>
+              <td><span class="step-num">Step 04</span><span class="step-label">Role Kickoff Meeting</span></td>
+              <td class="col-rec-cell">Lead a mandatory kickoff with HM and hiring team to align on competencies and interview structure.</td>
+              <td class="col-src-cell">Attendance required. Align on interview plan; understand required competencies to improve conversion rates during searches and pre-screens.</td>
+              <td class="col-out-cell"><span class="chip chip-teal">Full team alignment</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Phase C — gold -->
+    <div class="phase-card" id="phaseC">
+      <div class="phase-header" onclick="togglePhase('phaseC')">
+        <div class="phase-letter">C</div>
+        <div>
+          <div class="phase-title">Continuous Feedback &amp; Triage</div>
+          <div class="phase-sub">Maintaining quality through rapid, ongoing communication</div>
+        </div>
+        <span class="phase-chevron">▾</span>
+      </div>
+      <div class="phase-body">
+        <table class="step-table">
+          <thead><tr>
+            <th class="col-step">Practice</th>
+            <th class="col-rec">Recruiter Action</th>
+            <th class="col-src">Sourcer Action</th>
+            <th class="col-out">SLA / Cadence</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="step-num">Recurring</span><span class="step-label">Weekly Syncs</span></td>
+              <td class="col-rec-cell">Schedule weekly syncs with Sourcer &amp; HM. Review pipeline health (volume, conversion rates) and triage bottlenecked candidates.</td>
+              <td class="col-src-cell">Present pipeline overview, flag risks, present qualified profiles, and/or propose search adjustments based on market response.</td>
+              <td class="col-out-cell"><span class="chip chip-gold">Weekly — all parties</span></td>
+            </tr>
+            <tr>
+              <td><span class="step-num">As Needed</span><span class="step-label">Pipeline Risk Escalation</span></td>
+              <td class="col-rec-cell">If the pipeline is stalling, hold an ad-hoc sync ASAP. Present context to HM. Use Slack if meeting window can't be met.</td>
+              <td class="col-src-cell">Bring market data, candidate decline reasons, talent trends, and competitor insights to help adjust criteria and realign on targets.</td>
+              <td class="col-out-cell"><span class="chip chip-gold">Within 24–48 hrs of stall</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Phase D — green -->
+    <div class="phase-card" id="phaseD">
+      <div class="phase-header" onclick="togglePhase('phaseD')">
+        <div class="phase-letter">D</div>
+        <div>
+          <div class="phase-title">Process Management &amp; Closing</div>
+          <div class="phase-sub">Recruiter leads the close; Sourcer provides critical intel</div>
+        </div>
+        <span class="phase-chevron">▾</span>
+      </div>
+      <div class="phase-body">
+        <table class="step-table">
+          <thead><tr>
+            <th class="col-step" style="width:200px">Recruiter Focus</th>
+            <th class="col-src">Leveraging Sourcer's Expertise</th>
+            <th class="col-out">Key Agreement</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="col-rec-cell">Drive candidate experience through onsite to offer. Lead offer delivery, compensation alignment, and candidate closing strategy.</td>
+              <td class="col-src-cell">Ensure steady pipeline flow and flag market risks. Provide candidate motivations, comp expectations, location preferences, immigration status, and market intel to increase close chances.</td>
+              <td class="col-out-cell">Recruiter: inbound, stakeholder mgmt, closing.<br><br>Sourcer: pipeline health, market insights, search strategy.<br><br><span class="chip chip-green">Shared: candidate experience</span><div class="note-italic">Clean handoffs protect employer brand &amp; reduce duplicate effort</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OWNERSHIP ── -->
+  <div class="pane pane-ownership" id="pane-ownership">
+    <div class="sec-eyebrow">Primary Ownership</div>
+    <div class="sec-title">Who Owns What</div>
+    <p class="sec-desc">Built on three principles: One Team, Complementary Strengths, and a Continuous Feedback Loop.</p>
+    <div class="ownership-grid">
+      <div class="own-card sourcer">
+        <div class="own-header">
+          <div class="own-dot" style="background:var(--blue)"></div>
+          <span class="own-role">Sourcer — Primary Ownership</span>
+        </div>
+        <div class="own-body">
+          <div class="own-item"><span class="own-arrow">→</span><div>
+            <span class="own-item-title">Calibration &amp; Intake</span>
+            <span class="own-item-desc">Partner with recruiter on detailed calibration sessions. Define archetypes, green/red flags, and must-haves. Maintain a real-time feedback journal tagged by theme (e.g. too senior, too infra heavy, not enough scale experience).</span>
+          </div></div>
+          <div class="own-item"><span class="own-arrow">→</span><div>
+            <span class="own-item-title">Top-of-Funnel (ToF)</span>
+            <span class="own-item-desc">Own outreach strategy, multi-touch sequences, and pipeline generation. Conduct candidate pre-screens to improve calibration and advocate for qualified candidates. If ToF is low, prioritize identification and delegate screens to recruiters until healthy.</span>
+          </div></div>
+          <div class="own-item"><span class="own-arrow">→</span><div>
+            <span class="own-item-title">Pipeline Health</span>
+            <span class="own-item-desc">Ensure consistent candidate flow. Rebalance profiles as searches evolve. Flag risks early. Deep dive into bottlenecks — pass-through rates, interviewer feedback, candidate feedback.</span>
+          </div></div>
+          <div class="own-item"><span class="own-arrow">→</span><div>
+            <span class="own-item-title">Market Data &amp; Industry Trends</span>
+            <span class="own-item-desc">Provide data on talent availability, competitor activity, compensation trends, and overall industry trends.</span>
+          </div></div>
+        </div>
+        <div class="own-note">Recruiters are encouraged to source outbound candidates, especially when support is needed.</div>
+      </div>
+      <div class="own-card recruiter">
+        <div class="own-header">
+          <div class="own-dot" style="background:var(--teal)"></div>
+          <span class="own-role">Recruiter — Primary Ownership</span>
+        </div>
+        <div class="own-body">
+          <div class="own-item"><span class="own-arrow">→</span><div>
+            <span class="own-item-title">Intake Meetings</span>
+            <span class="own-item-desc">Schedule and lead intake with the hiring manager. Clarify scope, urgency, leveling, compensation, and interview plan including panel participants.</span>
+          </div></div>
+          <div class="own-item"><span class="own-arrow">→</span><div>
+            <span class="own-item-title">Job Opening &amp; External Posting</span>
+            <span class="own-item-desc">Gather final job details, finalize JD, review posting language, and ensure all systems (e.g. Ashby) are correctly set up before opening.</span>
+          </div></div>
+          <div class="own-item"><span class="own-arrow">→</span><div>
+            <span class="own-item-title">Role Kickoff &amp; Stakeholder Management</span>
+            <span class="own-item-desc">Lead kickoff meetings with HMs and hiring team. Own ongoing communication and alignment with all interviewers.</span>
+          </div></div>
+          <div class="own-item"><span class="own-arrow">→</span><div>
+            <span class="own-item-title">Applicant Review &amp; Offer / Closing</span>
+            <span class="own-item-desc">Manage inbound applications, referrals, and internal mobility. Drive offer strategy, compensation alignment, and candidate closing.</span>
+          </div></div>
+        </div>
+        <div class="own-note">Sourcers are encouraged to assist with inbound applicants, especially when support is needed.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLAs ── -->
+  <div class="pane pane-slas" id="pane-slas">
+    <div class="sec-eyebrow">Mandatory Agreements</div>
+    <div class="sec-title">Service Level Agreements</div>
+    <p class="sec-desc">These SLAs are mandatory for all roles. Exceptions for niche or specialized roles are noted where applicable.</p>
+    <div class="sla-list">
+      <div class="sla-row">
+        <div>
+          <div class="sla-scenario">New Sourced Lead</div>
+          <div class="sla-action">Send an initial outreach/engagement message within 48 hours of identification.</div>
+          <div class="sla-notable">Exceptions can be made for niche/specialized roles with unique engagement strategies.</div>
+        </div>
+        <span class="owner-chip both">Both</span>
+        <span class="timer-chip">48 hrs</span>
+      </div>
+      <div class="sla-row">
+        <div>
+          <div class="sla-scenario">Qualified Lead Confirmation</div>
+          <div class="sla-action">Move the engaged, qualified candidate to the appropriate next stage within 24 hours of their confirmation of interest.</div>
+        </div>
+        <span class="owner-chip both">Both</span>
+        <span class="timer-chip teal">24 hrs</span>
+      </div>
+      <div class="sla-row">
+        <div>
+          <div class="sla-scenario">Active Candidates — Stage Timeline</div>
+          <div class="sla-action">Ensure candidates are moving through appropriate interview stages within 48 hours. Send "no update, updates" for special cases to keep candidates informed.</div>
+        </div>
+        <span class="owner-chip both">Both</span>
+        <span class="timer-chip" style="color:var(--gold);background:var(--gold-bg);border-color:var(--gold-bd)">48 hrs</span>
+      </div>
+      <div class="sla-row">
+        <div>
+          <div class="sla-scenario">Urgent Need for Talent</div>
+          <div class="sla-action">Proactively inform Sourcer via direct message of the urgent need and specific profile required to immediately re-prioritize sourcing efforts.</div>
+        </div>
+        <span class="owner-chip recruiter">Recruiter</span>
+        <span class="timer-chip urgent">Immediate</span>
+      </div>
+      <div class="sla-row">
+        <div>
+          <div class="sla-scenario">Interview Feedback Submission</div>
+          <div class="sla-action">All interviewers must submit feedback into ATS within 24–48 hours of interview completion. Both Recruiter and Sourcer hold interviewers accountable.</div>
+        </div>
+        <span class="owner-chip both">Both</span>
+        <span class="timer-chip">24–48 hrs</span>
+      </div>
+      <div class="sla-row">
+        <div>
+          <div class="sla-scenario">Unresponsive Sourced Candidate</div>
+          <div class="sla-action">Sourcer sends follow-up after 5 business days. If still no response, partner with Recruiter to provide context and brainstorm an appropriate re-engagement strategy.</div>
+        </div>
+        <span class="owner-chip sourcer">Sourcer</span>
+        <span class="timer-chip green">5 bus. days</span>
+      </div>
+      <div class="sla-row">
+        <div>
+          <div class="sla-scenario">Pipeline Stall — Ad-hoc Sync</div>
+          <div class="sla-action">Hold an urgent ad-hoc sync upon identifying a stall. Use Slack to keep alignment flowing if HM meeting window can't be met within the suggested timeframe.</div>
+        </div>
+        <span class="owner-chip both">Both</span>
+        <span class="timer-chip" style="color:var(--gold);background:var(--gold-bg);border-color:var(--gold-bd)">24–48 hrs</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PHILOSOPHY ── -->
+  <div class="pane pane-philosophy" id="pane-philosophy">
+    <div class="sec-eyebrow">Operating Principles</div>
+    <div class="sec-title">Philosophy &amp; Culture</div>
+    <p class="sec-desc">The beliefs that govern how we work — individually and together.</p>
+    <div class="philo-grid">
+      <div class="philo-card sourcer">
+        <div class="philo-role">Sourcing Philosophy</div>
+        <div class="philo-headline">Strategy first,<br>search second.</div>
+        <div class="philo-tenets">
+          <div class="philo-tenet"><span class="philo-bullet">◆</span>We map before we message.</div>
+          <div class="philo-tenet"><span class="philo-bullet">◆</span>We calibrate before we chase.</div>
+          <div class="philo-tenet"><span class="philo-bullet">◆</span>We influence with data, not assumptions.</div>
+        </div>
+      </div>
+      <div class="philo-card recruiter">
+        <div class="philo-role">Recruiting Philosophy</div>
+        <div class="philo-headline">Precision first,<br>process second.</div>
+        <div class="philo-tenets">
+          <div class="philo-tenet"><span class="philo-bullet">◆</span>We align before we advance.</div>
+          <div class="philo-tenet"><span class="philo-bullet">◆</span>We communicate before we assume.</div>
+          <div class="philo-tenet"><span class="philo-bullet">◆</span>We convert insights into outcomes.</div>
+        </div>
+      </div>
+    </div>
+    <div class="closing-card">
+      <div class="closing-title">What Good Partnership Looks Like</div>
+      <div class="closing-grid">
+        <div class="closing-item"><span class="closing-check">✓</span>Sourcer brings clarity; recruiter brings alignment.</div>
+        <div class="closing-item"><span class="closing-check">✓</span>Over-communication protects the candidate's experience.</div>
+        <div class="closing-item"><span class="closing-check">✓</span>Feedback and data flow both ways.</div>
+        <div class="closing-item"><span class="closing-check">✓</span>Misalignments are addressed in real time.</div>
+        <div class="closing-item"><span class="closing-check">✓</span>Every intake results in artifacts: market map, outreach plan, candidate archetypes, green/red flags, calibration summary.</div>
+        <div class="closing-item"><span class="closing-check">✓</span>Clean handoffs reduce confusion, duplicate effort, and ensure a positive employer brand reputation.</div>
+      </div>
+    </div>
+    <div class="closing-thoughts">
+      <div class="closing-bar"></div>
+      <p class="closing-text">Sourcers and recruiters co-lead a hiring engine built on precision, data, and partnership. When both functions operate in sync, we move faster, hire smarter, and deliver a world-class experience for every candidate and hiring team.</p>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pane-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+function togglePhase(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+</script>
+</body>
+</html>

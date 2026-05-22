@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Talent Intelligence — Sourcing with AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+/* ── DARK TOKENS (default) ── */
+:root {
+  --bg:         #0a0b0f;
+  --surface:    #111318;
+  --surface2:   #181c24;
+  --surface3:   #1e2530;
+  --border:     #1e2330;
+  --border2:    #252d3d;
+  --text:       #e8eaf0;
+  --text-muted: #6b7491;
+  --text-dim:   #3d4560;
+  --accent:     #5b8fff;
+  --accent-dim: rgba(91,143,255,0.08);
+  --accent-bdr: rgba(91,143,255,0.22);
+  --teal:       #47c5a8;
+  --teal-dim:   rgba(71,197,168,0.07);
+  --teal-bdr:   rgba(71,197,168,0.2);
+  --gold:       #e8c547;
+  --gold-dim:   rgba(232,197,71,0.07);
+  --gold-bdr:   rgba(232,197,71,0.18);
+  --green:      #4ade80;
+  --green-dim:  rgba(74,222,128,0.08);
+  --green-bdr:  rgba(74,222,128,0.22);
+  --danger:     #f07a4a;
+  --topbar-bg:  rgba(10,11,15,0.96);
+  --noise-opacity: .022;
+  --shadow:     0 2px 24px rgba(0,0,0,0.5);
+}
+
+/* ── LIGHT TOKENS ── */
+[data-theme="light"] {
+  --bg:         #f5f4f0;
+  --surface:    #ffffff;
+  --surface2:   #f0ede8;
+  --surface3:   #e8e4de;
+  --border:     #ddd9d2;
+  --border2:    #ccc8c0;
+  --text:       #1a1a1e;
+  --text-muted: #6b6860;
+  --text-dim:   #aaa59e;
+  --accent:     #2a5fd4;
+  --accent-dim: rgba(42,95,212,0.07);
+  --accent-bdr: rgba(42,95,212,0.22);
+  --teal:       #1a9e85;
+  --teal-dim:   rgba(26,158,133,0.07);
+  --teal-bdr:   rgba(26,158,133,0.22);
+  --gold:       #b08a00;
+  --gold-dim:   rgba(176,138,0,0.08);
+  --gold-bdr:   rgba(176,138,0,0.22);
+  --green:      #1a8c4e;
+  --green-dim:  rgba(26,140,78,0.08);
+  --green-bdr:  rgba(26,140,78,0.22);
+  --danger:     #c44b1a;
+  --topbar-bg:  rgba(245,244,240,0.96);
+  --noise-opacity: 0;
+  --shadow:     0 2px 16px rgba(0,0,0,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* noise grain — dark only */
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: var(--noise-opacity);
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--topbar-bg);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; gap: 12px;
+  box-shadow: var(--shadow);
+  transition: background 0.3s, border-color 0.3s;
+}
+.topbar-left { display: flex; align-items: center; gap: 0; flex: 1; }
+.topbar-brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; margin-right: 32px; }
+.topbar-brand svg { height: 32px; width: auto; display: block; }
+
+/* nav */
+.tnav { display: flex; align-items: stretch; gap: 0; }
+.tnav-btn {
+  height: 56px; padding: 0 16px;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+  color: var(--text-muted); background: none;
+  border: none; border-bottom: 2px solid transparent;
+  cursor: pointer; white-space: nowrap;
+  display: flex; align-items: center; gap: 7px;
+  transition: color 0.15s, border-color 0.15s;
+  letter-spacing: 0.01em;
+}
+.tnav-btn:hover { color: var(--text); }
+.tnav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* stages dropdown */
+.stages-trigger { position: relative; }
+.stages-caret { font-size: 9px; opacity: 0.5; transition: transform 0.2s; }
+.stages-trigger.open .stages-caret { transform: rotate(180deg); }
+
+.stages-dropdown {
+  position: absolute; top: calc(100% + 1px); left: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 4px; padding: 5px;
+  width: 270px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+  z-index: 300; display: none;
+  animation: dropIn 0.15s ease;
+}
+.stages-trigger.open .stages-dropdown { display: block; }
+@keyframes dropIn { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
+
+.drop-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 11px; border-radius: 3px;
+  cursor: pointer; transition: background 0.12s;
+  width: 100%; background: none; border: none;
+  font-family: 'DM Sans', sans-serif; text-align: left;
+}
+.drop-item:hover { background: var(--accent-dim); }
+.drop-item.active-stage { background: var(--accent-dim); }
+.drop-num { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--accent); width: 22px; flex-shrink: 0; letter-spacing: 0.1em; }
+.drop-label { font-size: 12px; font-weight: 400; color: var(--text-muted); flex: 1; }
+.drop-item:hover .drop-label, .drop-item.active-stage .drop-label { color: var(--text); }
+.drop-done { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; display: none; }
+.drop-item.done .drop-done { display: block; }
+
+/* topbar right controls */
+.topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+/* search toggle */
+.search-toggle {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); font-size: 14px;
+  display: flex; align-items: center; padding: 6px 8px;
+  border-radius: 3px; transition: color 0.15s, background 0.15s;
+}
+.search-toggle:hover { color: var(--text); background: var(--surface2); }
+.search-toggle.active { color: var(--accent); }
+
+/* theme toggle */
+.theme-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px; border-radius: 3px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.15s;
+  border: 1px solid var(--border2);
+  background: var(--surface2); color: var(--text-muted);
+}
+.theme-toggle:hover { border-color: var(--accent-bdr); color: var(--accent); background: var(--accent-dim); }
+.theme-icon { font-size: 11px; }
+
+/* progress bar */
+.progress-bar { height: 2px; background: var(--border); }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--teal)); transition: width 0.5s ease; width: 0; }
+
+/* ── SEARCH DRAWER ── */
+.search-drawer {
+  position: sticky; top: 58px; z-index: 190;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 48px; display: none;
+  transition: background 0.3s;
+}
+.search-drawer.open { display: block; animation: dropIn 0.15s ease; }
+.search-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 14px; }
+.search-wrap { position: relative; flex: 1; max-width: 440px; }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 12px; pointer-events: none; }
+.search-box {
+  width: 100%; background: var(--surface2);
+  border: 1px solid var(--border2); border-radius: 3px;
+  padding: 7px 28px 7px 30px;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 300;
+  color: var(--text); outline: none; transition: border-color 0.2s, background 0.2s;
+}
+.search-box:focus { border-color: var(--accent-bdr); box-shadow: 0 0 0 3px rgba(91,143,255,0.06); }
+.search-box::placeholder { color: var(--text-dim); font-style: italic; }
+.search-x { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 14px; display: none; }
+.search-x:hover { color: var(--text-muted); }
+.search-count { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); white-space: nowrap; }
+
+/* ── SHELL ── */
+.shell { max-width: 900px; margin: 0 auto; padding: 52px 48px 80px; position: relative; z-index: 1; }
+
+/* ── PANELS ── */
+.panel { display: none; animation: fadeIn 0.2s ease; }
+.panel.active { display: block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+/* no results */
+.no-results { display: none; text-align: center; padding: 72px 20px; }
+.no-results.on { display: block; }
+.nr-t { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--text-muted); margin-bottom: 8px; }
+.nr-s { font-size: 13px; color: var(--text-dim); }
+
+/* ── EYEBROW ── */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-bottom: 18px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted);
+}
+.eyebrow-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); opacity: 0.6; }
+
+/* ── PAGE TITLE ── */
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px); font-weight: 700;
+  line-height: 1.04; letter-spacing: -0.02em;
+  color: var(--text); margin-bottom: 12px;
+}
+.page-title em { color: var(--accent); font-style: italic; }
+
+.page-sub {
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  color: var(--text-muted); font-weight: 300;
+  margin-bottom: 24px; line-height: 1.7; max-width: 540px;
+}
+
+/* ── TAGS ── */
+.tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 40px; }
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 3px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  border: 1px solid var(--border2); color: var(--text-muted); background: var(--surface2);
+}
+.tag.blue { border-color: var(--accent-bdr); color: var(--accent); background: var(--accent-dim); }
+.tag.teal { border-color: var(--teal-bdr); color: var(--teal); background: var(--teal-dim); }
+.tag.gold { border-color: var(--gold-bdr); color: var(--gold); background: var(--gold-dim); }
+
+/* ── SECTION HEADING ── */
+.section-head {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 22px; padding-bottom: 13px;
+  border-bottom: 1px solid var(--border);
+}
+.section-num {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); opacity: 0.7; flex-shrink: 0;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px; font-weight: 700; color: var(--text); letter-spacing: -0.01em;
+}
+.section-rule { margin-left: auto; width: 24px; height: 1px; background: var(--accent); opacity: 0.3; flex-shrink: 0; }
+
+/* ── CALLOUT BARS ── */
+.callout {
+  display: flex; border-radius: 4px; overflow: hidden;
+  margin-bottom: 16px; border: 1px solid var(--accent-bdr);
+}
+.callout-bar { width: 2px; flex-shrink: 0; background: var(--accent); }
+.callout-body {
+  padding: 11px 14px; font-size: 12px; line-height: 1.75;
+  color: var(--text-muted); font-weight: 300;
+  background: var(--accent-dim); flex: 1;
+  font-family: 'DM Sans', sans-serif;
+}
+.callout-body strong { color: var(--accent); font-weight: 500; }
+.callout.teal { border-color: var(--teal-bdr); }
+.callout.teal .callout-bar { background: var(--teal); }
+.callout.teal .callout-body { background: var(--teal-dim); }
+.callout.teal .callout-body strong { color: var(--teal); }
+.callout.gold { border-color: var(--gold-bdr); }
+.callout.gold .callout-bar { background: var(--gold); }
+.callout.gold .callout-body { background: var(--gold-dim); }
+.callout.gold .callout-body strong { color: var(--gold); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 14px; border-radius: 4px;
+  font-size: 11px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer; border: 1px solid var(--accent-bdr);
+  background: var(--accent-dim); color: var(--accent);
+  transition: all 0.15s; letter-spacing: 0.02em; white-space: nowrap;
+}
+.btn:hover { background: rgba(91,143,255,0.14); border-color: var(--accent); }
+.btn.teal { border-color: var(--teal-bdr); background: var(--teal-dim); color: var(--teal); }
+.btn.teal:hover { background: rgba(71,197,168,0.14); border-color: var(--teal); }
+.btn.gold { border-color: var(--gold-bdr); background: var(--gold-dim); color: var(--gold); }
+.btn.gold:hover { background: rgba(232,197,71,0.14); border-color: var(--gold); }
+.btn.done { border-color: var(--teal-bdr); background: var(--teal-dim); color: var(--teal); }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: linear-gradient(90deg, var(--accent-bdr), transparent); margin: 40px 0; }
+
+/* ── OVERVIEW ── */
+.ov-hero { padding-bottom: 36px; margin-bottom: 40px; border-bottom: 1px solid var(--border); }
+
+/* principles strip */
+.principles-strip { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--border); }
+.p-chip {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 3px;
+  border: 1px solid var(--border2); color: var(--text-muted); background: var(--surface2);
+  transition: border-color 0.15s, color 0.15s;
+}
+.p-chip:hover { border-color: var(--teal-bdr); color: var(--teal); }
+.p-chip-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--teal); }
+
+/* stage launch cards */
+.slc-row-label {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.slc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap: 10px; margin-bottom: 36px; }
+.slc {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 4px; padding: 16px 18px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  display: flex; flex-direction: column; gap: 6px;
+  position: relative;
+}
+.slc:hover { border-color: var(--accent-bdr); background: var(--surface2); }
+.slc-top { display: flex; align-items: center; justify-content: space-between; }
+.slc-num { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--accent); opacity: 0.8; }
+.slc-icon { font-size: 16px; }
+.slc-title { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
+.slc-goal { font-size: 12px; color: var(--text-muted); font-weight: 300; line-height: 1.4; }
+.slc-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+.slc-done-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--teal); display: none; letter-spacing: 0.08em; }
+.slc.done { border-color: var(--teal-bdr); }
+.slc.done .slc-done-label { display: block; }
+.slc-arrow { font-size: 12px; color: var(--accent); opacity: 0; transition: opacity 0.15s; }
+.slc:hover .slc-arrow { opacity: 1; }
+
+/* enabler strip */
+.enabler-strip { display: flex; gap: 10px; flex-wrap: wrap; }
+.en-card { flex: 1; min-width: 180px; background: var(--surface); border: 1px solid var(--border2); border-radius: 4px; padding: 16px 18px; }
+.en-icon { font-size: 16px; margin-bottom: 8px; display: block; }
+.en-title { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text); }
+.en-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; font-weight: 300; }
+
+/* ── STAGE PANELS ── */
+.stage-hdr {
+  padding-bottom: 28px; margin-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+}
+.stage-hdr-left { flex: 1; }
+.stage-eyebrow { margin-bottom: 8px; }
+.stage-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; line-height: 1.1; margin-bottom: 10px;
+}
+.stage-goal {
+  font-size: 13px; color: var(--text-muted); font-weight: 300; line-height: 1.6; max-width: 480px;
+}
+.stage-goal strong { color: var(--gold); font-weight: 500; }
+
+/* two-col stage layout */
+.stage-body { display: grid; grid-template-columns: 1fr 320px; gap: 24px; margin-bottom: 20px; }
+.stage-sidebar { display: flex; flex-direction: column; gap: 14px; }
+
+/* prompt as focal element */
+.prompt-block {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 4px; overflow: hidden;
+  margin-bottom: 0;
+}
+.prompt-bar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 9px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.prompt-bar-label {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--gold); display: flex; align-items: center; gap: 7px;
+}
+.prompt-copy {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 3px;
+  border: 1px solid var(--accent-bdr); background: var(--accent-dim); color: var(--accent);
+  cursor: pointer; transition: all 0.15s;
+}
+.prompt-copy:hover { background: rgba(91,143,255,0.14); border-color: var(--accent); }
+.prompt-copy.copied { border-color: var(--teal-bdr); background: var(--teal-dim); color: var(--teal); }
+.prompt-text {
+  padding: 20px 18px;
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  line-height: 1.8; color: var(--teal);
+}
+.results-strip {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.result-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 3px;
+  background: var(--teal-dim); border: 1px solid var(--teal-bdr); color: var(--teal);
+}
+
+/* sidebar how-to */
+.how-card { background: var(--surface); border: 1px solid var(--border2); border-radius: 4px; padding: 16px 18px; }
+.how-label {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 14px;
+}
+.how-item { display: flex; gap: 10px; margin-bottom: 11px; align-items: flex-start; }
+.how-item:last-child { margin-bottom: 0; }
+.hi-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 7px; opacity: 0.7; }
+.hi-text { font-size: 12px; line-height: 1.55; color: var(--text-muted); font-weight: 300; }
+.hi-text strong { color: var(--text); font-weight: 500; }
+
+/* stage footer nav */
+.stage-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 20px; border-top: 1px solid var(--border); margin-top: 8px;
+}
+.sf-btn {
+  background: none; border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 0; transition: color 0.15s; font-weight: 300;
+}
+.sf-prev { color: var(--text-dim); }
+.sf-prev:hover { color: var(--text-muted); }
+.sf-next { color: var(--accent); font-weight: 500; }
+.sf-next:hover { color: var(--text); }
+
+/* ── PROMPT LIBRARY ── */
+.lib-hdr { padding-bottom: 28px; margin-bottom: 32px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.lib-sub { font-size: 13px; color: var(--text-muted); max-width: 480px; line-height: 1.65; margin-top: 6px; font-weight: 300; }
+.copy-all-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 14px; border-radius: 4px;
+  font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500;
+  cursor: pointer; border: 1px solid var(--teal-bdr);
+  background: var(--teal-dim); color: var(--teal);
+  transition: all 0.15s; white-space: nowrap;
+}
+.copy-all-btn:hover { background: rgba(71,197,168,0.14); border-color: var(--teal); }
+.copy-all-btn.copied { border-color: var(--accent-bdr); background: var(--accent-dim); color: var(--accent); }
+
+.lib-list { display: flex; flex-direction: column; gap: 8px; }
+.lib-row {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 4px;
+  display: grid; grid-template-columns: 130px 1fr auto;
+  overflow: hidden; transition: border-color 0.15s;
+}
+.lib-row:hover { border-color: var(--accent-bdr); }
+.lib-stage-col {
+  padding: 14px 16px; border-right: 1px solid var(--border);
+  background: var(--surface2);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.lib-num { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--accent); }
+.lib-name { font-size: 11px; font-weight: 400; color: var(--text-muted); line-height: 1.3; }
+.lib-prompt-col { padding: 14px 16px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--teal); line-height: 1.6; }
+.lib-copy-col { padding: 0 16px; display: flex; align-items: center; }
+.lib-copy {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 5px 10px; border-radius: 3px;
+  border: 1px solid var(--accent-bdr); background: var(--accent-dim); color: var(--accent);
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.lib-copy:hover { background: rgba(91,143,255,0.14); border-color: var(--accent); }
+.lib-copy.copied { border-color: var(--teal-bdr); background: var(--teal-dim); color: var(--teal); }
+
+/* ── TAKEAWAYS ── */
+.tk-hdr { padding-bottom: 28px; margin-bottom: 32px; border-bottom: 1px solid var(--border); }
+.tk-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+
+.tk-body { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.tk-card { background: var(--surface); border: 1px solid var(--border2); border-radius: 4px; padding: 20px 22px; }
+.tk-card-title { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 18px; }
+.bpi { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.bpi:last-of-type { margin-bottom: 0; }
+.bpi-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 8px; opacity: 0.7; }
+.bpi-t { font-size: 13px; font-weight: 500; margin-bottom: 2px; color: var(--text); }
+.bpi-d { font-size: 12px; color: var(--text-muted); line-height: 1.5; font-weight: 300; }
+.ns { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+.ns-num { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; color: var(--gold); flex-shrink: 0; line-height: 1; padding-top: 2px; }
+.ns-t { font-size: 13px; font-weight: 500; margin-bottom: 3px; color: var(--text); }
+.ns-d { font-size: 12px; color: var(--text-muted); line-height: 1.5; font-weight: 300; }
+.tk-quote {
+  margin-top: 18px;
+  border-left: 2px solid var(--gold);
+  padding: 10px 14px;
+  font-size: 13px; font-style: italic; color: var(--text-muted); line-height: 1.65; font-weight: 300;
+  background: var(--gold-dim);
+}
+
+/* ── FOOTER ── */
+.page-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 0 0; margin-top: 48px; border-top: 1px solid var(--border);
+}
+.footer-text {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim);
+}
+
+/* ── MOBILE ── */
+@media(max-width:760px) {
+  .topbar { padding: 0 20px; }
+  .shell { padding: 36px 20px 60px; }
+  .search-drawer { padding: 10px 20px; }
+  .stage-body { grid-template-columns: 1fr; }
+  .stage-sidebar { order: -1; }
+  .tk-body { grid-template-columns: 1fr; }
+  .lib-row { grid-template-columns: 1fr; }
+  .lib-stage-col { border-right: none; border-bottom: 1px solid var(--border); }
+  .lib-copy-col { padding: 10px 16px; }
+  .slc-grid { grid-template-columns: 1fr 1fr; }
+  .topbar-brand svg { height: 26px; }
+  .page-title { font-size: 28px; }
+}
+@media(max-width:480px) { .slc-grid { grid-template-columns: 1fr; } }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<div class="topbar">
+  <div class="topbar-left">
+
+    <!-- brand SVG logo -->
+    <div class="topbar-brand">
+      <svg viewBox="0 0 210 40" xmlns="http://www.w3.org/2000/svg" height="32">
+        <circle cx="20" cy="20" r="16" fill="none" stroke="var(--accent)" stroke-width="0.9" opacity="0.5"/>
+        <circle cx="20" cy="20" r="10.5" fill="none" stroke="var(--accent)" stroke-width="0.7" opacity="0.7"/>
+        <circle cx="20" cy="20" r="2.8" fill="var(--gold)"/>
+        <line x1="20" y1="3" x2="20" y2="8.5" stroke="var(--accent)" stroke-width="0.7" opacity="0.6"/>
+        <line x1="20" y1="31.5" x2="20" y2="37" stroke="var(--accent)" stroke-width="0.7" opacity="0.6"/>
+        <line x1="3" y1="20" x2="8.5" y2="20" stroke="var(--accent)" stroke-width="0.7" opacity="0.6"/>
+        <line x1="31.5" y1="20" x2="37" y2="20" stroke="var(--accent)" stroke-width="0.7" opacity="0.6"/>
+        <circle cx="30.5" cy="12" r="1.8" fill="var(--teal)"/>
+        <circle cx="9.5" cy="28" r="1.4" fill="var(--accent)" opacity="0.8"/>
+        <line x1="46" y1="6" x2="46" y2="34" stroke="var(--border2)" stroke-width="0.8"/>
+        <text x="53" y="26" font-family="Playfair Display, serif" font-size="13" font-weight="700" fill="var(--text)" text-anchor="start">TALENT</text>
+        <text x="53" y="34.5" font-family="DM Mono, monospace" font-size="8" font-weight="400" letter-spacing="3" fill="var(--teal)" text-anchor="start">INTELLIGENCE</text>
+        <line x1="148" y1="8" x2="148" y2="32" stroke="var(--border2)" stroke-width="0.6"/>
+        <text x="155" y="22" font-family="DM Mono, monospace" font-size="6" font-weight="400" letter-spacing="2" fill="var(--gold)" opacity="0.7" text-anchor="start">AI · HUMAN · SIGNAL</text>
+      </svg>
+    </div>
+
+    <!-- primary nav -->
+    <nav class="tnav">
+      <button class="tnav-btn active" data-panel="overview" onclick="showPanel('overview',this)">Overview</button>
+
+      <div class="stages-trigger" id="stagesTrigger">
+        <button class="tnav-btn" id="stagesNavBtn" onclick="toggleStagesMenu(event)">
+          <span class="tag blue" id="stagesPill" style="pointer-events:none">Stages</span>
+          Sourcing Lifecycle
+          <span class="stages-caret">▾</span>
+        </button>
+        <div class="stages-dropdown" id="stagesDropdown">
+          <button class="drop-item" id="di-stage1" onclick="selectStage('stage1')"><span class="drop-num">01</span><span class="drop-label">Intake &amp; Role Understanding</span><span class="drop-done"></span></button>
+          <button class="drop-item" id="di-stage2" onclick="selectStage('stage2')"><span class="drop-num">02</span><span class="drop-label">Market Mapping</span><span class="drop-done"></span></button>
+          <button class="drop-item" id="di-stage3" onclick="selectStage('stage3')"><span class="drop-num">03</span><span class="drop-label">Search String Design</span><span class="drop-done"></span></button>
+          <button class="drop-item" id="di-stage4" onclick="selectStage('stage4')"><span class="drop-num">04</span><span class="drop-label">Calibration &amp; Pattern Recognition</span><span class="drop-done"></span></button>
+          <button class="drop-item" id="di-stage5" onclick="selectStage('stage5')"><span class="drop-num">05</span><span class="drop-label">Outreach Craft</span><span class="drop-done"></span></button>
+          <button class="drop-item" id="di-stage6" onclick="selectStage('stage6')"><span class="drop-num">06</span><span class="drop-label">Pipeline Management &amp; Reporting</span><span class="drop-done"></span></button>
+          <button class="drop-item" id="di-stage7" onclick="selectStage('stage7')"><span class="drop-num">07</span><span class="drop-label">Reflection &amp; Continuous Learning</span><span class="drop-done"></span></button>
+        </div>
+      </div>
+
+      <button class="tnav-btn" data-panel="prompts" onclick="showPanel('prompts',this)">Prompt Library</button>
+      <button class="tnav-btn" data-panel="takeaway" onclick="showPanel('takeaway',this)">Takeaways</button>
+    </nav>
+
+  </div>
+
+  <!-- right controls -->
+  <div class="topbar-right">
+    <button class="search-toggle" id="searchToggle" onclick="toggleSearch()" title="Search">🔍</button>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <span class="theme-icon" id="themeIcon">☀︎</span>
+      <span id="themeLabel">Light</span>
+    </button>
+  </div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ── SEARCH DRAWER ── -->
+<div class="search-drawer" id="searchDrawer">
+  <div class="search-inner">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-box" id="searchInput" type="text" placeholder="Search stages, prompts, techniques…" oninput="handleSearch(this.value)">
+      <button class="search-x" id="searchX" onclick="clearSearch()">×</button>
+    </div>
+    <span class="search-count" id="searchCount"></span>
+  </div>
+</div>
+
+<!-- ── SHELL ── -->
+<div class="shell">
+
+  <div class="no-results" id="noResults">
+    <div class="nr-t">No results found</div>
+    <div class="nr-s">Try a different keyword, or browse via the Stages menu above.</div>
+  </div>
+
+  <!-- ── OVERVIEW ── -->
+  <div id="overview" class="panel active">
+    <div class="ov-hero">
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        Talent Intelligence Hub
+        <span class="eyebrow-dot"></span>
+        Enablement
+      </div>
+      <h1 class="page-title">Sourcing with <em>AI</em></h1>
+      <p class="page-sub">A practical framework for integrating AI across the technical sourcing lifecycle. Seven stages. Ready-to-use prompts. Built for this team.</p>
+      <div class="tag-row">
+        <span class="tag blue">Nicole Shiu &amp; Dan Dougherty</span>
+        <span class="tag teal">Q1 2026</span>
+        <span class="tag gold">7 Stages</span>
+      </div>
+      <div class="principles-strip">
+        <div class="p-chip"><span class="p-chip-dot"></span>Clarify Complexity</div>
+        <div class="p-chip"><span class="p-chip-dot"></span>Compress Research</div>
+        <div class="p-chip"><span class="p-chip-dot"></span>Codify What Works</div>
+        <div class="p-chip"><span class="p-chip-dot"></span>Elevate Signal</div>
+      </div>
+    </div>
+
+    <div class="slc-row-label">
+      <div class="section-head" style="flex:1;margin-bottom:0;padding-bottom:0;border-bottom:none">
+        <span class="section-num">01–07</span>
+        <span class="section-title">Pick a stage to explore</span>
+        <div class="section-rule"></div>
+      </div>
+      <span id="doneCount" style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-left:16px;white-space:nowrap"></span>
+    </div>
+    <div style="height:16px"></div>
+
+    <div class="slc-grid">
+      <div class="slc" id="slc-1" onclick="selectStage('stage1')"><div class="slc-top"><span class="slc-num">01</span><span class="slc-icon">📋</span></div><div class="slc-title">Intake &amp; Role Understanding</div><div class="slc-goal">Get technical clarity fast so you can calibrate with confidence.</div><div class="slc-foot"><div class="slc-done-label">✓ complete</div><div class="slc-arrow">→</div></div></div>
+      <div class="slc" id="slc-2" onclick="selectStage('stage2')"><div class="slc-top"><span class="slc-num">02</span><span class="slc-icon">🗺️</span></div><div class="slc-title">Market Mapping</div><div class="slc-goal">Identify where qualified talent actually sits — faster and cleaner.</div><div class="slc-foot"><div class="slc-done-label">✓ complete</div><div class="slc-arrow">→</div></div></div>
+      <div class="slc" id="slc-3" onclick="selectStage('stage3')"><div class="slc-top"><span class="slc-num">03</span><span class="slc-icon">🔍</span></div><div class="slc-title">Search String Design</div><div class="slc-goal">Build smarter boolean strings. Avoid keyword bias.</div><div class="slc-foot"><div class="slc-done-label">✓ complete</div><div class="slc-arrow">→</div></div></div>
+      <div class="slc" id="slc-4" onclick="selectStage('stage4')"><div class="slc-top"><span class="slc-num">04</span><span class="slc-icon">⚖️</span></div><div class="slc-title">Calibration &amp; Pattern Recognition</div><div class="slc-goal">Strengthen judgment through comparison, not volume.</div><div class="slc-foot"><div class="slc-done-label">✓ complete</div><div class="slc-arrow">→</div></div></div>
+      <div class="slc" id="slc-5" onclick="selectStage('stage5')"><div class="slc-top"><span class="slc-num">05</span><span class="slc-icon">✉️</span></div><div class="slc-title">Outreach Craft</div><div class="slc-goal">Write high-conversion outreach faster without sounding generic.</div><div class="slc-foot"><div class="slc-done-label">✓ complete</div><div class="slc-arrow">→</div></div></div>
+      <div class="slc" id="slc-6" onclick="selectStage('stage6')"><div class="slc-top"><span class="slc-num">06</span><span class="slc-icon">📊</span></div><div class="slc-title">Pipeline Management &amp; Reporting</div><div class="slc-goal">Spend less time formatting updates, more time sourcing.</div><div class="slc-foot"><div class="slc-done-label">✓ complete</div><div class="slc-arrow">→</div></div></div>
+      <div class="slc" id="slc-7" onclick="selectStage('stage7')"><div class="slc-top"><span class="slc-num">07</span><span class="slc-icon">🎓</span></div><div class="slc-title">Reflection &amp; Continuous Learning</div><div class="slc-goal">Treat AI as a sourcing partner, not a shortcut.</div><div class="slc-foot"><div class="slc-done-label">✓ complete</div><div class="slc-arrow">→</div></div></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-head">
+      <span class="section-num">Key Enablers</span>
+      <span class="section-title">Why AI in sourcing</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="enabler-strip">
+      <div class="en-card"><span class="en-icon">⚡</span><div class="en-title">Move Faster</div><div class="en-desc">Accelerate research without sacrificing output quality.</div></div>
+      <div class="en-card"><span class="en-icon">🔍</span><div class="en-title">Extract Insights</div><div class="en-desc">Find signals without drowning in the noise of massive datasets.</div></div>
+      <div class="en-card"><span class="en-icon">🎯</span><div class="en-title">Focus on Nuance</div><div class="en-desc">Automate rote work so you can own the parts that need human judgment.</div></div>
+    </div>
+  </div>
+
+  <!-- ── STAGE 1 ── -->
+  <div id="stage1" class="panel">
+    <div class="stage-hdr">
+      <div class="stage-hdr-left">
+        <div class="eyebrow stage-eyebrow"><span class="eyebrow-dot"></span>Stage 01 of 07<span class="eyebrow-dot"></span>Intake &amp; Role Understanding</div>
+        <h2 class="stage-h2">Intake &amp; Role Understanding</h2>
+        <p class="stage-goal"><strong>Goal:</strong> Get technical clarity fast so you can calibrate with confidence.</p>
+      </div>
+      <button class="btn" id="done-stage1" onclick="toggleDone('stage1')">Mark complete</button>
+    </div>
+    <div class="stage-body">
+      <div>
+        <div class="prompt-block">
+          <div class="prompt-bar">
+            <div class="prompt-bar-label">⟩_ Example Prompt</div>
+            <button class="prompt-copy" onclick="copyPrompt(this,'p1')">Copy</button>
+          </div>
+          <div class="prompt-text" id="p1">"Summarize this job description into 3 buckets: core systems knowledge, domain-specific expertise, and differentiators between senior and staff-level talent."</div>
+          <div class="results-strip">
+            <span class="result-tag">✓ Shared language pre-search</span>
+            <span class="result-tag">✓ Clear must-haves vs. nice-to-haves</span>
+            <span class="result-tag">✓ Faster calibration cycles</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-sidebar">
+        <div class="how-card">
+          <div class="how-label">How to use AI</div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Blueprint Creation:</strong> Summarize intake notes into a role blueprint covering scope, level, must-haves, and differentiators.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Skill Decomposition:</strong> Break down key skill clusters (e.g., "What are core subdomains of storage engineering?").</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Market Alignment:</strong> Compare internal descriptions vs. market equivalents to align terminology.</div></div>
+        </div>
+        <div class="callout gold">
+          <div class="callout-bar"></div>
+          <div class="callout-body"><strong>Best Practice:</strong> Always verify AI-generated blueprints with your HM before sourcing starts — AI may miss org-specific context.</div>
+        </div>
+      </div>
+    </div>
+    <div class="stage-footer">
+      <button class="sf-btn sf-prev" onclick="showPanel('overview',getNavBtn('overview'))">← Overview</button>
+      <button class="sf-btn sf-next" onclick="selectStage('stage2')">Market Mapping →</button>
+    </div>
+  </div>
+
+  <!-- ── STAGE 2 ── -->
+  <div id="stage2" class="panel">
+    <div class="stage-hdr">
+      <div class="stage-hdr-left">
+        <div class="eyebrow stage-eyebrow"><span class="eyebrow-dot"></span>Stage 02 of 07<span class="eyebrow-dot"></span>Market Mapping</div>
+        <h2 class="stage-h2">Market Mapping</h2>
+        <p class="stage-goal"><strong>Goal:</strong> Identify where qualified talent actually sits — faster and cleaner.</p>
+      </div>
+      <button class="btn" id="done-stage2" onclick="toggleDone('stage2')">Mark complete</button>
+    </div>
+    <div class="stage-body">
+      <div>
+        <div class="prompt-block">
+          <div class="prompt-bar"><div class="prompt-bar-label">⟩_ Example Prompt</div><button class="prompt-copy" onclick="copyPrompt(this,'p2')">Copy</button></div>
+          <div class="prompt-text" id="p2">"List companies known for developing hypervisor or kernel-level technology in the AI/Cloud Infra space."</div>
+          <div class="results-strip">
+            <span class="result-tag">✓ Strategic market maps</span>
+            <span class="result-tag">✓ Higher hit rates</span>
+            <span class="result-tag">✓ Hidden talent pools</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-sidebar">
+        <div class="how-card">
+          <div class="how-label">How to use AI</div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Target Generation:</strong> Generate lists of target companies by tech stack, product type, or infrastructure model.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Org Classification:</strong> Classify orgs by technical profile (e.g., "Which companies have built distributed file systems?").</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Signal Detection:</strong> Cross-check public profiles for emerging players or acquisition spin-offs.</div></div>
+        </div>
+        <div class="callout gold"><div class="callout-bar"></div><div class="callout-body"><strong>Best Practice:</strong> AI-generated company lists are a starting point. Cross-reference with LinkedIn or Crunchbase before building outreach lists.</div></div>
+      </div>
+    </div>
+    <div class="stage-footer">
+      <button class="sf-btn sf-prev" onclick="selectStage('stage1')">← Intake &amp; Role</button>
+      <button class="sf-btn sf-next" onclick="selectStage('stage3')">Search String Design →</button>
+    </div>
+  </div>
+
+  <!-- ── STAGE 3 ── -->
+  <div id="stage3" class="panel">
+    <div class="stage-hdr">
+      <div class="stage-hdr-left">
+        <div class="eyebrow stage-eyebrow"><span class="eyebrow-dot"></span>Stage 03 of 07<span class="eyebrow-dot"></span>Search String Design</div>
+        <h2 class="stage-h2">Search String Design</h2>
+        <p class="stage-goal"><strong>Goal:</strong> Build smarter boolean strings and avoid keyword bias in your sourcing.</p>
+      </div>
+      <button class="btn" id="done-stage3" onclick="toggleDone('stage3')">Mark complete</button>
+    </div>
+    <div class="stage-body">
+      <div>
+        <div class="prompt-block">
+          <div class="prompt-bar"><div class="prompt-bar-label">⟩_ Example Prompt</div><button class="prompt-copy" onclick="copyPrompt(this,'p3')">Copy</button></div>
+          <div class="prompt-text" id="p3">"Create a boolean string for senior engineers experienced in hypervisor or virtualization stack development (KVM, Xen, QEMU, VMware). Exclude front-end and QA roles."</div>
+          <div class="results-strip">
+            <span class="result-tag">✓ Cleaner pipelines</span>
+            <span class="result-tag">✓ Higher signal-to-noise</span>
+            <span class="result-tag">✓ Broader title coverage</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-sidebar">
+        <div class="how-card">
+          <div class="how-label">How to use AI</div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Generate Variations:</strong> Create complex boolean variations for niche roles automatically.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Synonym Detection:</strong> Spot synonyms, alternate titles, and jargon you might miss.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Pre-Testing:</strong> Test strings for false positives before running in LinkedIn or SeekOut.</div></div>
+        </div>
+        <div class="callout gold"><div class="callout-bar"></div><div class="callout-body"><strong>Best Practice:</strong> High volume doesn't mean high signal. Sample 10–15 profiles after deploying any AI-built string before scaling.</div></div>
+      </div>
+    </div>
+    <div class="stage-footer">
+      <button class="sf-btn sf-prev" onclick="selectStage('stage2')">← Market Mapping</button>
+      <button class="sf-btn sf-next" onclick="selectStage('stage4')">Calibration →</button>
+    </div>
+  </div>
+
+  <!-- ── STAGE 4 ── -->
+  <div id="stage4" class="panel">
+    <div class="stage-hdr">
+      <div class="stage-hdr-left">
+        <div class="eyebrow stage-eyebrow"><span class="eyebrow-dot"></span>Stage 04 of 07<span class="eyebrow-dot"></span>Calibration</div>
+        <h2 class="stage-h2">Calibration &amp; Pattern Recognition</h2>
+        <p class="stage-goal"><strong>Goal:</strong> Strengthen judgment through comparison, not volume.</p>
+      </div>
+      <button class="btn" id="done-stage4" onclick="toggleDone('stage4')">Mark complete</button>
+    </div>
+    <div class="stage-body">
+      <div>
+        <div class="prompt-block">
+          <div class="prompt-bar"><div class="prompt-bar-label">⟩_ Example Prompt</div><button class="prompt-copy" onclick="copyPrompt(this,'p4')">Copy</button></div>
+          <div class="prompt-text" id="p4">"Summarize the common experience patterns among these three storage engineers that indicate readiness for staff-level scope."</div>
+          <div class="results-strip">
+            <span class="result-tag">✓ Faster calibration loops</span>
+            <span class="result-tag">✓ Less second-guessing</span>
+            <span class="result-tag">✓ Increased HM trust</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-sidebar">
+        <div class="how-card">
+          <div class="how-label">How to use AI</div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Profile Comparison:</strong> Compare two profiles side-by-side; ask AI to summarize relative strengths or fit.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Pattern Extraction:</strong> Extract shared patterns across high-signal candidates (company lineage, keywords, project scope).</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Archetype Creation:</strong> Turn calibration notes into archetype profiles for the hiring team.</div></div>
+        </div>
+        <div class="callout gold"><div class="callout-bar"></div><div class="callout-body"><strong>Best Practice:</strong> Feed 3–5 confirmed strong profiles — not maybes. Input quality determines archetype quality.</div></div>
+      </div>
+    </div>
+    <div class="stage-footer">
+      <button class="sf-btn sf-prev" onclick="selectStage('stage3')">← Search String Design</button>
+      <button class="sf-btn sf-next" onclick="selectStage('stage5')">Outreach Craft →</button>
+    </div>
+  </div>
+
+  <!-- ── STAGE 5 ── -->
+  <div id="stage5" class="panel">
+    <div class="stage-hdr">
+      <div class="stage-hdr-left">
+        <div class="eyebrow stage-eyebrow"><span class="eyebrow-dot"></span>Stage 05 of 07<span class="eyebrow-dot"></span>Outreach Craft</div>
+        <h2 class="stage-h2">Outreach Craft</h2>
+        <p class="stage-goal"><strong>Goal:</strong> Write high-conversion outreach faster without sounding generic.</p>
+      </div>
+      <button class="btn" id="done-stage5" onclick="toggleDone('stage5')">Mark complete</button>
+    </div>
+    <div class="stage-body">
+      <div>
+        <div class="prompt-block">
+          <div class="prompt-bar"><div class="prompt-bar-label">⟩_ Example Prompt</div><button class="prompt-copy" onclick="copyPrompt(this,'p5')">Copy</button></div>
+          <div class="prompt-text" id="p5">"Write a concise, authentic outreach message to a Staff Virtualization Engineer at Google who's worked on KVM, highlighting impact, ownership, and our AI infrastructure mission."</div>
+          <div class="results-strip">
+            <span class="result-tag">✓ Handcrafted feel at scale</span>
+            <span class="result-tag">✓ Higher reply rates</span>
+            <span class="result-tag">✓ Consistent team voice</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-sidebar">
+        <div class="how-card">
+          <div class="how-label">How to use AI</div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Tone A/B Testing:</strong> Draft multiple variants — technical, conversational, value-driven — and test.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Relevance Mirroring:</strong> Mirror language from candidate profiles (project names, tech stacks) for immediate relevance.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Asset Creation:</strong> Build a shared message bank for instant reuse across similar roles.</div></div>
+        </div>
+        <div class="callout teal"><div class="callout-bar"></div><div class="callout-body"><strong>Data Hygiene:</strong> Never paste candidate names, contact info, or identifying details into a public AI model. Use role context only.</div></div>
+      </div>
+    </div>
+    <div class="stage-footer">
+      <button class="sf-btn sf-prev" onclick="selectStage('stage4')">← Calibration</button>
+      <button class="sf-btn sf-next" onclick="selectStage('stage6')">Pipeline Management →</button>
+    </div>
+  </div>
+
+  <!-- ── STAGE 6 ── -->
+  <div id="stage6" class="panel">
+    <div class="stage-hdr">
+      <div class="stage-hdr-left">
+        <div class="eyebrow stage-eyebrow"><span class="eyebrow-dot"></span>Stage 06 of 07<span class="eyebrow-dot"></span>Pipeline Management</div>
+        <h2 class="stage-h2">Pipeline Management &amp; Reporting</h2>
+        <p class="stage-goal"><strong>Goal:</strong> Spend less time formatting updates, more time sourcing.</p>
+      </div>
+      <button class="btn" id="done-stage6" onclick="toggleDone('stage6')">Mark complete</button>
+    </div>
+    <div class="stage-body">
+      <div>
+        <div class="prompt-block">
+          <div class="prompt-bar"><div class="prompt-bar-label">⟩_ Example Prompt</div><button class="prompt-copy" onclick="copyPrompt(this,'p6')">Copy</button></div>
+          <div class="prompt-text" id="p6">"Summarize this pipeline data into a brief update for leadership: outcomes, risks, and next moves."</div>
+          <div class="results-strip">
+            <span class="result-tag">✓ Instant leadership clarity</span>
+            <span class="result-tag">✓ Faster root-cause detection</span>
+            <span class="result-tag">✓ More time for sourcing</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-sidebar">
+        <div class="how-card">
+          <div class="how-label">How to use AI</div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Snapshot Creation:</strong> Summarize weekly pipeline movement into status snapshots for HMs or execs.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Funnel Analysis:</strong> Analyze PTRs or stage-drop reasons to spot systemic issues.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Action Planning:</strong> Generate follow-up plans for stalled candidates.</div></div>
+        </div>
+        <div class="callout gold"><div class="callout-bar"></div><div class="callout-body"><strong>Best Practice:</strong> Validate AI-summarized numbers against Ashby before sharing with leadership. AI is only as accurate as your inputs.</div></div>
+      </div>
+    </div>
+    <div class="stage-footer">
+      <button class="sf-btn sf-prev" onclick="selectStage('stage5')">← Outreach Craft</button>
+      <button class="sf-btn sf-next" onclick="selectStage('stage7')">Continuous Learning →</button>
+    </div>
+  </div>
+
+  <!-- ── STAGE 7 ── -->
+  <div id="stage7" class="panel">
+    <div class="stage-hdr">
+      <div class="stage-hdr-left">
+        <div class="eyebrow stage-eyebrow"><span class="eyebrow-dot"></span>Stage 07 of 07<span class="eyebrow-dot"></span>Reflection &amp; Learning</div>
+        <h2 class="stage-h2">Reflection &amp; Continuous Learning</h2>
+        <p class="stage-goal"><strong>Goal:</strong> Treat AI as a sourcing partner, not a shortcut.</p>
+      </div>
+      <button class="btn" id="done-stage7" onclick="toggleDone('stage7')">Mark complete</button>
+    </div>
+    <div class="stage-body">
+      <div>
+        <div class="prompt-block">
+          <div class="prompt-bar"><div class="prompt-bar-label">⟩_ Example Prompt</div><button class="prompt-copy" onclick="copyPrompt(this,'p7')">Copy</button></div>
+          <div class="prompt-text" id="p7">"Suggest 3 alternative sourcing strategies for a search that has stalled for senior-level SDN engineers."</div>
+          <div class="results-strip">
+            <span class="result-tag">✓ Faster strategy iteration</span>
+            <span class="result-tag">✓ Sharper domain fluency</span>
+            <span class="result-tag">✓ Better cycle refresh</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-sidebar">
+        <div class="how-card">
+          <div class="how-label">How to use AI</div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Search Debriefs:</strong> Ask "What did I miss?" after a tough search to surface blind spots.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Pivot Strategy:</strong> Request alternative sourcing angles after a failed search cycle.</div></div>
+          <div class="how-item"><div class="hi-dot"></div><div class="hi-text"><strong>Technical Fluency:</strong> Keep learning through guided Q&amp;A (e.g., "Explain I/O virtualization").</div></div>
+        </div>
+        <div class="callout gold"><div class="callout-bar"></div><div class="callout-body"><strong>Best Practice:</strong> Save your best prompts to a shared team doc after each sprint. What works for one search often transfers to the next.</div></div>
+      </div>
+    </div>
+    <div class="stage-footer">
+      <button class="sf-btn sf-prev" onclick="selectStage('stage6')">← Pipeline Management</button>
+      <button class="sf-btn sf-next" onclick="showPanel('takeaway',getNavBtn('takeaway'))">Takeaways →</button>
+    </div>
+  </div>
+
+  <!-- ── PROMPT LIBRARY ── -->
+  <div id="prompts" class="panel">
+    <div class="lib-hdr">
+      <div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span>All Stages<span class="eyebrow-dot"></span>Ready to Use</div>
+        <h2 class="page-title" style="font-size:clamp(28px,4vw,40px)">Prompt <em>Library</em></h2>
+        <p class="lib-sub">All seven stage prompts in one place. Copy individually or grab all of them to load into your AI session before a sourcing sprint.</p>
+      </div>
+      <button class="copy-all-btn" id="copyAllBtn" onclick="copyAllPrompts()">Copy all 7 prompts</button>
+    </div>
+    <div class="lib-list">
+      <div class="lib-row"><div class="lib-stage-col"><span class="lib-num">01</span><span class="lib-name">Intake &amp; Role</span></div><div class="lib-prompt-col">"Summarize this job description into 3 buckets: core systems knowledge, domain-specific expertise, and differentiators between senior and staff-level talent."</div><div class="lib-copy-col"><button class="lib-copy" onclick="copyLibPrompt(this,0)">Copy</button></div></div>
+      <div class="lib-row"><div class="lib-stage-col"><span class="lib-num">02</span><span class="lib-name">Market Mapping</span></div><div class="lib-prompt-col">"List companies known for developing hypervisor or kernel-level technology in the AI/Cloud Infra space."</div><div class="lib-copy-col"><button class="lib-copy" onclick="copyLibPrompt(this,1)">Copy</button></div></div>
+      <div class="lib-row"><div class="lib-stage-col"><span class="lib-num">03</span><span class="lib-name">Search Strings</span></div><div class="lib-prompt-col">"Create a boolean string for senior engineers experienced in hypervisor or virtualization stack development (KVM, Xen, QEMU, VMware). Exclude front-end and QA roles."</div><div class="lib-copy-col"><button class="lib-copy" onclick="copyLibPrompt(this,2)">Copy</button></div></div>
+      <div class="lib-row"><div class="lib-stage-col"><span class="lib-num">04</span><span class="lib-name">Calibration</span></div><div class="lib-prompt-col">"Summarize the common experience patterns among these three storage engineers that indicate readiness for staff-level scope."</div><div class="lib-copy-col"><button class="lib-copy" onclick="copyLibPrompt(this,3)">Copy</button></div></div>
+      <div class="lib-row"><div class="lib-stage-col"><span class="lib-num">05</span><span class="lib-name">Outreach Craft</span></div><div class="lib-prompt-col">"Write a concise, authentic outreach message to a Staff Virtualization Engineer at Google who's worked on KVM, highlighting impact, ownership, and our AI infrastructure mission."</div><div class="lib-copy-col"><button class="lib-copy" onclick="copyLibPrompt(this,4)">Copy</button></div></div>
+      <div class="lib-row"><div class="lib-stage-col"><span class="lib-num">06</span><span class="lib-name">Pipeline</span></div><div class="lib-prompt-col">"Summarize this pipeline data into a brief update for leadership: outcomes, risks, and next moves."</div><div class="lib-copy-col"><button class="lib-copy" onclick="copyLibPrompt(this,5)">Copy</button></div></div>
+      <div class="lib-row"><div class="lib-stage-col"><span class="lib-num">07</span><span class="lib-name">Learning</span></div><div class="lib-prompt-col">"Suggest 3 alternative sourcing strategies for a search that has stalled for senior-level SDN engineers."</div><div class="lib-copy-col"><button class="lib-copy" onclick="copyLibPrompt(this,6)">Copy</button></div></div>
+    </div>
+  </div>
+
+  <!-- ── TAKEAWAYS ── -->
+  <div id="takeaway" class="panel">
+    <div class="tk-hdr">
+      <div class="eyebrow"><span class="eyebrow-dot"></span>Team Takeaway<span class="eyebrow-dot"></span>Strategic Edge</div>
+      <h2 class="page-title" style="font-size:clamp(28px,4vw,40px)">The Strategic <em>Edge</em></h2>
+      <div class="tk-pills">
+        <span class="tag blue">Clarify Complexity</span>
+        <span class="tag teal">Compress Research</span>
+        <span class="tag gold">Codify What Works</span>
+        <span class="tag">Elevate Signal</span>
+      </div>
+    </div>
+    <div class="tk-body">
+      <div class="tk-card">
+        <div class="tk-card-title" style="color:var(--teal)">Best Practices</div>
+        <div class="bpi"><div class="bpi-dot"></div><div><div class="bpi-t">Human Oversight</div><div class="bpi-d">AI is the engine, you are the pilot. Always verify outputs for accuracy and bias.</div></div></div>
+        <div class="bpi"><div class="bpi-dot"></div><div><div class="bpi-t">Data Hygiene</div><div class="bpi-d">Never input candidate PII into public AI models.</div></div></div>
+        <div class="bpi"><div class="bpi-dot"></div><div><div class="bpi-t">A/B Testing</div><div class="bpi-d">Don't settle for the first draft. Test different prompts and outreach tones.</div></div></div>
+        <div class="bpi"><div class="bpi-dot"></div><div><div class="bpi-t">Asset Building</div><div class="bpi-d">Save successful prompts to a shared team library for reuse.</div></div></div>
+        <div class="bpi"><div class="bpi-dot"></div><div><div class="bpi-t">Track Impact</div><div class="bpi-d">Monitor response rates and time-to-calibration to measure ROI.</div></div></div>
+      </div>
+      <div class="tk-card">
+        <div class="tk-card-title" style="color:var(--gold)">Next Steps</div>
+        <div class="ns"><div class="ns-num">01</div><div><div class="ns-t">Pilot a Workflow</div><div class="ns-d">Pick 1–2 stages (e.g., Intake or Outreach) to apply AI this week.</div></div></div>
+        <div class="ns"><div class="ns-num">02</div><div><div class="ns-t">Define Metrics</div><div class="ns-d">Set success criteria and schedule a review in 2 weeks.</div></div></div>
+        <div class="ns"><div class="ns-num">03</div><div><div class="ns-t">Share &amp; Iterate</div><div class="ns-d">Bring wins and failures to the next standup to refine playbooks.</div></div></div>
+        <div class="tk-quote">"The craft still matters. AI just gives you more room to master it."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="footer-text">Talent Intelligence Hub · Sourcing with AI · Internal</span>
+    <span class="footer-text" id="footerDone"></span>
+  </div>
+
+</div><!-- /shell -->
+
+<script>
+const PROMPTS = [
+  '"Summarize this job description into 3 buckets: core systems knowledge, domain-specific expertise, and differentiators between senior and staff-level talent."',
+  '"List companies known for developing hypervisor or kernel-level technology in the AI/Cloud Infra space."',
+  '"Create a boolean string for senior engineers experienced in hypervisor or virtualization stack development (KVM, Xen, QEMU, VMware). Exclude front-end and QA roles."',
+  '"Summarize the common experience patterns among these three storage engineers that indicate readiness for staff-level scope."',
+  '"Write a concise, authentic outreach message to a Staff Virtualization Engineer at Google who\'s worked on KVM, highlighting impact, ownership, and our AI infrastructure mission."',
+  '"Summarize this pipeline data into a brief update for leadership: outcomes, risks, and next moves."',
+  '"Suggest 3 alternative sourcing strategies for a search that has stalled for senior-level SDN engineers."'
+];
+const PLABELS = ['Stage 01 — Intake & Role','Stage 02 — Market Mapping','Stage 03 — Search String Design','Stage 04 — Calibration','Stage 05 — Outreach Craft','Stage 06 — Pipeline Management','Stage 07 — Continuous Learning'];
+const STAGES = ['stage1','stage2','stage3','stage4','stage5','stage6','stage7'];
+const TOTAL = 7;
+let done = new Set(JSON.parse(localStorage.getItem('sai_done3')||'[]'));
+
+// ── THEME ──
+function toggleTheme(){
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeIcon').textContent = isDark ? '◑' : '☀︎';
+  document.getElementById('themeLabel').textContent = isDark ? 'Dark' : 'Light';
+  localStorage.setItem('sai_theme', isDark ? 'light' : 'dark');
+}
+// restore saved theme
+(function(){
+  const saved = localStorage.getItem('sai_theme');
+  if(saved && saved !== 'dark'){
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('themeIcon').textContent = '◑';
+    document.getElementById('themeLabel').textContent = 'Dark';
+  }
+})();
+
+// ── NAV ──
+function getNavBtn(id){ return document.querySelector(`.tnav-btn[data-panel="${id}"]`); }
+
+function showPanel(id, tabEl){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tnav-btn').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(tabEl) tabEl.classList.add('active');
+  if(STAGES.includes(id)){
+    document.getElementById('stagesNavBtn').classList.add('active');
+    document.querySelectorAll('.drop-item').forEach(d=>d.classList.remove('active-stage'));
+    const di = document.getElementById('di-'+id);
+    if(di) di.classList.add('active-stage');
+    updateStagesPill(id);
+  } else {
+    updateStagesPill(null);
+  }
+  closeStagesMenu();
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function selectStage(id){ showPanel(id, document.getElementById('stagesNavBtn')); }
+
+function updateStagesPill(id){
+  const pill = document.getElementById('stagesPill');
+  if(!id){ pill.textContent='Stages'; return; }
+  pill.textContent = `${id.replace('stage','')} / ${TOTAL}`;
+}
+
+function toggleStagesMenu(e){
+  e.stopPropagation();
+  document.getElementById('stagesTrigger').classList.toggle('open');
+}
+function closeStagesMenu(){ document.getElementById('stagesTrigger').classList.remove('open'); }
+document.addEventListener('click', e=>{
+  if(!document.getElementById('stagesTrigger').contains(e.target)) closeStagesMenu();
+});
+
+// ── PROGRESS ──
+function updateProgress(){
+  document.getElementById('progressFill').style.width = (done.size/TOTAL*100)+'%';
+  const dc = document.getElementById('doneCount');
+  if(dc) dc.textContent = done.size > 0 ? `${done.size} of ${TOTAL} completed` : '';
+  const fd = document.getElementById('footerDone');
+  if(fd) fd.textContent = done.size > 0 ? `${done.size} / ${TOTAL} stages completed` : '';
+}
+
+// ── MARK DONE ──
+function toggleDone(id){
+  const btn = document.getElementById('done-'+id);
+  const num = id.replace('stage','');
+  const card = document.getElementById('slc-'+num);
+  const di = document.getElementById('di-'+id);
+  if(done.has(id)){
+    done.delete(id);
+    btn.classList.remove('done'); btn.textContent='Mark complete';
+    if(card) card.classList.remove('done');
+    if(di) di.classList.remove('done');
+  } else {
+    done.add(id);
+    btn.classList.add('done'); btn.textContent='✓ Complete';
+    if(card) card.classList.add('done');
+    if(di) di.classList.add('done');
+  }
+  localStorage.setItem('sai_done3', JSON.stringify([...done]));
+  updateProgress();
+}
+
+function restoreDone(){
+  done.forEach(id=>{
+    const btn=document.getElementById('done-'+id);
+    const num=id.replace('stage','');
+    if(btn){btn.classList.add('done');btn.textContent='✓ Complete';}
+    const card=document.getElementById('slc-'+num);
+    const di=document.getElementById('di-'+id);
+    if(card) card.classList.add('done');
+    if(di) di.classList.add('done');
+  });
+  updateProgress();
+}
+
+// ── COPY ──
+function copyPrompt(btn, id){
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    btn.textContent='Copied'; btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2000);
+  });
+}
+function copyLibPrompt(btn, idx){
+  navigator.clipboard.writeText(PROMPTS[idx]).then(()=>{
+    btn.textContent='Copied'; btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2000);
+  });
+}
+function copyAllPrompts(){
+  const all = PROMPTS.map((p,i)=>`${PLABELS[i]}:\n${p}`).join('\n\n---\n\n');
+  navigator.clipboard.writeText(all).then(()=>{
+    const btn=document.getElementById('copyAllBtn');
+    btn.textContent='✓ All 7 copied'; btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy all 7 prompts';btn.classList.remove('copied');},2500);
+  });
+}
+
+// ── SEARCH ──
+const SEARCH_INDEX = [
+  {panel:'stage1',terms:'intake role blueprint skill decomposition market alignment calibrate confidence job description core systems knowledge must haves nice to haves calibration cycles'},
+  {panel:'stage2',terms:'market mapping target generation org classification signal detection companies tech stack infrastructure hypervisor kernel AI cloud scattershot hit rates hidden talent pools'},
+  {panel:'stage3',terms:'search string boolean generate variations synonym detection pre testing keyword bias noise signal ratio niche KVM Xen QEMU VMware linkedin seekout'},
+  {panel:'stage4',terms:'calibration pattern recognition profile comparison archetype creation judgment volume storage engineers staff level company lineage keywords project scope HM trust'},
+  {panel:'stage5',terms:'outreach craft tone AB testing relevance mirroring asset creation message bank high conversion authentic KVM google impact ownership reply rates consistent voice PII privacy data hygiene'},
+  {panel:'stage6',terms:'pipeline management reporting snapshot funnel analysis pass through rates PTR stage drop stalled candidates leadership outcomes risks ashby root cause'},
+  {panel:'stage7',terms:'reflection continuous learning search debriefs pivot strategy technical fluency partner shortcut SDN engineers domain fluency strategy refresh'},
+  {panel:'prompts',terms:'prompt library all prompts copy boolean outreach pipeline calibration intake market mapping search string sprint session copy all'},
+  {panel:'takeaway',terms:'takeaway best practices next steps human oversight data hygiene AB testing asset building track impact pilot workflow define metrics share iterate craft matters'},
+];
+
+function toggleSearch(){
+  const d=document.getElementById('searchDrawer'), b=document.getElementById('searchToggle');
+  if(d.classList.contains('open')){ d.classList.remove('open'); b.classList.remove('active'); }
+  else { d.classList.add('open'); b.classList.add('active'); document.getElementById('searchInput').focus(); }
+}
+function handleSearch(val){
+  const x=document.getElementById('searchX'), c=document.getElementById('searchCount');
+  x.style.display=val?'block':'none';
+  if(!val.trim()){c.textContent='';document.getElementById('noResults').classList.remove('on');return;}
+  const q=val.toLowerCase();
+  const hits=SEARCH_INDEX.filter(i=>i.terms.toLowerCase().includes(q));
+  c.textContent=hits.length?`${hits.length} result${hits.length>1?'s':''}`:'No results';
+  document.getElementById('noResults').classList.toggle('on',hits.length===0);
+  if(hits.length===1){ selectStage(hits[0].panel) || showPanel(hits[0].panel, getNavBtn(hits[0].panel)); }
+}
+function clearSearch(){
+  document.getElementById('searchInput').value='';
+  document.getElementById('searchX').style.display='none';
+  document.getElementById('searchCount').textContent='';
+  document.getElementById('noResults').classList.remove('on');
+}
+
+restoreDone();
+</script>
+</body>
+</html>

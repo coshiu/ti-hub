@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Crusoe · Sourcing SOP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0b0f;--surface:#111318;--surface2:#181c24;--surface3:#1e2530;
+  --border:#1e2330;--border2:#252d3d;
+  --text:#e8eaf0;--text-muted:#6b7491;--text-dim:#3d4560;
+  --accent:#5b8fff;--accent-dim:rgba(91,143,255,0.08);--accent-bdr:rgba(91,143,255,0.22);
+  --teal:#47c5a8;--teal-dim:rgba(71,197,168,0.07);--teal-bdr:rgba(71,197,168,0.2);
+  --gold:#e8c547;--gold-dim:rgba(232,197,71,0.07);--gold-bdr:rgba(232,197,71,0.18);
+  --green:#4ade80;--green-dim:rgba(74,222,128,0.08);--green-bdr:rgba(74,222,128,0.22);
+  --danger:#f07a4a;--danger-dim:rgba(240,122,74,0.08);--danger-bdr:rgba(240,122,74,0.22);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;line-height:1.6;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.022;pointer-events:none;z-index:0;}
+
+/* LAYOUT */
+.shell{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* SIDEBAR */
+.sidebar{width:236px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar-logo{padding:24px 20px 18px;border-bottom:1px solid var(--border);}
+.sidebar-eyebrow{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;}
+.eyebrow-dot{width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:.6}
+.sidebar-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;letter-spacing:-.02em;color:var(--text);line-height:1.2;margin-bottom:4px;}
+.sidebar-title em{color:var(--accent);font-style:italic}
+.sidebar-meta{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.04em;}
+.nav-section{padding:14px 0 2px}
+.nav-section-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);font-weight:500;padding:0 20px;margin-bottom:4px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 20px;cursor:pointer;color:var(--text-muted);font-size:12px;font-weight:400;font-family:'DM Sans',sans-serif;transition:color .14s,background .14s;border-left:2px solid transparent;user-select:none;}
+.nav-item:hover{color:var(--text);background:var(--surface2)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-dim)}
+.nav-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;background:currentColor;opacity:.5}
+.nav-item.active .nav-dot{opacity:1}
+.sidebar-footer{margin-top:auto;padding:14px 20px;border-top:1px solid var(--border);}
+.sidebar-footer-text{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--text-dim);letter-spacing:.06em;line-height:1.9;}
+
+/* MAIN */
+.main{flex:1;min-width:0;padding:48px 52px 80px;max-width:820px}
+.pane{display:none}
+.pane.active{display:block}
+
+/* PAGE HEADER */
+.page-eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);}
+.page-title{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1.08;letter-spacing:-.02em;color:var(--text);margin-bottom:8px;}
+.page-title em{color:var(--accent);font-style:italic}
+.page-sub{font-size:13px;color:var(--text-muted);font-weight:300;margin-bottom:0;line-height:1.75;max-width:520px;}
+.page-divider{height:1px;background:linear-gradient(90deg,var(--accent-bdr),transparent);margin:22px 0 30px;}
+
+/* SECTION HEADS */
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.section-num{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);opacity:.7;flex-shrink:0;}
+.section-title-text{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.01em;}
+.section-rule{margin-left:auto;width:24px;height:1px;background:var(--accent);opacity:.3;flex-shrink:0}
+
+/* CALLOUTS */
+.callout{display:flex;gap:0;border-radius:4px;overflow:hidden;margin-bottom:18px;border:1px solid var(--accent-bdr);}
+.callout-bar{width:2px;flex-shrink:0;background:var(--accent)}
+.callout-body{padding:11px 14px;font-size:12px;line-height:1.8;color:var(--text-muted);font-weight:300;background:var(--accent-dim);flex:1;font-family:'DM Sans',sans-serif;}
+.callout.teal{border-color:var(--teal-bdr)}.callout.teal .callout-bar{background:var(--teal)}.callout.teal .callout-body{background:var(--teal-dim)}
+.callout.gold{border-color:var(--gold-bdr)}.callout.gold .callout-bar{background:var(--gold)}.callout.gold .callout-body{background:var(--gold-dim)}
+.callout.danger{border-color:var(--danger-bdr)}.callout.danger .callout-bar{background:var(--danger)}.callout.danger .callout-body{background:var(--danger-dim)}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:18px 20px;margin-bottom:12px;}
+.card-accent{background:var(--accent-dim);border-color:var(--accent-bdr)}
+.card-teal{background:var(--teal-dim);border-color:var(--teal-bdr)}
+
+/* TAGS */
+.tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:3px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border2);color:var(--text-muted);background:var(--surface2);}
+.tag.blue{border-color:var(--accent-bdr);color:var(--accent);background:var(--accent-dim)}
+.tag.teal{border-color:var(--teal-bdr);color:var(--teal);background:var(--teal-dim)}
+.tag.danger{border-color:var(--danger-bdr);color:var(--danger);background:var(--danger-dim)}
+
+/* RESOURCE CARDS */
+.resource-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+a.resource-item{background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:13px 15px;display:flex;align-items:center;gap:13px;transition:border-color .15s,background .15s;cursor:pointer;text-decoration:none;color:inherit;}
+a.resource-item:hover{border-color:var(--accent-bdr);background:var(--surface2)}
+a.resource-item:hover .resource-arrow{opacity:1}
+.resource-icon{width:30px;height:30px;border-radius:4px;background:var(--accent-dim);border:1px solid var(--accent-bdr);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.resource-name{font-family:'DM Sans',sans-serif;font-weight:500;font-size:12px;margin-bottom:2px;color:var(--text);}
+.resource-desc{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.04em;}
+.resource-arrow{margin-left:auto;font-size:11px;color:var(--accent);opacity:0;transition:opacity .15s;flex-shrink:0;}
+
+/* BLOCKED COMPANIES */
+.tag-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.tag-blocked{font-family:'DM Mono',monospace;font-size:9.5px;font-weight:500;padding:4px 11px;border-radius:3px;letter-spacing:.04em;background:var(--danger-dim);color:var(--danger);border:1px solid var(--danger-bdr);}
+.tag-ok{font-family:'DM Mono',monospace;font-size:9.5px;font-weight:500;padding:4px 11px;border-radius:3px;letter-spacing:.04em;background:var(--green-dim);color:var(--green);border:1px solid var(--green-bdr);}
+
+/* SEARCH BAR */
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:8px 14px;margin-bottom:16px;transition:border-color .15s;}
+.search-bar:focus-within{border-color:var(--accent-bdr)}
+.search-icon{color:var(--text-dim);font-size:12px;flex-shrink:0}
+.search-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;}
+.search-input::placeholder{color:var(--text-dim);font-style:italic}
+.filter-count{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.06em;}
+
+/* ACCORDION */
+.rule-block{background:var(--surface);border:1px solid var(--border2);border-radius:4px;overflow:hidden;margin-bottom:10px;transition:border-color .2s;}
+.rule-block.open{border-color:var(--accent-bdr)}
+.rule-header{display:flex;align-items:center;gap:14px;padding:13px 18px;cursor:pointer;transition:background .14s;user-select:none;}
+.rule-header:hover{background:var(--surface2)}
+.rule-num{width:28px;height:28px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent-bdr);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--accent);flex-shrink:0;}
+.rule-title{font-family:'DM Sans',sans-serif;font-weight:500;font-size:13px;flex:1;color:var(--text);}
+.rule-chevron{font-size:11px;color:var(--text-dim);transition:transform .2s;flex-shrink:0;}
+.rule-block.open .rule-chevron{transform:rotate(180deg);color:var(--accent)}
+.rule-body{display:none;padding:0 18px 16px 60px;border-top:1px solid var(--border);background:var(--surface2);}
+.rule-block.open .rule-body{display:block}
+.rule-body p{color:var(--text-muted);font-size:12px;margin-top:12px;line-height:1.8;font-weight:300;}
+
+/* PRINCIPLES */
+.principle-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.principle-card{background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:18px;transition:border-color .15s,background .15s;}
+.principle-card:hover{border-color:var(--border2);background:var(--surface2)}
+.principle-icon{font-size:17px;margin-bottom:10px}
+.principle-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text);}
+.principle-desc{font-size:12px;color:var(--text-muted);line-height:1.7;font-weight:300}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:0;position:relative;padding-left:28px;}
+.timeline::before{content:'';position:absolute;left:9px;top:0;bottom:0;width:1px;background:var(--border2);}
+.tl-item{position:relative;padding:0 0 18px 20px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-19px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);box-shadow:0 0 0 1px var(--accent-bdr);}
+.tl-title{font-family:'DM Sans',sans-serif;font-weight:500;font-size:12px;margin-bottom:3px;color:var(--text);}
+.tl-desc{font-size:11px;color:var(--text-muted);line-height:1.65;font-weight:300}
+
+/* DOC LIST */
+.doc-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.doc-list li{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--text-muted);line-height:1.65;padding:4px 0;font-weight:300;}
+.doc-list li::before{content:'→';font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);flex-shrink:0;margin-top:1px;}
+
+/* CREDIT FLOW */
+.flow-row{display:flex;align-items:stretch;gap:0;margin-bottom:0}
+.flow-step{flex:1;background:var(--surface);border:1px solid var(--border2);padding:14px 16px;}
+.flow-step:first-child{border-radius:4px 0 0 4px}
+.flow-step:last-child{border-radius:0 4px 4px 0}
+.flow-step+.flow-step{border-left:none}
+.flow-step-num{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--accent);font-weight:500;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
+.flow-step-title{font-family:'DM Sans',sans-serif;font-weight:500;font-size:12px;margin-bottom:4px;color:var(--text);}
+.flow-step-desc{font-size:11px;color:var(--text-muted);line-height:1.6;font-weight:300}
+.flow-arrow{display:flex;align-items:center;padding:0 2px;color:var(--accent);font-size:14px;flex-shrink:0;background:var(--bg);}
+
+/* MISC */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mono-lbl{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--text-dim);margin-bottom:8px;}
+.mono-value{font-family:'DM Mono',monospace;font-size:11px;color:#7ab8f0;background:rgba(10,11,15,0.5);border:1px solid var(--border2);border-radius:4px;padding:12px 14px;line-height:1.8;white-space:pre-wrap;font-style:italic;}
+.status-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-eyebrow">
+        <span class="eyebrow-dot"></span>Talent Intelligence<span class="eyebrow-dot"></span>
+      </div>
+      <div class="sidebar-title">Sourcing <em>SOP</em></div>
+      <div class="sidebar-meta">Nicole Shiu · July 2025</div>
+    </div>
+    <nav>
+      <div class="nav-section">
+        <div class="nav-section-label">Overview</div>
+        <div class="nav-item active" onclick="nav('resources',this)"><span class="nav-dot"></span> Resources</div>
+        <div class="nav-item" onclick="nav('off-limits',this)"><span class="nav-dot"></span> Off-Limits Companies</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Rules of Engagement</div>
+        <div class="nav-item" onclick="nav('cooldown',this)"><span class="nav-dot"></span> Cool Down Period</div>
+        <div class="nav-item" onclick="nav('history',this)"><span class="nav-dot"></span> Candidate History</div>
+        <div class="nav-item" onclick="nav('outreach',this)"><span class="nav-dot"></span> Outreach Commitment</div>
+        <div class="nav-item" onclick="nav('hygiene',this)"><span class="nav-dot"></span> Ashby Data Hygiene</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Best Practices</div>
+        <div class="nav-item" onclick="nav('principles',this)"><span class="nav-dot"></span> Core Principles</div>
+        <div class="nav-item" onclick="nav('communication',this)"><span class="nav-dot"></span> Communication</div>
+        <div class="nav-item" onclick="nav('credit',this)"><span class="nav-dot"></span> Sourcing Credit</div>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-text">Internal Use Only<br>Talent Intelligence · Crusoe</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- RESOURCES -->
+    <div class="pane active" id="pane-resources">
+      <div class="page-eyebrow"><span class="eyebrow-dot"></span>Getting Started<span class="eyebrow-dot"></span></div>
+      <h1 class="page-title">Sourcing &amp; Recruiting <em>Resources</em></h1>
+      <p class="page-sub">Everything you need before your first outreach — onboarding docs, tools, and hygiene guides.</p>
+      <div class="page-divider"></div>
+
+      <div class="section-head"><span class="section-num">01</span><span class="section-title-text">Confluence Pages</span><div class="section-rule"></div></div>
+      <div class="resource-grid" style="margin-bottom:28px">
+        <a class="resource-item" href="https://crusoe.atlassian.net/wiki/spaces/TTR/pages/1025114163/Who+We+Are" target="_blank">
+          <div class="resource-icon">📘</div>
+          <div><div class="resource-name">Who We Are</div><div class="resource-desc">Company context · Confluence</div></div>
+          <span class="resource-arrow">↗</span>
+        </a>
+        <a class="resource-item" href="https://crusoe.atlassian.net/wiki/spaces/TTR/pages/1582105582/Ashby+Naming+Conventions" target="_blank">
+          <div class="resource-icon">🏷️</div>
+          <div><div class="resource-name">Ashby Naming Conventions</div><div class="resource-desc">Data hygiene · Confluence</div></div>
+          <span class="resource-arrow">↗</span>
+        </a>
+        <a class="resource-item" href="https://crusoe.atlassian.net/wiki/spaces/TTR/pages/1580499321/SOBO+101+Send+Emails+on+Behalf+of+in+Ashby" target="_blank">
+          <div class="resource-icon">📬</div>
+          <div><div class="resource-name">Send on Behalf of (SOBO)</div><div class="resource-desc">Outreach setup · Confluence</div></div>
+          <span class="resource-arrow">↗</span>
+        </a>
+        <a class="resource-item" href="https://docs.google.com/spreadsheets/d/1HkqUfX3L_5WghiJH64KLIuqmgT2fFU5X8FI1hLLHCyU/edit?gid=1590925774#gid=1590925774" target="_blank">
+          <div class="resource-icon">🎯</div>
+          <div><div class="resource-name">Target Companies List</div><div class="resource-desc">Targeting guide · Google Sheets</div></div>
+          <span class="resource-arrow">↗</span>
+        </a>
+        <a class="resource-item" href="https://docs.google.com/document/d/1s3es2lSImgPsphUTvKSKIuk2do0jjX7HTA7Ha7of7uY/edit?tab=t.b5xnk7y72uag" target="_blank">
+          <div class="resource-icon">🤝</div>
+          <div><div class="resource-name">Recruiter-Sourcer Partnership Framework</div><div class="resource-desc">Collaboration model · Google Docs</div></div>
+          <span class="resource-arrow">↗</span>
+        </a>
+        <a class="resource-item" href="https://claude.ai/artifacts/latest/55d4835f-23ea-408c-ab33-a16d3cfe954f" target="_blank">
+          <div class="resource-icon">🧠</div>
+          <div><div class="resource-name">Talent Intelligence Hub</div><div class="resource-desc">Internal tools library · Claude</div></div>
+          <span class="resource-arrow">↗</span>
+        </a>
+      </div>
+
+      <div class="section-head"><span class="section-num">02</span><span class="section-title-text">Tools &amp; Training</span><div class="section-rule"></div></div>
+      <div class="resource-grid" style="margin-bottom:28px">
+        <a class="resource-item" href="https://docs.google.com/presentation/d/1_45yGvATAAAbOrsHNqucxApoOlKt6AfSZfZ-6anns9Q/edit?slide=id.g3285084b8ce_0_6#slide=id.g3285084b8ce_0_6" target="_blank">
+          <div class="resource-icon" style="background:var(--teal-dim);border-color:var(--teal-bdr)">🎞️</div>
+          <div><div class="resource-name">Sourcing 102 Deck</div><div class="resource-desc">Tips &amp; tricks · Google Slides</div></div>
+          <span class="resource-arrow" style="color:var(--teal)">↗</span>
+        </a>
+        <a class="resource-item" href="https://drive.google.com/file/d/1O6Dzmv2wsoKcqop-O_4ooErYuMbq2_Ge/view" target="_blank">
+          <div class="resource-icon" style="background:var(--danger-dim);border-color:var(--danger-bdr)">▶️</div>
+          <div><div class="resource-name">Presentation Recording</div><div class="resource-desc">Please watch before starting · Drive</div></div>
+          <span class="resource-arrow" style="color:var(--danger)">↗</span>
+        </a>
+        <a class="resource-item" href="https://chromewebstore.google.com/detail/ashby/ncbbpdnmfeilfegjpilgdjajafbcganl" target="_blank">
+          <div class="resource-icon" style="background:var(--gold-dim);border-color:var(--gold-bdr)">🔌</div>
+          <div><div class="resource-name">Ashby Chrome Extension</div><div class="resource-desc">Browser tool · Chrome Web Store</div></div>
+          <span class="resource-arrow" style="color:var(--gold)">↗</span>
+        </a>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-bar"></div>
+        <div class="callout-body"><strong style="color:var(--text);font-weight:500">New to the team?</strong> Start with the Presentation Recording, then review Confluence basics. Install the Ashby Chrome Extension before your first sourcing session.</div>
+      </div>
+    </div>
+
+    <!-- OFF-LIMITS -->
+    <div class="pane" id="pane-off-limits">
+      <div class="page-eyebrow"><span class="eyebrow-dot"></span>Notable · Rules of Engagement<span class="eyebrow-dot"></span></div>
+      <h1 class="page-title">Off-Limits <em>Companies</em></h1>
+      <p class="page-sub">Do not source candidates from the following companies. Some previously restricted companies have been updated to OK status.</p>
+      <div class="page-divider"></div>
+
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="company-search" placeholder="Search companies…" oninput="filterCompanies(this.value)"/>
+        <span class="filter-count" id="company-count">20 companies</span>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <div class="mono-lbl" style="margin-bottom:10px">Blocked — do not source from</div>
+        <div class="tag-grid" id="blocked-tags">
+          <span class="tag-blocked" data-name="NVIDIA">NVIDIA</span>
+          <span class="tag-blocked" data-name="DPR Construction">DPR Construction</span>
+          <span class="tag-blocked" data-name="Oracle">Oracle <span style="font-size:8px;opacity:.6">(senior leadership)</span></span>
+          <span class="tag-blocked" data-name="Google">Google <span style="font-size:8px;opacity:.6">(senior DC construction)</span></span>
+          <span class="tag-blocked" data-name="AMD">AMD</span>
+          <span class="tag-blocked" data-name="Cartesia">Cartesia</span>
+          <span class="tag-blocked" data-name="Windsurf">Windsurf</span>
+          <span class="tag-blocked" data-name="Cursor">Cursor</span>
+          <span class="tag-blocked" data-name="Odyssey">Odyssey</span>
+          <span class="tag-blocked" data-name="Yutori">Yutori</span>
+          <span class="tag-blocked" data-name="Neuralwatt">Neuralwatt</span>
+          <span class="tag-blocked" data-name="Fireworks AI">Fireworks AI</span>
+          <span class="tag-blocked" data-name="Otter.ai">Otter.ai</span>
+          <span class="tag-blocked" data-name="together.ai">together.ai</span>
+          <span class="tag-blocked" data-name="HeyGen">HeyGen</span>
+          <span class="tag-blocked" data-name="Baseten">Baseten</span>
+          <span class="tag-blocked" data-name="Linum">Linum</span>
+          <span class="tag-blocked" data-name="Avalanche">Avalanche</span>
+        </div>
+      </div>
+      <div style="margin-bottom:20px">
+        <div class="mono-lbl" style="margin-bottom:10px">Previously blocked · OK to source from</div>
+        <div class="tag-grid" id="ok-tags">
+          <span class="tag-ok" data-name="Sony">✓ Sony <span style="font-size:8px;opacity:.65">(updated)</span></span>
+          <span class="tag-ok" data-name="Deloitte">✓ Deloitte <span style="font-size:8px;opacity:.65">(updated)</span></span>
+        </div>
+      </div>
+      <div class="callout danger">
+        <div class="callout-bar"></div>
+        <div class="callout-body"><strong style="color:var(--text);font-weight:500">When in doubt, check with your team lead.</strong> This list is subject to updates. Confirm before outreaching if you're unsure whether a company is restricted.</div>
+      </div>
+    </div>
+
+    <!-- COOL DOWN -->
+    <div class="pane" id="pane-cooldown">
+      <div class="page-eyebrow"><span class="eyebrow-dot"></span>Rules of Engagement · 01<span class="eyebrow-dot"></span></div>
+      <h1 class="page-title">Cool Down <em>Period</em></h1>
+      <p class="page-sub">Timing matters. Respect prior engagement windows before re-initiating contact.</p>
+      <div class="page-divider"></div>
+      <div class="grid2" style="margin-bottom:20px">
+        <div class="card card-accent">
+          <div class="mono-lbl">General rule</div>
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:6px;color:var(--text)">⏱ 3-Month Window</div>
+          <p style="font-size:12px;color:var(--text-muted);line-height:1.75;font-weight:300">Do not re-engage candidates contacted within the past <strong style="color:var(--text);font-weight:500">3 months</strong>. Allow a full cool-down before outreach.</p>
+        </div>
+        <div class="card card-teal">
+          <div class="mono-lbl">Interviewed candidates</div>
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:6px;color:var(--text)">🗓 1-Year Window</div>
+          <p style="font-size:12px;color:var(--text-muted);line-height:1.75;font-weight:300">Avoid re-engaging candidates who have <strong style="color:var(--text);font-weight:500">interviewed at Crusoe</strong> within the past year without explicit HM buy-in.</p>
+        </div>
+      </div>
+      <div class="section-head"><span class="section-num">!</span><span class="section-title-text">Exceptions &amp; Edge Cases</span><div class="section-rule"></div></div>
+      <div class="rule-block" id="exc1">
+        <div class="rule-header" onclick="toggleRule('exc1')">
+          <div class="rule-num">1</div><div class="rule-title">Business-need exception</div><span class="rule-chevron">▼</span>
+        </div>
+        <div class="rule-body"><p>Exceptions can be made when eligibility requirements shift based on business needs. Use discretion and craft messaging that acknowledges the prior contact. Document the exception and rationale.</p></div>
+      </div>
+      <div class="rule-block" id="exc2">
+        <div class="rule-header" onclick="toggleRule('exc2')">
+          <div class="rule-num">2</div><div class="rule-title">Re-engaging a prior interviewer</div><span class="rule-chevron">▼</span>
+        </div>
+        <div class="rule-body"><p>Before reaching out to anyone who has interviewed at Crusoe recently, <strong style="color:var(--text);font-weight:500">confirm that the hiring manager is genuinely interested</strong> in considering them for the new role. Don't assume interest — get explicit confirmation first.</p></div>
+      </div>
+    </div>
+
+    <!-- CANDIDATE HISTORY -->
+    <div class="pane" id="pane-history">
+      <div class="page-eyebrow"><span class="eyebrow-dot"></span>Rules of Engagement · 02<span class="eyebrow-dot"></span></div>
+      <h1 class="page-title">Candidate <em>History</em></h1>
+      <p class="page-sub">Every candidate has context. Always check before you reach out.</p>
+      <div class="page-divider"></div>
+      <div class="callout gold" style="margin-bottom:24px">
+        <div class="callout-bar"></div>
+        <div class="callout-body"><strong style="color:var(--text);font-weight:500">Before any outreach:</strong> Check notes and recent activity in Ashby. This is non-negotiable — you may be reaching out to someone with a prior relationship with Crusoe.</div>
+      </div>
+      <div class="section-head"><span class="section-num">→</span><span class="section-title-text">If a Candidate Has Previously Interviewed</span><div class="section-rule"></div></div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="mono-lbl">Acknowledge it in your message</div>
+        <div class="mono-value">"I see you've been in touch with us before — I wanted to check in to see if now might be a good time to revisit opportunities at Crusoe."</div>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:12px;line-height:1.75;font-weight:300">This signals respect, professionalism, and awareness — and reflects well on Crusoe's brand.</p>
+      </div>
+    </div>
+
+    <!-- OUTREACH COMMITMENT -->
+    <div class="pane" id="pane-outreach">
+      <div class="page-eyebrow"><span class="eyebrow-dot"></span>Rules of Engagement · 03<span class="eyebrow-dot"></span></div>
+      <h1 class="page-title">Outreach <em>Commitment</em></h1>
+      <p class="page-sub">If we reach out, we owe a response. Always close the loop — even when circumstances change.</p>
+      <div class="page-divider"></div>
+      <div class="card card-accent" style="margin-bottom:22px">
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;margin-bottom:8px;color:var(--text)">The Commitment</div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.8;font-weight:300">If we proactively contact a candidate and they respond with interest, <strong style="color:var(--text);font-weight:500">we owe them a conversation</strong> — even if the role requirements have shifted.</p>
+      </div>
+      <div class="section-head"><span class="section-num">→</span><span class="section-title-text">What This Means in Practice</span><div class="section-rule"></div></div>
+      <ul class="doc-list" style="margin-bottom:22px">
+        <li>Be transparent if the role has evolved or requirements have changed since initial outreach.</li>
+        <li>Close the loop with every interested candidate — silence after outreach damages Crusoe's reputation.</li>
+        <li>Respect their time: give them a real conversation, even a brief one, before archiving.</li>
+      </ul>
+      <div class="callout gold">
+        <div class="callout-bar"></div>
+        <div class="callout-body"><strong style="color:var(--text);font-weight:500">Candidate experience is a Crusoe brand signal.</strong> Every interaction — even a brief one — shapes how people talk about us in their networks.</div>
+      </div>
+    </div>
+
+    <!-- ASHBY DATA HYGIENE -->
+    <div class="pane" id="pane-hygiene">
+      <div class="page-eyebrow"><span class="eyebrow-dot"></span>Rules of Engagement · 04<span class="eyebrow-dot"></span></div>
+      <h1 class="page-title">Ashby Data <em>Hygiene</em></h1>
+      <p class="page-sub">Clean data powers better reporting. This is everyone's responsibility.</p>
+      <div class="page-divider"></div>
+      <div class="section-head"><span class="section-num">01</span><span class="section-title-text">Status Tracking</span><div class="section-rule"></div></div>
+      <div class="grid2" style="margin-bottom:22px">
+        <div class="card">
+          <div class="mono-lbl">Required status states</div>
+          <div class="status-row"><span class="tag blue">Contacted</span><span style="font-size:11px;color:var(--text-muted);font-weight:300;margin-left:6px">InMail or message sent</span></div>
+          <div class="status-row"><span class="tag teal">Interested</span><span style="font-size:11px;color:var(--text-muted);font-weight:300;margin-left:6px">Positive response received</span></div>
+          <div class="status-row"><span class="tag danger">Not Interested</span><span style="font-size:11px;color:var(--text-muted);font-weight:300;margin-left:6px">Declined or unresponsive</span></div>
+        </div>
+        <div class="card">
+          <div class="mono-lbl">Logging requirements</div>
+          <ul class="doc-list">
+            <li>Log InMails as they are sent</li>
+            <li>Update status throughout the process</li>
+            <li>Tag context for future follow-up</li>
+            <li>Add candidate detail notes for reporting accuracy</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="callout-bar"></div>
+        <div class="callout-body"><strong style="color:var(--text);font-weight:500">Why this matters:</strong> Accurate Ashby data is the foundation of sourcing reporting. Incomplete or stale status fields break pipeline analytics and make it harder to defend sourcing impact at the leadership level.</div>
+      </div>
+    </div>
+
+    <!-- CORE PRINCIPLES -->
+    <div class="pane" id="pane-principles">
+      <div class="page-eyebrow"><span class="eyebrow-dot"></span>Best Practices<span class="eyebrow-dot"></span></div>
+      <h1 class="page-title">Core Sourcing <em>Principles</em></h1>
+      <p class="page-sub">The philosophy behind how we approach every search at Crusoe.</p>
+      <div class="page-divider"></div>
+      <div class="principle-grid" style="margin-bottom:22px">
+        <div class="principle-card">
+          <div class="principle-icon">🎯</div>
+          <div class="principle-title">Calibrate Early, Calibrate Often</div>
+          <div class="principle-desc">Confirm leveling, must-haves, and nice-to-haves upfront. Understand why the role matters, where prior candidates fell short, and what a strong fit looks like.</div>
+        </div>
+        <div class="principle-card">
+          <div class="principle-icon">◈</div>
+          <div class="principle-title">Quality Over Quantity</div>
+          <div class="principle-desc">Be intentional. A curated shortlist of well-qualified candidates is more impactful than mass outreach. Volume without signal creates noise, not pipelines.</div>
+        </div>
+        <div class="principle-card">
+          <div class="principle-icon">🌱</div>
+          <div class="principle-title">Candidate Experience First</div>
+          <div class="principle-desc">Every message is a reflection of Crusoe's brand — be clear, respectful, and human. Treat every candidate like they're deciding whether to work with us.</div>
+        </div>
+        <div class="principle-card">
+          <div class="principle-icon">📍</div>
+          <div class="principle-title">Own Your Pipeline</div>
+          <div class="principle-desc">Primary ownership matters. Stay close to your candidates, your HM relationships, and your domain. Depth over breadth creates consistent results.</div>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="callout-bar"></div>
+        <div class="callout-body"><strong style="color:var(--text);font-weight:500">The bar is high at Crusoe.</strong> A strong fit is someone who can speak the language of their domain and grow with the organization. Calibrate to that standard from the first search.</div>
+      </div>
+    </div>
+
+    <!-- COMMUNICATION -->
+    <div class="pane" id="pane-communication">
+      <div class="page-eyebrow"><span class="eyebrow-dot"></span>Best Practices<span class="eyebrow-dot"></span></div>
+      <h1 class="page-title">Communication <em>Guidelines</em></h1>
+      <p class="page-sub">Tone, personalization, and cadence — how we engage candidates at every stage.</p>
+      <div class="page-divider"></div>
+      <div class="section-head"><span class="section-num">01</span><span class="section-title-text">Tone &amp; Personalization</span><div class="section-rule"></div></div>
+      <div class="grid2" style="margin-bottom:24px">
+        <div class="card">
+          <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text)">Respect Seniority</div>
+          <p style="font-size:12px;color:var(--text-muted);line-height:1.75;font-weight:300">Tailor tone and content based on the candidate's experience level and background. A Staff Engineer gets a different message than an L3.</p>
+        </div>
+        <div class="card">
+          <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text)">Always Personalize</div>
+          <p style="font-size:12px;color:var(--text-muted);line-height:1.75;font-weight:300">Lead with <em>why them</em> and <em>why us</em>. Generic messages signal low effort and reflect poorly on Crusoe. Personalization is not optional.</p>
+        </div>
+      </div>
+      <div class="section-head"><span class="section-num">02</span><span class="section-title-text">Follow-Up Cadence</span><div class="section-rule"></div></div>
+      <div class="timeline" style="margin-bottom:24px">
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Initial outreach</div><div class="tl-desc">Personalized first message — lead with why them, establish why Crusoe, clear ask.</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Follow-up 1 · +3–5 business days</div><div class="tl-desc">Light touch. Even a "no update" update keeps the candidate warm and informed.</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Follow-up 2 · +3–5 business days</div><div class="tl-desc">Add context, a new angle, or a specific Crusoe signal that may resonate.</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Follow-up 3–4 · +3–5 business days each</div><div class="tl-desc">Final attempts. Maintain tone — never pressure, always leave the door open gracefully.</div></div>
+      </div>
+      <div class="callout gold">
+        <div class="callout-bar"></div>
+        <div class="callout-body"><strong style="color:var(--text);font-weight:500">Don't leave candidates in the dark.</strong> If there's no new information, a brief "still working on timing" message preserves the relationship and prevents drop-off.</div>
+      </div>
+    </div>
+
+    <!-- SOURCING CREDIT -->
+    <div class="pane" id="pane-credit">
+      <div class="page-eyebrow"><span class="eyebrow-dot"></span>Best Practices<span class="eyebrow-dot"></span></div>
+      <h1 class="page-title">Sourcing Credit <em>&amp; Handoffs</em></h1>
+      <p class="page-sub">How credit is assigned, how handoffs work, and what happens after archive.</p>
+      <div class="page-divider"></div>
+      <div class="section-head"><span class="section-num">01</span><span class="section-title-text">Credit Assignment</span><div class="section-rule"></div></div>
+      <div class="card card-accent" style="margin-bottom:14px">
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;margin-bottom:7px;color:var(--text)">First-touch ownership</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.8;font-weight:300">The sourcer who <strong style="color:var(--text);font-weight:500">first finds and engages</strong> a candidate keeps sourcing credit — even if that candidate is later moved to a different team, role, or process.</p>
+      </div>
+      <div class="card" style="margin-bottom:26px">
+        <div class="mono-lbl">Credit duration</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.8;font-weight:300">Credit remains with the original sourcer for as long as the candidate is <strong style="color:var(--text);font-weight:500">active in the ATS</strong>. Once archived for 3+ months, the candidate becomes fair game for new sourcing — unless an exception applies.</p>
+      </div>
+      <div class="section-head"><span class="section-num">02</span><span class="section-title-text">Candidate Handoffs</span><div class="section-rule"></div></div>
+      <div class="flow-row" style="margin-bottom:22px">
+        <div class="flow-step">
+          <div class="flow-step-num">Step 01</div>
+          <div class="flow-step-title">POC introduces candidate</div>
+          <div class="flow-step-desc">Current recruiter or sourcer introduces the candidate directly to the new team's recruiter.</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-step-num">Step 02</div>
+          <div class="flow-step-title">New recruiter takes ownership</div>
+          <div class="flow-step-desc">After the intro, the new recruiter owns scheduling and interviewing from that point forward.</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-step-num">Step 03</div>
+          <div class="flow-step-title">Original sourcer steps back</div>
+          <div class="flow-step-desc">No need for the original sourcer to stay involved post-handoff. Credit stays put.</div>
+        </div>
+      </div>
+      <div class="callout teal">
+        <div class="callout-bar"></div>
+        <div class="callout-body"><strong style="color:var(--text);font-weight:500">Clean handoffs protect candidate experience.</strong> A warm intro with context is always better than a cold transfer — it signals continuity and respect to the candidate.</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function nav(id,el){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('pane-'+id).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleRule(id){document.getElementById(id).classList.toggle('open')}
+function filterCompanies(q){
+  q=q.toLowerCase().trim();
+  const all=document.querySelectorAll('[data-name]');
+  let v=0;
+  all.forEach(t=>{const match=!q||t.getAttribute('data-name').toLowerCase().includes(q);t.style.display=match?'':'none';if(match)v++;});
+  document.getElementById('company-count').textContent=v+' compan'+(v===1?'y':'ies');
+}
+</script>
+</body>
+</html>

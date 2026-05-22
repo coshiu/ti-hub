@@ -262,8 +262,119 @@
 
   .sidebar-footer p { font-size: 11px; color: var(--text-dim); line-height: 1.6; }
 
-  /* ── MAIN ── */
-  .main { margin-left: 240px; min-height: 100vh; display: flex; flex-direction: column; }
+  /* ── SIDEBAR COLLAPSE ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 240px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 32px 0;
+    z-index: 100;
+    transition: width 0.25s cubic-bezier(0.16,1,0.3,1);
+    overflow: hidden;
+  }
+
+  .sidebar.collapsed { width: 52px; }
+  .sidebar.collapsed .sidebar-logo { padding: 16px 12px 16px; }
+  .sidebar.collapsed .sidebar-logo svg { display: none; }
+  .sidebar.collapsed .nav-section-label { display: none; }
+  .sidebar.collapsed .nav-item { padding: 10px; justify-content: center; gap: 0; }
+  .sidebar.collapsed .nav-item span:not(.nav-dot) { display: none; }
+  .sidebar.collapsed .nav-dot { width: 10px; height: 10px; }
+  .sidebar.collapsed .nav-count { display: none; }
+  .sidebar.collapsed .sidebar-footer { display: none; }
+
+  .sidebar-toggle {
+    position: absolute;
+    top: 16px; right: -14px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--blue);
+    border: 2px solid var(--bg);
+    color: white;
+    font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 101;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(26,143,255,0.4);
+  }
+
+  .sidebar-toggle:hover { background: #4a7aee; transform: scale(1.1); }
+
+  .main { margin-left: 240px; min-height: 100vh; display: flex; flex-direction: column; transition: margin-left 0.25s cubic-bezier(0.16,1,0.3,1); }
+  .main.expanded { margin-left: 52px; }
+
+  /* ── PINNED ROW ── */
+  .pinned-section { margin-bottom: 28px; animation: fadeUp 0.4s ease both; }
+
+  .pinned-label {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 14px;
+  }
+
+  .pinned-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(91,143,255,0.3), transparent);
+  }
+
+  .pinned-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+  }
+
+  .pinned-card {
+    background: var(--surface);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+
+  .pinned-card:hover { transform: translateY(-2px); }
+
+  .pinned-card[data-type="job"]      { border: 1.5px solid var(--job);      box-shadow: 0 0 0 3px rgba(232,197,71,0.08); }
+  .pinned-card[data-type="market"]   { border: 1.5px solid var(--market);   box-shadow: 0 0 0 3px rgba(240,122,74,0.08); }
+  .pinned-card[data-type="partner"]  { border: 1.5px solid var(--partner);  box-shadow: 0 0 0 3px rgba(26,143,255,0.08); }
+  .pinned-card[data-type="pipeline"] { border: 1.5px solid var(--pipeline); box-shadow: 0 0 0 3px rgba(71,197,168,0.08); }
+  .pinned-card[data-type="comp"]     { border: 1.5px solid var(--comp);     box-shadow: 0 0 0 3px rgba(96,200,240,0.08); }
+  .pinned-card[data-type="reporting"]{ border: 1.5px solid var(--reporting);box-shadow: 0 0 0 3px rgba(167,139,250,0.08); }
+  .pinned-card[data-type="tools"]    { border: 1.5px solid var(--tools);    box-shadow: 0 0 0 3px rgba(163,230,53,0.08); }
+
+  .pinned-featured-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: rgba(232,197,71,0.12);
+    color: #c9a830;
+    font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+    border: 1px solid rgba(232,197,71,0.35);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  .pinned-accent { height: 3px; width: 100%; }
+  .pinned-body { padding: 18px 20px; }
+
+  .pinned-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+
+  .pinned-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-weight: 700;
+    color: var(--text); margin-bottom: 8px;
+    line-height: 1.3; padding-right: 60px;
+  }
+
+  .pinned-desc {
+    font-size: 13px; color: var(--text-muted);
+    line-height: 1.6;
+  }
 
   /* ── TOPBAR ── */
   .topbar {
@@ -682,7 +793,8 @@
 </div>
 
 <!-- SIDEBAR -->
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar">‹</div>
   <div class="sidebar-logo">
     <svg viewBox="0 0 200 72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Talent Intelligence">
       <defs>
@@ -746,7 +858,7 @@
       <span class="nav-count" id="count-job">0</span>
     </a>
     <a class="nav-item" data-type="pipeline" onclick="setFilter('pipeline', this)">
-      <span class="nav-dot" style="background:var(--pipeline)"></span> Learning & Development
+      <span class="nav-dot" style="background:var(--pipeline)"></span> Leveraging AI
       <span class="nav-count" id="count-pipeline">0</span>
     </a>
     <a class="nav-item" data-type="market" onclick="setFilter('market', this)">
@@ -889,7 +1001,7 @@
       <div class="filter-pills" id="filterPills">
         <button class="pill active-all" onclick="setFilterPill('all', this)">All</button>
         <button class="pill" onclick="setFilterPill('job', this)">Sourcing Strategy</button>
-        <button class="pill" onclick="setFilterPill('pipeline', this)">Learning & Development</button>
+        <button class="pill" onclick="setFilterPill('pipeline', this)">Leveraging AI</button>
         <button class="pill" onclick="setFilterPill('market', this)">Competitive Intelligence</button>
         <button class="pill" onclick="setFilterPill('comp', this)">Public Assets</button>
         <button class="pill" onclick="setFilterPill('partner', this)">Partnerships</button>
@@ -919,6 +1031,63 @@
 </div>
 
 <script>
+  // ── SIDEBAR TOGGLE ────────────────────────────────────────────────────────
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const main = document.querySelector('.main');
+    const toggle = document.getElementById('sidebarToggle');
+    const collapsed = sidebar.classList.toggle('collapsed');
+    main.classList.toggle('expanded', collapsed);
+    toggle.textContent = collapsed ? '›' : '‹';
+    toggle.style.right = collapsed ? '-14px' : '-14px';
+  }
+
+  // ── PINNED ARTIFACTS ──────────────────────────────────────────────────────
+  function renderPinned() {
+    const section = document.getElementById('pinnedSection');
+    const pinned = artifacts.filter(a => a.pinned);
+    if (!pinned.length) { section.innerHTML = ''; return; }
+    const meta = TYPE_META;
+    section.innerHTML = `
+      <div class="pinned-label">★ Featured</div>
+      <div class="pinned-grid">
+        ${pinned.map(a => {
+          const tags = (a.tags || []).slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('');
+          return `
+            <div class="artifact-card pinned-card" data-type="${a.type}" onclick="openDetail('${a.id}')">
+              <div class="pinned-featured-badge">★ Featured</div>
+              <div class="card-accent-bar" style="background:${meta[a.type].barColor}"></div>
+              <div class="card-body">
+                <div class="card-meta">
+                  <span class="card-type-badge badge-${a.type}">${meta[a.type].label}</span>
+                  <span class="card-date">Last updated: ${fmtDate(a.updatedAt || a.createdAt)}</span>
+                </div>
+                <div class="card-title">${a.title}</div>
+                ${(a.owner || a.producer) ? `
+                  <div class="card-owners">
+                    ${a.owner ? `<div class="card-owner-block"><span class="card-owner-label">Owner</span><span class="card-owner-name">${a.owner}</span></div>` : ''}
+                    ${a.owner && a.producer ? `<span style="color:var(--text-dim);font-size:10px">·</span>` : ''}
+                    ${a.producer ? `<div class="card-owner-block"><span class="card-owner-label">Producer</span><span class="card-owner-name">${a.producer}</span></div>` : ''}
+                  </div>` : ''}
+                <div class="card-desc">${a.desc}</div>
+                ${tags ? `<div class="card-tags">${tags}</div>` : ''}
+                <div class="card-footer">
+                  <div class="card-status">
+                    <div class="status-dot ${a.status}"></div>
+                    ${a.status === 'live' ? 'Live' : a.status === 'draft' ? 'Draft' : 'In Review'}
+                  </div>
+                  <div class="card-actions">
+                    ${a.link ? `<a class="icon-btn" href="${a.link}" target="_blank" onclick="event.stopPropagation()" title="Open in New Tab" style="font-size:10px;font-family:'DM Mono',monospace;width:auto;padding:0 8px;letter-spacing:0.05em;color:var(--accent);border-color:rgba(91,143,255,0.3)">↗ Open in New Tab</a>` : ''}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
   function toggleAbout() {
     const body = document.getElementById('aboutBody');
     const chevron = document.getElementById('aboutChevron');
@@ -933,7 +1102,7 @@
 
   const TYPE_META = {
     job:      { label: 'Sourcing Strategy',       color: '#e8c547', barColor: '#e8c547' },
-    pipeline: { label: 'Learning & Development',  color: '#47c5a8', barColor: '#47c5a8' },
+    pipeline: { label: 'Leveraging AI',  color: '#47c5a8', barColor: '#47c5a8' },
     comp:     { label: 'Public Assets',            color: '#60c8f0', barColor: '#60c8f0' },
     market:   { label: 'Competitive Intelligence', color: '#f07a4a', barColor: '#f07a4a' },
     partner:   { label: 'Partnerships', color: '#1a8fff', barColor: '#1a8fff' },
@@ -943,6 +1112,18 @@
 
   const SAMPLE_DATA = [
     {
+      id: 'real13', type: 'reporting',
+      title: 'Talent Intelligence Team: Progress Tracker',
+      desc: 'Track the TI team\'s progress across active initiatives, projects, and deliverables. A centralized view of what\'s in flight, what\'s complete, and what\'s next for the Talent Intelligence function.',
+      content: `Progress tracking dashboard for the Talent Intelligence team.\n\nDesigned to help the TI team:\n-> Track active initiatives and project status\n-> Surface what is in flight, complete, and upcoming\n-> Support team reviews and leadership updates\n-> Maintain accountability across team deliverables`,
+      tags: ['progress tracker', 'reporting', 'team', 'initiatives', 'projects'],
+      status: 'live',
+      owner: 'Nicole Shiu',
+      link: '',
+      createdAt: Date.now() + 2000,
+      updatedAt: Date.now() + 2000
+    },
+    {
       id: 'real11', type: 'reporting',
       title: 'YTD Sourcing Impact',
       desc: 'Your go-to for showing sourcing\'s contribution to the business. Tracks hiring outcomes year-to-date, built for team reviews and leadership conversations.',
@@ -950,7 +1131,7 @@
       tags: ['YTD', 'sourcing impact', 'reporting', 'pipeline', 'metrics', 'dashboard'],
       status: 'live',
       owner: 'Nicole Shiu',
-      link: '',
+      link: 'other_modules/ytd_sourcing_dashboard_v2.html',
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
@@ -961,8 +1142,8 @@
       content: `Interview preparation generation tool for the Talent Intelligence team.\n\nDesigned to help sourcers and recruiters:\n→ Generate tailored interview prep materials by role and level\n→ Equip candidates with relevant context before interviews\n→ Improve candidate experience and interview performance\n→ Standardize prep content across the sourcing team`,
       tags: ['interview prep', 'candidate experience', 'tools', 'recruiting', 'preparation'],
       status: 'live',
-      owner: 'Dan',
-      link:  undefined,
+      owner: 'Dan Dougherty',
+      link: '',
       createdAt: Date.now() + 1000,
       updatedAt: Date.now() + 1000
     },
@@ -974,7 +1155,7 @@
       tags: ['hiring pace', 'forecasting', 'pipeline velocity', 'headcount', 'reporting'],
       status: 'live',
       owner: 'Nicole Shiu',
-      link:  undefined,
+      link: 'other_modules/hiring_pace_simulator_ti.html',
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
@@ -986,10 +1167,35 @@
       tags: ['battle cards', 'competitive intel', 'comp data', 'talk tracks', 'level crosswalk'],
       status: 'live',
       owner: 'Nicole Shiu',
-      producer: 'Ali',
-      link:  undefined,
+      producer: 'Ali Aguayo',
+      pinned: true,
+      link: 'other_modules/competitive-intel-tool.html',
       createdAt: Date.now() - 86400000 * 4,
       updatedAt: Date.now()
+    },
+    {
+      id: 'real15', type: 'job',
+      title: 'Sourcing Allocations',
+      desc: 'A structured view of how sourcing capacity is allocated across open reqs and teams. Use this to track where sourcing effort is going, identify imbalances, and make informed decisions about prioritization.',
+      content: `Sourcing allocation tracking for the Talent Intelligence team.\n\nDesigned to help sourcers and leaders:\n-> Track sourcing capacity across open reqs and teams\n-> Identify allocation imbalances and coverage gaps\n-> Support prioritization decisions with data\n-> Maintain visibility into where sourcing effort is deployed`,
+      tags: ['allocations', 'sourcing strategy', 'capacity', 'prioritization', 'planning'],
+      status: 'live',
+      owner: 'Nicole Shiu',
+      link: 'other_modules/sourcer_allocation.html',
+      createdAt: Date.now() + 4000,
+      updatedAt: Date.now() + 4000
+    },
+    {
+      id: 'real14', type: 'job',
+      title: 'TalentIQ - Complexity Weighing System',
+      desc: 'A structured framework for assessing role complexity before sourcing begins. Use this to calibrate effort, set expectations with stakeholders, and ensure the right level of sourcing investment for every req.',
+      content: `Complexity weighing system for technical sourcing at Crusoe.\n\nDesigned to help sourcers and recruiters:\n-> Assess role complexity before sourcing begins\n-> Calibrate effort based on market scarcity and business criticality\n-> Set aligned expectations with hiring managers and stakeholders\n-> Prioritize sourcing investment across open reqs`,
+      tags: ['complexity', 'role assessment', 'sourcing strategy', 'calibration', 'TalentIQ'],
+      status: 'live',
+      owner: 'Nicole Shiu',
+      link: 'other_modules/weighing_system.html',
+      createdAt: Date.now() + 3000,
+      updatedAt: Date.now() + 3000
     },
     {
       id: 'real7', type: 'job',
@@ -998,7 +1204,9 @@
       content: `6-section fillable calibration intake:\n01 → Business Context & Org Structure - team mission, gaps, HM pain points & success signals\n02 → Position Overview - title, leveling, scope, location, reason for opening\n03 → Qualifications & Calibration - must-haves, nice-to-haves, target companies, keywords, ideal profile, archetypes, anti-signals, tech stack, screening questions\n04 → Interview Plan - stage-by-stage table with focus areas, duration, interviewers\n05 → HM & Recruiter/Sourcer Commitments - three-column commitment tracker + agreed SLAs\n06 → Boolean Search Strings - two templates + custom field\n\nFeatures: tabbed navigation, fillable fields, download to .txt\nAuthored by: Nicole Shiu`,
       tags: ['intake', 'calibration', 'req intake', 'boolean', 'interview plan', 'downloadable'],
       status: 'live',
-      link:  undefined,
+      owner: 'Nicole Shiu',
+      pinned: true,
+      link: 'other_modules/req_intake.html',
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
@@ -1010,7 +1218,8 @@
       tags: ['SOP', 'rules of engagement', 'Ashby', 'cool down', 'sourcing credit', 'best practices'],
       status: 'live',
       owner: 'Nicole Shiu',
-      link:  undefined,
+      pinned: true,
+      link: 'other_modules/sourcing_SOP.html',
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
@@ -1022,9 +1231,21 @@
       tags: ['sourcing', 'operating model', 'swimlanes', 'assignment matrix', 'cloud engineering', 'routing'],
       status: 'live',
       owner: 'Nicole Shiu',
-      link:  undefined,
+      link: 'other_modules/operating_model.html',
       createdAt: Date.now() - 86400000 * 3,
       updatedAt: Date.now()
+    },
+    {
+      id: 'real3', type: 'comp',
+      title: 'Engineering & Product Content Library',
+      desc: 'Sharing something with a candidate or prepping for a technical conversation? This library surfaces the best podcasts, articles, and press that reflect Crusoe\'s mission, filtered by team and topic.',
+      content: `Content types covered:\n→ Podcasts (Acquired, Not Boring Founders, Age of Miracles, others)\n→ Articles & press coverage\n→ Journals & research\n\nKey highlights:\n• "Saving the Planet with Better AI Data Centers" - Acquired Podcast (Chase Lochmiller)\n• "Not Boring Founders: Crusoe Energy" - Age of Miracles / Spotify\n\nTopics: Sustainable AI, GPU cloud, energy-efficient compute, HPC for AI, founding story, product vision, design culture\n\nAudience: PM, TPM, Design - for team learning and candidate sharing\nFormat: Interactive filterable table with search and date sort`,
+      tags: ['content library', 'mission', 'podcasts', 'PM', 'TPM', 'design', 'candidate sharing'],
+      status: 'live',
+      producer: 'Talent Intelligence Team',
+      link: 'other_modules/content-library.html',
+      createdAt: Date.now() - 86400000 * 2,
+      updatedAt: Date.now() - 86400000 * 2
     },
     {
       id: 'real9', type: 'pipeline',
@@ -1034,7 +1255,7 @@
       tags: ['AI', 'role matching', 'candidate evaluation', 'screening', 'signal'],
       status: 'live',
       owner: 'Nicole Shiu',
-      link:  'learning_modules/ai_assisted_evaluator.html',
+      link: 'other_modules/ai-role-matching-ti-hub.html',
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
@@ -1045,7 +1266,7 @@
       content: `Onboarding guide for the Talent Intelligence team.\n\nCovers:\n→ Team structure and core responsibilities\n→ Tools and systems (Ashby, LinkedIn, etc.)\n→ Key workflows and processes\n→ How to partner with recruiters and hiring managers\n→ First 30/60/90 day expectations`,
       tags: ['onboarding', 'L&D', 'new hire', 'talent intelligence', 'training'],
       status: 'live',
-      link:  undefined,
+      link: 'other_modules/TI_Onboarding_TIHub_Design.html',
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
@@ -1056,7 +1277,8 @@
       content: `7 Sourcing Stages with AI integration:\n01 → Define the Role - use AI to sharpen intake, identify must-haves vs. nice-to-haves\n02 → Build the Sourcing Strategy - AI-assisted market mapping and channel selection\n03 → Source Candidates - AI for Boolean string generation, profile pattern matching\n04 → Outreach & Engagement - AI-drafted personalized outreach at scale\n05 → Screening & Assessment - AI-assisted resume review and screening frameworks\n06 → Calibration - AI to synthesize feedback and surface patterns\n07 → Offer & Close - AI for comp benchmarking and closing talk tracks\n\nEach stage includes:\n→ Primary goal\n→ How to use AI (3 methods per stage)\n→ Copyable example prompt (terminal-style)\n→ Expected results\n\nCore philosophy: "Amplify judgment, not replace it."\nClosing quote: "The craft still matters. AI just gives you more room to master it."`,
       tags: ['AI sourcing', 'prompts', 'workflow', '7 stages', 'playbook'],
       status: 'live',
-      link: 'learning_modules/sourcing_with_ai.html',
+      pinned: true,
+      link: 'other_modules/sourcing-with-ai.html',
       createdAt: Date.now() - 86400000 * 1,
       updatedAt: Date.now() - 86400000 * 1
     },
@@ -1068,19 +1290,8 @@
       tags: ['partnership', 'SLAs', 'collaboration', 'recruiter', 'sourcer', 'framework'],
       status: 'live',
       owner: 'Nicole Shiu',
-      link:  'learning_modules/partnership.html',
-      createdAt: Date.now(),
-      updatedAt: Date.now()
-    },
-    {
-      id: 'real0', type: 'job',
-      title: 'Weighted Model',
-      desc: 'TBD',
-      content: `TBD...`,
-      tags: ['partnership', 'SLAs', 'collaboration', 'recruiter', 'sourcer', 'framework'],
-      status: 'live',
-      owner: 'Nicole Shiu',
-      link:  'other_modules/weighted_system.html',
+      pinned: true,
+      link: 'other_modules/partnership-framework.html',
       createdAt: Date.now(),
       updatedAt: Date.now()
     }
@@ -1095,7 +1306,7 @@
       const stored = localStorage.getItem('ti_hub_v17');
       if (stored) {
         const parsed = JSON.parse(stored);
-        const realIds = ['real1','real2','real3','real4','real5','real6','real7','real8','real9','real10','real11','real12', 'real0'];
+        const realIds = ['real1','real2','real3','real4','real5','real6','real7','real8','real9','real10','real11','real12','real13','real14','real15'];
         const hasReal = realIds.every(id => parsed.some(a => a.id === id));
         if (hasReal) {
           artifacts = parsed;
@@ -1122,7 +1333,7 @@
     const titles = {
       all:      ['All Artifacts', 'Your complete Talent Intelligence library: sourcing strategy, competitive intel, learning resources, and more.'],
       job:      ['Sourcing Strategy', 'Alignment frameworks, swimlane models, and sourcing playbooks for technical recruiting.'],
-      pipeline: ['Learning & Development', 'Guides, playbooks, and interactive tools for building sourcing craft and AI fluency.'],
+      pipeline: ['Leveraging AI', 'Guides, playbooks, and interactive tools for building sourcing craft and AI fluency.'],
       comp:     ['Public Assets', 'Shareable resources, content libraries, and materials built for candidate and team use.'],
       market:   ['Competitive Intelligence', 'Battle cards, competitor talent maps, comp snapshots, and recruiter talk tracks.'],
       partner:   ['Partnerships', 'Working agreements, collaboration frameworks, and SLAs that define how we partner across TA.'],
@@ -1215,19 +1426,19 @@
     const grid = document.getElementById('cardsGrid');
     const filtered = getFiltered();
     if (!filtered.length) {
-      grid.innerHTML = `<div class="empty-state">
-        <div class="empty-state-icon">◻</div>
-        <h3>No artifacts found</h3>
-        <p>Try adjusting your search or add your first artifact.</p>
-      </div>`;
+      grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">◻</div><h3>No artifacts found</h3><p>Try adjusting your search or filters.</p></div>`;
       return;
     }
-    grid.innerHTML = filtered.map(a => {
+    const pinned = filtered.filter(a => a.pinned);
+    const rest = filtered.filter(a => !a.pinned);
+    const ordered = [...pinned, ...rest];
+    const makeCard = (a) => {
       const meta = TYPE_META[a.type];
-      const moreDetails = 'More Details';
       const tags = (a.tags || []).slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('');
+      const badge = a.pinned ? `<div class="pinned-featured-badge">★ Featured</div>` : '';
       return `
-        <div class="artifact-card" data-type="${a.type}" onclick="openDetail('${a.id}')">
+        <div class="artifact-card${a.pinned ? ' pinned-card' : ''}" data-type="${a.type}" onclick="openDetail('${a.id}')">
+          ${badge}
           <div class="card-accent-bar" style="background:${meta.barColor}"></div>
           <div class="card-body">
             <div class="card-meta">
@@ -1249,17 +1460,17 @@
                 ${a.status === 'live' ? 'Live' : a.status === 'draft' ? 'Draft' : 'In Review'}
               </div>
               <div class="card-actions">
-                ${a.link ? `<a class="icon-btn" href="${a.link}" target="_blank" onclick="event.stopPropagation()" title="${moreDetails}" style="font-size:10px;font-family:'DM Mono',monospace;width:auto;padding:0 8px;letter-spacing:0.05em;color:var(--accent);border-color:rgba(91,143,255,0.3)">↗ ${moreDetails}</a>` : ''}
-                <div class="icon-btn" onclick="event.stopPropagation(); deleteArtifact('${a.id}')" title="Delete">🗑</div>
+                ${a.link ? `<a class="icon-btn" href="${a.link}" target="_blank" onclick="event.stopPropagation()" title="Open in New Tab" style="font-size:10px;font-family:'DM Mono',monospace;width:auto;padding:0 8px;letter-spacing:0.05em;color:var(--accent);border-color:rgba(91,143,255,0.3)">↗ Open in New Tab</a>` : ''}
               </div>
             </div>
           </div>
         </div>
       `;
-    }).join('');
+    };
+    grid.innerHTML = ordered.map(makeCard).join('');
   }
 
-  function openDetail(id) {
+    function openDetail(id) {
     const a = artifacts.find(x => x.id === id);
     if (!a) return;
     const meta = TYPE_META[a.type];
@@ -1297,7 +1508,7 @@
           </div>
           ${a.link ? `<div>
             <div class="detail-section-label">Open Original</div>
-            <a href="${a.link}" target="_blank" style="font-size:13px; color:var(--accent); text-decoration:none">↗ More Details</a>
+            <a href="${a.link}" target="_blank" style="font-size:13px; color:var(--accent); text-decoration:none">↗ Open in New Tab</a>
           </div>` : ''}
         </div>
       </div>
@@ -1309,12 +1520,12 @@
     if (e.target === detailModal) detailModal.classList.remove('open');
   }
 
-  function deleteArtifact(id) {
-    if (!confirm('Delete this artifact?')) return;
-    artifacts = artifacts.filter(a => a.id !== id);
-    saveData();
-    renderCards();
-  }
+  // function deleteArtifact(id) {
+  //   if (!confirm('Delete this artifact?')) return;
+  //   artifacts = artifacts.filter(a => a.id !== id);
+  //   saveData();
+  //   renderCards();
+  // }
 
   function exportData() {
     const blob = new Blob([JSON.stringify(artifacts, null, 2)], { type: 'application/json' });

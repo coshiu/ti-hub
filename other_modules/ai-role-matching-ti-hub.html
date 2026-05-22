@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Role Matching Evaluator — Talent Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK TOKENS (default) ─────────────────────────────── */
+:root {
+  --bg:#0a0b0f; --surface:#111318; --surface2:#181c24; --surface3:#1e2530;
+  --border:#1e2330; --border2:#252d3d;
+  --text:#e8eaf0; --text-muted:#6b7491; --text-dim:#3d4560;
+  --accent:#5b8fff; --accent-dim:rgba(91,143,255,0.08); --accent-bdr:rgba(91,143,255,0.22);
+  --teal:#47c5a8; --teal-dim:rgba(71,197,168,0.07); --teal-bdr:rgba(71,197,168,0.2);
+  --gold:#e8c547; --gold-dim:rgba(232,197,71,0.07); --gold-bdr:rgba(232,197,71,0.18);
+  --green:#4ade80; --green-dim:rgba(74,222,128,0.08); --green-bdr:rgba(74,222,128,0.22);
+  --danger:#f07a4a;
+  --topbar-bg: rgba(10,11,15,0.95);
+  --grain-opacity: 0.022;
+}
+
+/* ── LIGHT TOKENS ──────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:#f5f4f0; --surface:#ffffff; --surface2:#f0ede8; --surface3:#e8e4de;
+  --border:#ddd9d2; --border2:#ccc8c0;
+  --text:#1a1a1e; --text-muted:#6b6860; --text-dim:#aaa59e;
+  --accent:#2a5fd4; --accent-dim:rgba(42,95,212,0.07); --accent-bdr:rgba(42,95,212,0.22);
+  --teal:#1a9e85; --teal-dim:rgba(26,158,133,0.07); --teal-bdr:rgba(26,158,133,0.22);
+  --gold:#b08a00; --gold-dim:rgba(176,138,0,0.08); --gold-bdr:rgba(176,138,0,0.22);
+  --green:#1a8c4e; --green-dim:rgba(26,140,78,0.08); --green-bdr:rgba(26,140,78,0.22);
+  --danger:#c44b1a;
+  --topbar-bg: rgba(245,244,240,0.96);
+  --grain-opacity: 0;
+}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;line-height:1.6;transition:background .25s,color .25s}
+
+/* grain — dark only */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:var(--grain-opacity);pointer-events:none;z-index:0}
+
+/* ── LAYOUT ─────────────────────────────────────────────── */
+.shell{position:relative;z-index:1;display:grid;grid-template-columns:256px 1fr;grid-template-rows:auto 1fr;min-height:100vh}
+
+/* ── TOPBAR ─────────────────────────────────────────────── */
+.topbar{
+  grid-column:1/-1;display:flex;align-items:center;
+  background:var(--topbar-bg);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);height:56px;
+  position:sticky;top:0;z-index:100;transition:background .25s,border-color .25s;
+}
+.topbar-logo{
+  width:256px;flex-shrink:0;display:flex;align-items:center;
+  padding:0 28px;border-right:1px solid var(--border2);height:100%;gap:12px;
+}
+.logo-mark{
+  width:32px;height:32px;flex-shrink:0;
+  border:1px solid var(--accent-bdr);background:var(--accent-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--accent);
+  letter-spacing:.04em;border-radius:3px;
+}
+.logo-text strong{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);display:block}
+.logo-text span{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.06em}
+.topbar-center{flex:1;padding:0 32px;display:flex;align-items:center;gap:16px}
+.topbar-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.topbar-rule{width:1px;height:20px;background:var(--border2)}
+.topbar-sub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
+.topbar-right{margin-left:auto;padding-right:28px;display:flex;align-items:center;gap:10px}
+.status-pip{width:5px;height:5px;border-radius:50%;background:var(--teal);opacity:.8;animation:pip 3s ease-in-out infinite}
+.status-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}
+@keyframes pip{0%,100%{opacity:.8}50%{opacity:.3}}
+
+/* ── THEME TOGGLE ───────────────────────────────────────── */
+.theme-toggle{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 11px;border-radius:4px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--border2);background:var(--surface2);color:var(--text-muted);
+  transition:all .18s;white-space:nowrap;
+}
+.theme-toggle:hover{border-color:var(--accent-bdr);color:var(--accent);background:var(--accent-dim)}
+.theme-toggle-icon{font-size:11px;transition:transform .3s}
+[data-theme="light"] .theme-toggle-icon{transform:rotate(180deg)}
+
+/* ── SIDEBAR ─────────────────────────────────────────────── */
+.sidebar{
+  background:var(--surface);border-right:1px solid var(--border2);
+  padding:28px 0;position:sticky;top:56px;height:calc(100vh - 56px);
+  overflow-y:auto;display:flex;flex-direction:column;
+  transition:background .25s,border-color .25s;
+}
+.nav-section{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);padding:16px 24px 8px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 24px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:var(--text-muted);
+  border-left:2px solid transparent;transition:all .15s;
+}
+.nav-item:hover{background:var(--accent-dim);color:var(--text)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-dim)}
+.nav-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--text-dim);flex-shrink:0;width:16px}
+.nav-item.active .nav-num{color:var(--accent);opacity:.7}
+.nav-dash{width:10px;height:1px;background:var(--border2);flex-shrink:0;transition:all .15s}
+.nav-item.active .nav-dash,.nav-item:hover .nav-dash{background:var(--accent);width:14px}
+.nav-desc{font-size:10px;color:var(--text-dim);margin-top:1px;line-height:1.3;font-weight:300;transition:color .15s}
+.nav-item.active .nav-desc{color:var(--accent-bdr)}
+.nav-item:hover .nav-desc{color:var(--text-muted)}
+.nav-start-badge{
+  margin-left:auto;flex-shrink:0;font-family:'DM Mono',monospace;font-size:8px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--teal);
+  border:1px solid var(--teal-bdr);background:var(--teal-dim);padding:2px 6px;
+  border-radius:3px;animation:badgePulse 2.5s ease-in-out infinite;
+}
+@keyframes badgePulse{0%,100%{opacity:1}50%{opacity:.45}}
+.nav-start-badge.hidden{display:none}
+.nav-item.visited .nav-num{color:var(--teal);opacity:.6}
+.sidebar-footer{
+  margin-top:auto;padding:20px 24px;border-top:1px solid var(--border);
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;
+  color:var(--text-dim);line-height:1.9;
+}
+
+/* ── MAIN ───────────────────────────────────────────────── */
+.main{padding:48px 52px 80px;min-height:calc(100vh - 56px);max-width:880px}
+
+/* ── SECTION TRANSITIONS ────────────────────────────────── */
+.section{display:none}
+.section.active{display:block;animation:reveal .3s ease both}
+@keyframes reveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION HEADER ─────────────────────────────────────── */
+.section-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--text-muted);
+}
+.eyebrow-dot{width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:.6}
+.section-title{
+  font-family:'Playfair Display',serif;font-size:38px;font-weight:700;
+  line-height:1.06;letter-spacing:-.02em;color:var(--text);margin-bottom:12px;
+}
+.section-title em{color:var(--accent);font-style:italic}
+.section-sub{font-size:13px;color:var(--text-muted);font-weight:300;margin-bottom:40px;line-height:1.75;max-width:560px}
+
+/* ── DIVIDER ────────────────────────────────────────────── */
+.divider{height:1px;background:linear-gradient(90deg,var(--accent-bdr),transparent);margin:36px 0}
+
+/* ── CALLOUT ────────────────────────────────────────────── */
+.callout{display:flex;border-radius:4px;overflow:hidden;margin-bottom:20px;border:1px solid var(--accent-bdr)}
+.callout-bar{width:2px;flex-shrink:0;background:var(--accent)}
+.callout-body{padding:11px 14px;font-size:12px;line-height:1.75;color:var(--text-muted);font-weight:300;background:var(--accent-dim);flex:1;font-family:'DM Sans',sans-serif}
+.callout-body strong{color:var(--text);font-weight:500}
+.callout.teal{border-color:var(--teal-bdr)}
+.callout.teal .callout-bar{background:var(--teal)}
+.callout.teal .callout-body{background:var(--teal-dim)}
+.callout.gold{border-color:var(--gold-bdr)}
+.callout.gold .callout-bar{background:var(--gold)}
+.callout.gold .callout-body{background:var(--gold-dim)}
+.callout.danger{border-color:rgba(240,122,74,.25)}
+.callout.danger .callout-bar{background:var(--danger)}
+.callout.danger .callout-body{background:rgba(240,122,74,.06)}
+
+/* ── BUTTONS ────────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:4px;
+  font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;
+  border:1px solid var(--accent-bdr);background:var(--accent-dim);color:var(--accent);
+  transition:all .15s;letter-spacing:.02em;white-space:nowrap;
+}
+.btn:hover{background:rgba(91,143,255,0.14);border-color:var(--accent)}
+.btn.teal{border-color:var(--teal-bdr);background:var(--teal-dim);color:var(--teal)}
+.btn.teal:hover{background:rgba(71,197,168,0.14);border-color:var(--teal)}
+.btn.gold{border-color:var(--gold-bdr);background:var(--gold-dim);color:var(--gold)}
+.btn.gold:hover{background:rgba(232,197,71,0.14);border-color:var(--gold)}
+
+/* ── TAGS ───────────────────────────────────────────────── */
+.tag{
+  display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:3px;
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--border2);color:var(--text-muted);background:var(--surface2);
+}
+.tag.blue{border-color:var(--accent-bdr);color:var(--accent);background:var(--accent-dim)}
+.tag.teal{border-color:var(--teal-bdr);color:var(--teal);background:var(--teal-dim)}
+.tag.gold{border-color:var(--gold-bdr);color:var(--gold);background:var(--gold-dim)}
+.tag.green{border-color:var(--green-bdr);color:var(--green);background:var(--green-dim)}
+
+/* ── MONO BLOCK (prompts) ───────────────────────────────── */
+.mono-block{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:4px;
+  padding:10px 14px;font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--text-muted);line-height:1.75;white-space:pre-wrap;
+}
+
+/* ── STAT STRIP ─────────────────────────────────────────── */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border2);background:var(--surface);margin-bottom:32px;border-radius:4px;overflow:hidden}
+.stat-item{padding:22px 20px;border-right:1px solid var(--border);position:relative}
+.stat-item:last-child{border-right:none}
+.stat-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:.3}
+.stat-n{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:6px}
+.stat-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.stat-desc{font-size:11px;color:var(--text-dim)}
+
+/* ── MINI CARDS ─────────────────────────────────────────── */
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px}
+.mini-card{
+  border:1px solid var(--border2);background:var(--surface);padding:22px 20px;
+  border-radius:4px;position:relative;transition:border-color .18s,background .18s;
+}
+.mini-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background .18s;border-radius:4px 4px 0 0}
+.mini-card:hover{border-color:var(--accent-bdr);background:var(--surface2)}
+.mini-card:hover::before{background:var(--accent)}
+.mini-card-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--teal);line-height:1;margin-bottom:10px}
+.mini-card-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim);margin-bottom:5px}
+.mini-card-title{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px}
+.mini-card-text{font-size:12px;color:var(--text-muted);line-height:1.7}
+
+/* ── WELCOME BANNER ─────────────────────────────────────── */
+.welcome-banner{
+  border:1px solid var(--teal-bdr);background:var(--teal-dim);
+  padding:18px 22px;margin-bottom:32px;border-radius:4px;
+  border-left:2px solid var(--teal);
+}
+.wb-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+.wb-text{font-size:13px;color:var(--text-muted);line-height:1.75;margin-bottom:12px;font-weight:300}
+.wb-cta{
+  display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:4px;
+  font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;
+  border:1px solid var(--teal-bdr);background:transparent;color:var(--teal);
+  transition:all .15s;letter-spacing:.02em;
+}
+.wb-cta:hover{background:rgba(71,197,168,0.14);border-color:var(--teal)}
+.wb-cta-arrow{font-size:12px}
+
+/* ── CONCEPT BLOCK ──────────────────────────────────────── */
+.concept-block{
+  border:1px solid var(--border2);background:var(--surface);
+  border-radius:4px;margin-bottom:20px;overflow:hidden;transition:border-color .18s;
+}
+.concept-block:hover{border-color:var(--accent-bdr)}
+.concept-inner{padding:28px 30px}
+.concept-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);opacity:.7;margin-bottom:8px}
+.concept-heading{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-.01em}
+.concept-text{font-size:13px;color:var(--text-muted);line-height:1.8;font-weight:300}
+.pull-quote{
+  margin-top:20px;padding:12px 18px;
+  border-left:2px solid var(--teal);background:var(--teal-dim);
+  font-family:'Playfair Display',serif;font-size:15px;font-style:italic;
+  color:var(--text);line-height:1.65;border-radius:0 4px 4px 0;
+}
+
+/* ── STEPS ──────────────────────────────────────────────── */
+.steps{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.step-card{
+  border:1px solid var(--border2);background:var(--surface);
+  border-radius:4px;overflow:hidden;cursor:pointer;transition:border-color .18s;
+}
+.step-card:hover{border-color:var(--accent-bdr)}
+.step-card.open{border-color:var(--accent-bdr)}
+.step-head{display:flex;align-items:center;gap:14px;padding:16px 20px;transition:background .18s}
+.step-card.open .step-head{background:var(--accent-dim)}
+.step-badge{
+  width:34px;height:34px;flex-shrink:0;border:1px solid var(--accent-bdr);
+  background:var(--accent-dim);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--accent);
+}
+.step-card.open .step-badge{background:var(--accent);color:var(--bg)}
+.step-head-content{flex:1}
+.step-head-title{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;transition:color .15s}
+.step-card.open .step-head-title{color:var(--accent)}
+.step-head-sub{font-size:12px;color:var(--text-muted)}
+.step-chev{color:var(--text-dim);font-size:13px;transition:transform .25s,color .15s}
+.step-card.open .step-chev{transform:rotate(180deg);color:var(--accent)}
+.step-body{display:none;border-top:1px solid var(--border2);padding:22px 20px}
+.step-card.open .step-body{display:block}
+.step-body-text{font-size:13px;color:var(--text-muted);line-height:1.8;margin-bottom:16px;font-weight:300}
+.load-list{margin-bottom:16px;display:flex;flex-direction:column;gap:6px}
+.load-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text-muted);line-height:1.6}
+.load-arrow{color:var(--teal);flex-shrink:0;font-family:'DM Mono',monospace;font-size:11px;margin-top:2px}
+
+/* ── PROMPT BOX ─────────────────────────────────────────── */
+.prompt-box{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:4px;overflow:hidden;
+}
+.prompt-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;border-bottom:1px solid var(--border);background:var(--surface);
+}
+.prompt-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
+.copy-btn{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--accent-dim);border:1px solid var(--accent-bdr);color:var(--accent);
+  padding:3px 9px;cursor:pointer;border-radius:3px;transition:all .15s;
+}
+.copy-btn:hover{background:rgba(91,143,255,0.14);border-color:var(--accent)}
+.copy-btn.copied{color:var(--teal);border-color:var(--teal-bdr);background:var(--teal-dim)}
+.prompt-text{padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);line-height:1.75;white-space:pre-wrap}
+
+/* ── RISK GRID ──────────────────────────────────────────── */
+.risk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px}
+.risk-card{
+  border:1px solid var(--border2);background:var(--surface);border-radius:4px;
+  padding:20px;cursor:pointer;position:relative;overflow:hidden;transition:all .18s;
+}
+.risk-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.risk-card.r-a::before{background:var(--danger)}
+.risk-card.r-b::before{background:var(--gold)}
+.risk-card.r-c::before{background:var(--teal)}
+.risk-card.r-d::before{background:var(--accent)}
+.risk-card:hover{transform:translateY(-2px);border-color:var(--accent-bdr);box-shadow:0 6px 24px rgba(0,0,0,.12)}
+.risk-icon{font-size:16px;margin-bottom:10px}
+.risk-title{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;margin-bottom:6px}
+.risk-card.r-a .risk-title{color:var(--danger)}
+.risk-card.r-b .risk-title{color:var(--gold)}
+.risk-card.r-c .risk-title{color:var(--teal)}
+.risk-card.r-d .risk-title{color:var(--accent)}
+.risk-text{font-size:12px;color:var(--text-muted);line-height:1.7;font-weight:300}
+.risk-cta{margin-top:10px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);transition:color .15s}
+.risk-card:hover .risk-cta{color:var(--accent)}
+
+/* ── CHECKLIST ──────────────────────────────────────────── */
+.checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:20px}
+.check-item{
+  display:flex;align-items:flex-start;gap:12px;padding:14px 16px;
+  border:1px solid var(--border2);background:var(--surface);border-radius:4px;
+  cursor:pointer;transition:all .15s;
+}
+.check-item:hover{border-color:var(--accent-bdr);background:var(--surface2)}
+.check-item.done{border-color:var(--teal-bdr);background:var(--teal-dim)}
+.check-box{
+  width:18px;height:18px;flex-shrink:0;margin-top:1px;
+  border:1px solid var(--border2);background:var(--surface2);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:transparent;transition:all .15s;
+}
+.check-item.done .check-box{background:var(--teal);border-color:var(--teal);color:var(--bg)}
+.check-title{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;transition:color .15s}
+.check-item.done .check-title{color:var(--teal)}
+.check-desc{font-size:12px;color:var(--text-muted);line-height:1.6;font-weight:300}
+.progress-wrap{
+  border:1px solid var(--border2);background:var(--surface);border-radius:4px;
+  padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:16px;
+}
+.progress-track{flex:1;height:2px;background:var(--border2);border-radius:1px;overflow:hidden}
+.progress-fill{height:100%;background:var(--teal);border-radius:1px;transition:width .35s ease}
+.progress-txt{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);flex-shrink:0;letter-spacing:.06em}
+.progress-ok{font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);display:none;letter-spacing:.08em}
+.key-q{border:1px solid var(--accent-bdr);background:var(--accent-dim);padding:16px 20px;margin-bottom:16px;border-radius:4px;border-left:2px solid var(--accent)}
+.key-q-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);opacity:.7;margin-bottom:8px}
+.key-q-text{font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:var(--text);line-height:1.55}
+
+/* ── RESET REMINDER ─────────────────────────────────────── */
+.reset-reminder{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  border:1px solid var(--gold-bdr);background:var(--gold-dim);
+  padding:10px 16px;margin-bottom:14px;border-radius:4px;
+}
+.rr-text{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
+.rr-text span{color:var(--gold)}
+.btn-reset-prominent{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  background:var(--gold-dim);border:1px solid var(--gold-bdr);color:var(--gold);
+  padding:5px 12px;cursor:pointer;border-radius:3px;transition:all .15s;flex-shrink:0;
+}
+.btn-reset-prominent:hover{background:rgba(232,197,71,0.14);border-color:var(--gold)}
+
+/* ── PROMPT LIBRARY INTRO ───────────────────────────────── */
+.prompt-library-intro{
+  border:1px solid var(--border2);background:var(--surface);
+  padding:14px 18px;margin-bottom:20px;border-radius:4px;
+  display:flex;align-items:flex-start;gap:14px;
+}
+.pli-sequence{display:flex;gap:5px;flex-shrink:0;align-items:center;margin-top:2px}
+.pli-step{
+  width:20px;height:20px;border-radius:50%;
+  border:1px solid var(--border2);background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:8px;color:var(--text-dim);
+}
+.pli-arrow{color:var(--text-dim);font-size:9px}
+.pli-text{font-size:12px;color:var(--text-muted);line-height:1.7;font-weight:300}
+.pli-text strong{color:var(--text);font-weight:500}
+
+/* ── PROMPT CARDS ───────────────────────────────────────── */
+.prompt-cards{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.p-card{border:1px solid var(--border2);background:var(--surface);border-radius:4px;overflow:hidden;transition:border-color .18s}
+.p-card:hover{border-color:var(--accent-bdr)}
+.p-card-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.p-when{font-size:11px;color:var(--text-muted);font-style:italic;padding:8px 16px 0;font-weight:300}
+.p-card-title{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text)}
+.p-card-body{padding:0 16px 14px}
+.p-tag{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:3px;border:1px solid;
+}
+.p-tag.setup {color:var(--accent);border-color:var(--accent-bdr);background:var(--accent-dim)}
+.p-tag.eval  {color:var(--teal); border-color:var(--teal-bdr); background:var(--teal-dim)}
+.p-tag.probe {color:var(--gold); border-color:var(--gold-bdr); background:var(--gold-dim)}
+.p-tag.sanity{color:var(--danger);border-color:rgba(240,122,74,.25);background:rgba(240,122,74,.06)}
+.p-tag.compare{color:var(--green);border-color:var(--green-bdr);background:var(--green-dim)}
+
+/* ── RULES ──────────────────────────────────────────────── */
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.rules-col{border:1px solid var(--border2);background:var(--surface);border-radius:4px;overflow:hidden}
+.rules-col-head{padding:11px 18px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:500}
+.rules-col.do .rules-col-head{color:var(--teal);background:var(--teal-dim);border-bottom:1px solid var(--teal-bdr)}
+.rules-col.dont .rules-col-head{color:var(--danger);background:rgba(240,122,74,.06);border-bottom:1px solid rgba(240,122,74,.2)}
+.rules-list{padding:14px 18px;display:flex;flex-direction:column;gap:9px}
+.rule-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-muted);line-height:1.55;font-weight:300}
+.rule-sym{flex-shrink:0;font-family:'DM Mono',monospace;font-size:10px;margin-top:2px}
+.rules-col.do .rule-sym{color:var(--teal)}
+.rules-col.dont .rule-sym{color:var(--danger)}
+
+/* ── MODAL ──────────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:40px;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--surface);border:1px solid var(--border2);border-radius:6px;
+  width:100%;max-width:540px;max-height:88vh;overflow-y:auto;
+  transform:translateY(16px);transition:transform .25s;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 24px;border-bottom:1px solid var(--border2);
+}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.modal-x{
+  width:28px;height:28px;border:1px solid var(--border2);border-radius:4px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);
+  background:var(--surface2);transition:all .15s;
+}
+.modal-x:hover{color:var(--accent);border-color:var(--accent-bdr)}
+.modal-body{padding:22px 24px}
+.modal-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
+.modal-text{font-size:13px;color:var(--text-muted);line-height:1.8;margin-bottom:20px;font-weight:300}
+
+/* ── ALERT ──────────────────────────────────────────────── */
+.alert{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border:1px solid;border-radius:4px;margin-bottom:16px;font-size:12px;line-height:1.7}
+.alert.warn{border-color:var(--gold-bdr);background:var(--gold-dim);color:var(--text-muted)}
+.alert.warn .a-icon{color:var(--gold)}
+.alert.warn strong{color:var(--gold);font-weight:500}
+.alert.danger{border-color:rgba(240,122,74,.25);background:rgba(240,122,74,.06);color:var(--text-muted)}
+.alert.danger .a-icon{color:var(--danger)}
+.alert.danger strong{color:var(--danger);font-weight:500}
+.a-icon{flex-shrink:0;font-size:13px;margin-top:1px}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">TI</div>
+      <div class="logo-text">
+        <strong>Talent Intelligence</strong>
+        <span>Training Module</span>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <div class="topbar-title">AI Role Matching <em style="font-family:'Playfair Display',serif;color:var(--accent)">Evaluator</em></div>
+      <div class="topbar-rule"></div>
+      <div class="topbar-sub">Learning &amp; Development</div>
+    </div>
+    <div class="topbar-right">
+      <div class="status-pip"></div>
+      <span class="status-label">Active</span>
+      <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
+        <span class="theme-toggle-icon">☽</span>
+        <span id="theme-label">Light Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="nav-section">Navigation</div>
+    <div class="nav-item active" id="nav-overview" onclick="go('overview',this)">
+      <span class="nav-num">01</span><span class="nav-dash"></span>
+      <div><div>Overview</div><div class="nav-desc">What this is &amp; how it works</div></div>
+      <span class="nav-start-badge" id="start-badge">Start here</span>
+    </div>
+    <div class="nav-item" id="nav-workflow" onclick="go('workflow',this)">
+      <span class="nav-num">02</span><span class="nav-dash"></span>
+      <div><div>The Workflow</div><div class="nav-desc">3-step evaluation process</div></div>
+    </div>
+    <div class="nav-item" id="nav-risks" onclick="go('risks',this)">
+      <span class="nav-num">03</span><span class="nav-dash"></span>
+      <div><div>Failure Modes</div><div class="nav-desc">Where AI gets it wrong</div></div>
+    </div>
+    <div class="nav-item" id="nav-factcheck" onclick="go('factcheck',this)">
+      <span class="nav-num">04</span><span class="nav-dash"></span>
+      <div><div>Fact-Check</div><div class="nav-desc">Before advancing any candidate</div></div>
+    </div>
+    <div class="nav-item" id="nav-prompts" onclick="go('prompts',this)">
+      <span class="nav-num">05</span><span class="nav-dash"></span>
+      <div><div>Prompt Library</div><div class="nav-desc">Copyable templates by stage</div></div>
+    </div>
+    <div class="nav-item" id="nav-rules" onclick="go('rules',this)">
+      <span class="nav-num">06</span><span class="nav-dash"></span>
+      <div><div>Rules of the Road</div><div class="nav-desc">Non-negotiables</div></div>
+    </div>
+    <div class="sidebar-footer">L&amp;D Series<br>Talent Intelligence<br>AI-Forward Sourcing</div>
+  </aside>
+
+  <main class="main">
+
+    <!-- 01 OVERVIEW -->
+    <div class="section active" id="s-overview">
+      <div class="section-eyebrow"><span class="eyebrow-dot"></span>Module 01<span class="eyebrow-dot"></span></div>
+      <h1 class="section-title">AI as a <em>Role Matching</em> Evaluator</h1>
+      <p class="section-sub">How to use AI to sharpen your sourcing signal at volume — without letting it replace your judgment.</p>
+
+      <div class="welcome-banner">
+        <div class="wb-label">First time here?</div>
+        <div class="wb-text">This module teaches you how to use Claude as a structured thinking partner when screening candidates. Work through the six modules in order the first time — each one builds on the last. After that, use it as a reference whenever you need it.</div>
+        <button class="wb-cta" onclick="go('workflow', document.getElementById('nav-workflow'))">
+          Start with Module 02 — The Workflow <span class="wb-cta-arrow">→</span>
+        </button>
+      </div>
+
+      <div class="three-col">
+        <div class="mini-card"><div class="mini-card-num">01</div><div class="mini-card-label">Step One</div><div class="mini-card-title">Load the Role Brief</div><div class="mini-card-text">JD + intake notes + HM nuance. One fresh chat per role, no exceptions.</div></div>
+        <div class="mini-card"><div class="mini-card-num">02</div><div class="mini-card-label">Step Two</div><div class="mini-card-title">Feed Candidates</div><div class="mini-card-text">Paste profiles, get structured breakdowns on strengths, gaps, and unknowns — fast.</div></div>
+        <div class="mini-card"><div class="mini-card-num">03</div><div class="mini-card-label">Step Three</div><div class="mini-card-title">Treat It as a Hypothesis</div><div class="mini-card-text">The AI read is your starting point — not your verdict. Verify before you advance.</div></div>
+      </div>
+
+      <div class="stat-strip">
+        <div class="stat-item"><div class="stat-lbl">Workflow Steps</div><div class="stat-n">3</div><div class="stat-desc">load → match → validate</div></div>
+        <div class="stat-item"><div class="stat-lbl">Failure Modes</div><div class="stat-n">4</div><div class="stat-desc">where AI gets it wrong</div></div>
+        <div class="stat-item"><div class="stat-lbl">Fact-Checks</div><div class="stat-n">6</div><div class="stat-desc">before you advance anyone</div></div>
+        <div class="stat-item"><div class="stat-lbl">Prompt Templates</div><div class="stat-n">5</div><div class="stat-desc">copyable, ready to use</div></div>
+      </div>
+
+      <div class="concept-block">
+        <div class="concept-inner">
+          <div class="concept-tag">Core Concept</div>
+          <div class="concept-heading">Your judgment. AI's pattern-matching speed.</div>
+          <div class="concept-text">You load a chat with your JD, intake notes, and role context — then cross-reference candidate profiles against those criteria to get a structured fit estimate. The AI handles criteria-matching at volume. You bring everything that comes after: market context, the read on the person, the HM relationship, and the advocacy.<br><br>Think of it as a spell-checker for sourcing. It helps you move faster and think more systematically — but it doesn't make you a good recruiter.</div>
+          <div class="pull-quote">"Amplify judgment, not replace it. The craft still matters — AI just gives you more room to master it."</div>
+        </div>
+      </div>
+
+      <div class="alert warn"><span class="a-icon">⚡</span><div><strong>Critical:</strong> Always open a fresh chat for each new role. Reusing a chat across roles lets prior context bleed into your evaluation and corrupts your signal.</div></div>
+    </div>
+
+    <!-- 02 WORKFLOW -->
+    <div class="section" id="s-workflow">
+      <div class="section-eyebrow"><span class="eyebrow-dot"></span>Module 02<span class="eyebrow-dot"></span></div>
+      <h1 class="section-title">The <em>3-Step</em> Workflow</h1>
+      <p class="section-sub">Click each step to expand the full guidance and a copyable prompt. Run these in sequence for every new search.</p>
+      <div class="steps">
+        <div class="step-card open" id="st1" onclick="toggleStep('st1')">
+          <div class="step-head"><div class="step-badge">01</div><div><div class="step-head-title">Build Your Role Brief</div><div class="step-head-sub">Load all context before evaluating a single candidate</div></div><div class="step-chev">▾</div></div>
+          <div class="step-body">
+            <p class="step-body-text">Open a fresh chat for each new search. The quality of this setup directly determines the quality of every evaluation that follows.</p>
+            <div class="load-list">
+              <div class="load-item"><span class="load-arrow">→</span>The full job description</div>
+              <div class="load-item"><span class="load-arrow">→</span>Key intake notes — especially anything from your HM conversation</div>
+              <div class="load-item"><span class="load-arrow">→</span>Must-haves vs. nice-to-haves, explicitly separated</div>
+              <div class="load-item"><span class="load-arrow">→</span>Why the role is open and what hasn't worked before</div>
+              <div class="load-item"><span class="load-arrow">→</span>Team culture, comp constraints, any HM-specific signals</div>
+            </div>
+            <div class="prompt-box"><div class="prompt-bar"><div class="prompt-lbl">Setup Prompt</div><button class="copy-btn" onclick="cp(event,'p1')">Copy</button></div><div class="prompt-text" id="p1">"You're helping me evaluate candidates for [Role Title]. I'll share the JD and intake notes now. When I send profiles, assess each one against these criteria — flag top strengths, notable gaps, and anything you can't determine from what I've shared."</div></div>
+          </div>
+        </div>
+        <div class="step-card" id="st2" onclick="toggleStep('st2')">
+          <div class="step-head"><div class="step-badge">02</div><div><div class="step-head-title">Cross-Reference Candidates</div><div class="step-head-sub">Paste the profile, get a structured fit breakdown</div></div><div class="step-chev">▾</div></div>
+          <div class="step-body">
+            <p class="step-body-text">Paste in a candidate's LinkedIn summary, resume text, or your own sourcer-written profile. The AI evaluates it against the loaded criteria and returns a structured read on strengths, gaps, and unknowns — fast.</p>
+            <div class="prompt-box"><div class="prompt-bar"><div class="prompt-lbl">Evaluation Prompt</div><button class="copy-btn" onclick="cp(event,'p2')">Copy</button></div><div class="prompt-text" id="p2">"Here's [Candidate Name]'s background: [paste profile]. Using the criteria we discussed, how well do they match? List strengths, gaps, and anything you can't determine from what I've shared."</div></div>
+          </div>
+        </div>
+        <div class="step-card" id="st3" onclick="toggleStep('st3')">
+          <div class="step-head"><div class="step-badge">03</div><div><div class="step-head-title">Use Output as a Hypothesis</div><div class="step-head-sub">Apply your judgment before advancing any candidate</div></div><div class="step-chev">▾</div></div>
+          <div class="step-body">
+            <p class="step-body-text">The AI's assessment is a starting point — not the conclusion. Use it to move faster through volume, then apply your own judgment. The AI doesn't know your HM the way you do.</p>
+            <div class="key-q" style="margin-bottom:16px;"><div class="key-q-lbl">Always Ask First</div><div class="key-q-text">"Can I point to specific evidence in this candidate's profile that supports what the AI flagged?"</div></div>
+            <div class="prompt-box"><div class="prompt-bar"><div class="prompt-lbl">Sanity Check</div><button class="copy-btn" onclick="cp(event,'p3')">Copy</button></div><div class="prompt-text" id="p3">"Before I advance this candidate to the HM — what's the strongest case against presenting them? What should I be prepared to defend?"</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 RISKS -->
+    <div class="section" id="s-risks">
+      <div class="section-eyebrow"><span class="eyebrow-dot"></span>Module 03<span class="eyebrow-dot"></span></div>
+      <h1 class="section-title"><em>Failure Modes</em> — Where AI Gets It Wrong</h1>
+      <p class="section-sub">The AI can be wrong in ways that look confident. Know these four failure modes before trusting any assessment. Click each for a deeper look.</p>
+      <div class="risk-grid">
+        <div class="risk-card r-a" onclick="openModal('fp')"><div class="risk-icon">◆</div><div class="risk-title">False Positives</div><div class="risk-text">Strong keyword overlap — but experience is surface-level or in the wrong context. AI flags a match your eye would dismiss.</div><div class="risk-cta">→ expand</div></div>
+        <div class="risk-card r-b" onclick="openModal('fn')"><div class="risk-icon">◆</div><div class="risk-title">False Negatives</div><div class="risk-text">Strong candidate underscored because their profile doesn't mirror JD language. Transferable value exists — AI misses it.</div><div class="risk-cta">→ expand</div></div>
+        <div class="risk-card r-c" onclick="openModal('hall')"><div class="risk-icon">◆</div><div class="risk-title">Hallucinated Details</div><div class="risk-text">Partial profile input — AI fills gaps with plausible-sounding but fabricated details. Always verify against the source.</div><div class="risk-cta">→ expand</div></div>
+        <div class="risk-card r-d" onclick="openModal('soft')"><div class="risk-icon">◆</div><div class="risk-title">Missing the Soft Stuff</div><div class="risk-text">Culture fit, trajectory, motivation. AI can prompt you to think about these — it cannot assess them. That's your work.</div><div class="risk-cta">→ expand</div></div>
+      </div>
+      <div class="concept-block"><div class="concept-inner"><div class="concept-tag">Pattern Recognition</div><div class="concept-heading">Confidence ≠ Accuracy</div><div class="concept-text">The most dangerous outputs are the ones that look thorough. A well-structured match assessment can still be built on a misread title, an inferred skill, or a missed nuance about what your HM actually wants. The output looking good is not the same as it being right.</div></div></div>
+    </div>
+
+    <!-- 04 FACT-CHECK -->
+    <div class="section" id="s-factcheck">
+      <div class="section-eyebrow"><span class="eyebrow-dot"></span>Module 04<span class="eyebrow-dot"></span></div>
+      <h1 class="section-title">Fact-Check <em>Checklist</em></h1>
+      <p class="section-sub">Run through this after every AI assessment. Click each item to mark it complete.</p>
+
+      <div class="reset-reminder">
+        <div class="rr-text"><span>↺ &nbsp;Reset between every candidate.</span> &nbsp;Don't carry confidence forward from a prior profile.</div>
+        <button class="btn-reset-prominent" onclick="resetChecklist()">↺ &nbsp;Reset</button>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-txt" id="prog-txt">0 / 6 verified</div>
+        <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="progress-ok" id="prog-ok">✦ Clear to Advance</div>
+      </div>
+      <div class="key-q"><div class="key-q-lbl">Start Here Every Time</div><div class="key-q-text">"Can I point to specific evidence in this profile that supports what the AI flagged?"</div></div>
+      <div class="checklist">
+        <div class="check-item" onclick="chk(this)"><div class="check-box">✓</div><div><div class="check-title">Verify titles — scope, not just label</div><div class="check-desc">Confirm scope, team size, and actual decisions made. A "Manager" at one company is an IC at another.</div></div></div>
+        <div class="check-item" onclick="chk(this)"><div class="check-box">✓</div><div><div class="check-title">Trace the timeline — progression, not tenure</div><div class="check-desc">5 years at one company can span two very different functions. Look at trajectory, not just how long they stayed.</div></div></div>
+        <div class="check-item" onclick="chk(this)"><div class="check-box">✓</div><div><div class="check-title">Find evidence for every claimed strength</div><div class="check-desc">Point to where in the profile the skill is evidenced — project, scope, output. If you can't find it, it's unverified.</div></div></div>
+        <div class="check-item" onclick="chk(this)"><div class="check-box">✓</div><div><div class="check-title">Apply your HM knowledge before scoring</div><div class="check-desc">A "weak" AI match may be exactly what your HM wants. The AI doesn't know their quirks or past decisions.</div></div></div>
+        <div class="check-item" onclick="chk(this)"><div class="check-box">✓</div><div><div class="check-title">Return to the original document</div><div class="check-desc">Always reference the source resume or LinkedIn — not just what you pasted. You may have cut something that changes the read.</div></div></div>
+        <div class="check-item" onclick="chk(this)"><div class="check-box">✓</div><div><div class="check-title">Trust your pattern recognition</div><div class="check-desc">You have market context the AI doesn't. If a "strong" match feels off — dig before you advance.</div></div></div>
+      </div>
+      <div class="alert danger"><span class="a-icon">⚠</span><div><strong>Each evaluation is independent.</strong> A cleared checklist for one candidate means nothing for the next. Reset before every new profile.</div></div>
+    </div>
+
+    <!-- 05 PROMPTS -->
+    <div class="section" id="s-prompts">
+      <div class="section-eyebrow"><span class="eyebrow-dot"></span>Module 05<span class="eyebrow-dot"></span></div>
+      <h1 class="section-title"><em>Prompt</em> Library</h1>
+      <p class="section-sub">Five ready-to-use prompts for every stage of the evaluation. Copy and adapt — never paste and trust without fact-checking.</p>
+
+      <div class="prompt-library-intro">
+        <div class="pli-sequence">
+          <div class="pli-step">1</div>
+          <div class="pli-arrow">→</div>
+          <div class="pli-step">2</div>
+          <div class="pli-arrow">→</div>
+          <div class="pli-step">3+</div>
+        </div>
+        <div class="pli-text">Use <strong>Setup</strong> once at the start of each new search, then <strong>Eval</strong> for every candidate you run through. Use <strong>Probe</strong>, <strong>Sanity</strong>, and <strong>Compare</strong> as needed — they're for when you need to go deeper on a specific concern or decision.</div>
+      </div>
+
+      <div class="prompt-cards">
+        <div class="p-card">
+          <div class="p-card-head"><span class="p-tag setup">Setup</span><span class="p-card-title">Role Brief — Chat Initialization</span></div>
+          <div class="p-when">Use once at the very start of a new search, before you look at any profiles.</div>
+          <div class="p-card-body"><div class="prompt-box" style="margin-top:4px;"><div class="prompt-bar"><div class="prompt-lbl">paste into Claude first</div><button class="copy-btn" onclick="cp(event,'pl1')">Copy</button></div><div class="prompt-text" id="pl1">"You're helping me evaluate candidates for [Role Title]. I'll share the JD and intake notes now. When I send profiles, assess each one against these criteria — flag top strengths, notable gaps, and anything you can't determine from what I've shared."</div></div></div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-head"><span class="p-tag eval">Eval</span><span class="p-card-title">Candidate Profile Assessment</span></div>
+          <div class="p-when">Use for every candidate — paste their LinkedIn, resume, or your own written profile summary.</div>
+          <div class="p-card-body"><div class="prompt-box" style="margin-top:4px;"><div class="prompt-bar"><div class="prompt-lbl">repeat per candidate</div><button class="copy-btn" onclick="cp(event,'pl2')">Copy</button></div><div class="prompt-text" id="pl2">"Here's [Candidate Name]'s background: [paste profile]. Using the criteria we discussed, how well do they match? List strengths, gaps, and anything you can't determine from what I've shared."</div></div></div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-head"><span class="p-tag probe">Probe</span><span class="p-card-title">Pressure-Testing a Flagged Gap</span></div>
+          <div class="p-when">Use when the AI flags a concern you want to validate — or that you suspect might not be a real disqualifier.</div>
+          <div class="p-card-body"><div class="prompt-box" style="margin-top:4px;"><div class="prompt-bar"><div class="prompt-lbl">use when AI surfaces a concern</div><button class="copy-btn" onclick="cp(event,'pl3')">Copy</button></div><div class="prompt-text" id="pl3">"You flagged [specific gap] as a concern. What interview question would help me validate whether this is a real disqualifier — or whether there's transferable experience I might be missing?"</div></div></div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-head"><span class="p-tag sanity">Sanity</span><span class="p-card-title">Pre-Advance Devil's Advocate</span></div>
+          <div class="p-when">Use before presenting any candidate to your hiring manager — forces you to pressure-test your own confidence.</div>
+          <div class="p-card-body"><div class="prompt-box" style="margin-top:4px;"><div class="prompt-bar"><div class="prompt-lbl">use before advancing to HM</div><button class="copy-btn" onclick="cp(event,'pl4')">Copy</button></div><div class="prompt-text" id="pl4">"Before I advance this candidate to the HM — what's the strongest case against presenting them? What should I be prepared to defend?"</div></div></div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-head"><span class="p-tag compare">Compare</span><span class="p-card-title">Shortlist Comparison</span></div>
+          <div class="p-when">Use when you've narrowed to 2–3 finalists and need to articulate the tradeoffs before a debrief.</div>
+          <div class="p-card-body"><div class="prompt-box" style="margin-top:4px;"><div class="prompt-bar"><div class="prompt-lbl">use when choosing between finalists</div><button class="copy-btn" onclick="cp(event,'pl5')">Copy</button></div><div class="prompt-text" id="pl5">"I have [N] candidates. Based on our criteria, compare them and explain the tradeoffs — don't just rank them. Where does each have the strongest fit, and where are the meaningful gaps?"</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06 RULES -->
+    <div class="section" id="s-rules">
+      <div class="section-eyebrow"><span class="eyebrow-dot"></span>Module 06<span class="eyebrow-dot"></span></div>
+      <h1 class="section-title">Rules of <em>the Road</em></h1>
+      <p class="section-sub">These aren't suggestions. They're the floor that keeps your signal clean and your candidates treated with the care they deserve.</p>
+      <div class="rules-grid">
+        <div class="rules-col do"><div class="rules-col-head">Do — Always</div><div class="rules-list">
+          <div class="rule-item"><span class="rule-sym">→</span>Open a fresh chat for each role — no exceptions</div>
+          <div class="rule-item"><span class="rule-sym">→</span>Load the full JD + intake notes before any candidate</div>
+          <div class="rule-item"><span class="rule-sym">→</span>Verify every AI assessment against the source document</div>
+          <div class="rule-item"><span class="rule-sym">→</span>Use AI output to sharpen your interview questions</div>
+          <div class="rule-item"><span class="rule-sym">→</span>Apply your HM knowledge before advancing anyone</div>
+          <div class="rule-item"><span class="rule-sym">→</span>Treat every match estimate as a hypothesis to test</div>
+        </div></div>
+        <div class="rules-col dont"><div class="rules-col-head">Don't — Never</div><div class="rules-list">
+          <div class="rule-item"><span class="rule-sym">✕</span>Advance a candidate based on AI match alone</div>
+          <div class="rule-item"><span class="rule-sym">✕</span>Assume the AI caught everything — it misses soft signals</div>
+          <div class="rule-item"><span class="rule-sym">✕</span>Paste partial profiles and trust the full assessment</div>
+          <div class="rule-item"><span class="rule-sym">✕</span>Reuse the same chat across multiple roles</div>
+          <div class="rule-item"><span class="rule-sym">✕</span>Skip fact-checking because output looks thorough</div>
+          <div class="rule-item"><span class="rule-sym">✕</span>Let an AI score override your pattern recognition</div>
+        </div></div>
+      </div>
+      <div class="concept-block"><div class="concept-inner"><div class="concept-tag">The Mental Model</div><div class="concept-heading">Scaffold. Not a Crutch.</div><div class="concept-text">AI accelerates the criteria-matching layer — the part that scales with volume. Your value is in everything that comes after: the conversation, the relationship, the read on the person, the advocacy you bring to the hiring team.</div><div class="pull-quote">"The sourcing role has evolved into a strategic talent intelligence function. AI gives us speed — we owe it precision in return."</div></div></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-x" onclick="document.getElementById('modal').classList.remove('open')">✕</div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// Track visited modules
+const visited = new Set(['overview']);
+
+function go(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+
+  // Mark visited
+  visited.add(id);
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('visited');
+
+  // Hide start badge once user navigates away from overview
+  if (id !== 'overview') {
+    const badge = document.getElementById('start-badge');
+    if (badge) badge.classList.add('hidden');
+  }
+}
+
+function toggleStep(id) {
+  const c = document.getElementById(id);
+  const open = c.classList.contains('open');
+  document.querySelectorAll('.step-card').forEach(s => s.classList.remove('open'));
+  if (!open) c.classList.add('open');
+}
+
+function cp(e, id) {
+  e.stopPropagation();
+  const text = document.getElementById(id).textContent.trim();
+  navigator.clipboard.writeText(text).catch(() => {
+    const t = document.createElement('textarea');
+    t.value = text; t.style.position = 'fixed'; t.style.opacity = '0';
+    document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+  });
+  const btn = e.target;
+  btn.textContent = '✦ Copied'; btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+}
+
+function chk(el) {
+  el.classList.toggle('done');
+  const done  = document.querySelectorAll('.check-item.done').length;
+  const total = document.querySelectorAll('.check-item').length;
+  document.getElementById('prog-fill').style.width = (done / total * 100) + '%';
+  document.getElementById('prog-txt').textContent = `${done} / ${total} verified`;
+  document.getElementById('prog-ok').style.display = done === total ? 'block' : 'none';
+}
+
+function resetChecklist() {
+  document.querySelectorAll('.check-item').forEach(el => el.classList.remove('done'));
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('prog-txt').textContent = '0 / 6 verified';
+  document.getElementById('prog-ok').style.display = 'none';
+}
+
+const RISKS = {
+  fp: { title: 'False Positives', content: [
+    { l: 'What it is', t: 'The AI flags a strong match based on keyword overlap — but the experience behind those keywords is surface-level, out of context, or in the wrong scope.' },
+    { l: 'Real example', t: 'A candidate with "managed budgets" gets scored highly for a Finance Leadership role. In context, they were a recruiting coordinator tracking agency spend — not a finance owner managing P&L.' },
+    { l: 'How to catch it', t: 'For every "strength" the AI surfaces, ask: where specifically in this profile does that play out? If you can\'t point to a concrete instance, treat it as unverified.' },
+    { l: 'Prompt to use', t: '"For each strength you listed, point to the specific part of the profile that supports it. If you can\'t find direct evidence, flag it as an inference."', p: true }
+  ]},
+  fn: { title: 'False Negatives', content: [
+    { l: 'What it is', t: 'A genuinely strong candidate gets underscored because their profile doesn\'t mirror the language in your JD. AI pattern-matches against vocabulary — your eye reads between the lines.' },
+    { l: 'Real example', t: 'A candidate who "built and scaled the data platform from scratch" may not trigger on a JD asking for "distributed systems experience" — even though the experience is directly relevant.' },
+    { l: 'How to catch it', t: 'Don\'t let AI dismissals be final. If a candidate caught your attention for a reason the AI downscored, investigate it. Use AI to probe the gap, not to close the case.' },
+    { l: 'Prompt to use', t: '"This candidate was flagged as a weak match, but I think there may be transferable experience the criteria don\'t capture. Can you reassess against the underlying business need rather than the literal JD language?"', p: true }
+  ]},
+  hall: { title: 'Hallucinated Details', content: [
+    { l: 'What it is', t: 'When you paste a partial or summarized profile, the AI fills in missing context with plausible-sounding inferences. These sound confident and specific — but they\'re fabricated.' },
+    { l: 'Real example', t: 'You paste a condensed LinkedIn summary: "led infrastructure projects at Google." The AI assumes team size, scope, and tech stack — none of which were in the profile.' },
+    { l: 'How to catch it', t: 'Always paste the complete profile. After receiving an assessment, ask: "What did you infer versus what was explicitly stated?" Anything inferred needs manual verification.' },
+    { l: 'Prompt to use', t: '"Before I use this assessment — what did you infer versus what was explicitly stated in the profile? Flag any areas where you made assumptions."', p: true }
+  ]},
+  soft: { title: 'Missing the Soft Stuff', content: [
+    { l: 'What it is', t: 'AI can evaluate hard criteria reasonably well. It cannot assess culture fit, career trajectory logic, motivation signals, stability patterns, or working-style compatibility with your HM.' },
+    { l: 'Real example', t: 'A candidate checks every technical box. But their progression — startup to startup, 18 months each — is a pattern your HM has explicitly passed on before. The AI has no way to know that history.' },
+    { l: 'How to catch it', t: 'Before advancing anyone, explicitly ask: what does this trajectory suggest about their motivations? Would this fit how this team operates? Does this match my HM\'s known preferences?' },
+    { l: 'What AI can help with', t: 'You can use prompts to surface questions to explore in a screen — but the answers require a human conversation. That\'s where your value lives.' }
+  ]}
+};
+
+function openModal(type) {
+  const d = RISKS[type];
+  document.getElementById('modal-title').textContent = d.title;
+  document.getElementById('modal-body').innerHTML = d.content.map(s => `
+    <div style="margin-bottom:22px;">
+      <div class="modal-lbl">${s.l}</div>
+      ${s.p
+        ? `<div class="prompt-box"><div class="prompt-bar"><div class="prompt-lbl">Suggested Prompt</div></div><div class="prompt-text">${s.t}</div></div>`
+        : `<div class="modal-text">${s.t}</div>`}
+    </div>`).join('');
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal'))
+    document.getElementById('modal').classList.remove('open');
+}
+
+// Mark overview as visited on load
+document.getElementById('nav-overview').classList.add('visited');
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-label').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+  document.getElementById('theme-btn').querySelector('.theme-toggle-icon').textContent = isDark ? '☀' : '☽';
+  localStorage.setItem('ti-theme', isDark ? 'light' : 'dark');
+}
+
+// Restore saved theme preference
+(function() {
+  const saved = localStorage.getItem('ti-theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    const label = document.getElementById('theme-label');
+    const icon  = document.querySelector('.theme-toggle-icon');
+    if (label) label.textContent = saved === 'light' ? 'Dark Mode' : 'Light Mode';
+    if (icon)  icon.textContent  = saved === 'light' ? '☀' : '☽';
+  }
+})();
+
+</script>
+
+</html>

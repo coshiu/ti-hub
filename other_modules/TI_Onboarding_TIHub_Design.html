@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Talent Intelligence — Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK TOKENS (default) ─────────────────────────────── */
+:root {
+  --bg:         #0a0b0f;
+  --surface:    #111318;
+  --surface2:   #181c24;
+  --surface3:   #1e2530;
+  --border:     #1e2330;
+  --border2:    #252d3d;
+  --text:       #e8eaf0;
+  --text-muted: #6b7491;
+  --text-dim:   #3d4560;
+  --accent:     #5b8fff;
+  --accent-dim: rgba(91,143,255,0.08);
+  --accent-bdr: rgba(91,143,255,0.22);
+  --teal:       #47c5a8;
+  --teal-dim:   rgba(71,197,168,0.07);
+  --teal-bdr:   rgba(71,197,168,0.2);
+  --gold:       #e8c547;
+  --gold-dim:   rgba(232,197,71,0.07);
+  --gold-bdr:   rgba(232,197,71,0.18);
+  --green:      #4ade80;
+  --green-dim:  rgba(74,222,128,0.08);
+  --green-bdr:  rgba(74,222,128,0.22);
+  --danger:     #f07a4a;
+  --topbar-bg:  rgba(10,11,15,0.95);
+  --noise-opacity: 0.022;
+  --input-bg:   rgba(255,255,255,0.02);
+  --shadow:     0 2px 16px rgba(0,0,0,0.4);
+}
+
+/* ── LIGHT TOKENS ──────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:         #f5f4f0;
+  --surface:    #ffffff;
+  --surface2:   #f0ede8;
+  --surface3:   #e8e4de;
+  --border:     #ddd9d2;
+  --border2:    #ccc8c0;
+  --text:       #1a1a1e;
+  --text-muted: #6b6860;
+  --text-dim:   #aaa59e;
+  --accent:     #2a5fd4;
+  --accent-dim: rgba(42,95,212,0.07);
+  --accent-bdr: rgba(42,95,212,0.22);
+  --teal:       #1a9e85;
+  --teal-dim:   rgba(26,158,133,0.07);
+  --teal-bdr:   rgba(26,158,133,0.22);
+  --gold:       #b08a00;
+  --gold-dim:   rgba(176,138,0,0.08);
+  --gold-bdr:   rgba(176,138,0,0.22);
+  --green:      #1a8c4e;
+  --green-dim:  rgba(26,140,78,0.08);
+  --green-bdr:  rgba(26,140,78,0.22);
+  --danger:     #c44b1a;
+  --topbar-bg:  rgba(255,255,255,0.96);
+  --noise-opacity: 0;
+  --input-bg:   var(--surface);
+  --shadow:     0 2px 12px rgba(0,0,0,0.08);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* Noise grain overlay (dark mode only) */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: var(--noise-opacity);
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.25s;
+}
+
+/* ── TOPBAR ─────────────────────────────────────────────── */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--topbar-bg);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; gap: 12px;
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.topbar-brand { display: flex; align-items: center; gap: 12px; }
+.topbar-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+.topbar-sep { width: 1px; height: 14px; background: var(--border2); }
+.topbar-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+/* ── BUTTONS (design system) ─────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 13px; border-radius: 4px;
+  font-size: 11px; font-weight: 500;
+  font-family: 'DM Mono', monospace;
+  cursor: pointer; border: 1px solid var(--accent-bdr);
+  background: var(--accent-dim); color: var(--accent);
+  transition: all .15s; letter-spacing: .04em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.btn:hover { background: rgba(91,143,255,0.14); border-color: var(--accent); }
+[data-theme="light"] .btn:hover { background: rgba(42,95,212,0.13); }
+
+.btn.teal { border-color: var(--teal-bdr); background: var(--teal-dim); color: var(--teal); }
+.btn.teal:hover { background: rgba(71,197,168,0.14); border-color: var(--teal); }
+[data-theme="light"] .btn.teal:hover { background: rgba(26,158,133,0.14); }
+
+.btn.gold { border-color: var(--gold-bdr); background: var(--gold-dim); color: var(--gold); }
+.btn.gold:hover { background: rgba(232,197,71,0.14); border-color: var(--gold); }
+[data-theme="light"] .btn.gold:hover { background: rgba(176,138,0,0.13); }
+
+.btn.ghost {
+  border-color: var(--border2); background: transparent; color: var(--text-muted);
+}
+.btn.ghost:hover { border-color: var(--text-muted); color: var(--text); background: var(--surface2); }
+
+/* Theme toggle */
+.theme-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px; border-radius: 4px;
+  font-size: 11px; font-weight: 500;
+  font-family: 'DM Mono', monospace; letter-spacing: .04em; text-transform: uppercase;
+  cursor: pointer; border: 1px solid var(--border2);
+  background: transparent; color: var(--text-muted);
+  transition: all .2s;
+}
+.theme-toggle:hover { border-color: var(--accent-bdr); color: var(--accent); }
+
+/* ── HERO ────────────────────────────────────────────────── */
+.hero {
+  padding: 48px 48px 36px;
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -80px; left: -80px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--accent-dim) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--text-muted);
+}
+.eyebrow-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); opacity: .6; }
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px; font-weight: 700; line-height: 1.08;
+  letter-spacing: -.02em; color: var(--text); margin-bottom: 22px;
+}
+.hero h1 em { color: var(--accent); font-style: italic; }
+
+/* Info grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1px; background: var(--border2);
+  border: 1px solid var(--border2); border-radius: 4px; overflow: hidden;
+  max-width: 900px;
+}
+.info-cell {
+  background: var(--surface2);
+  padding: 13px 16px;
+  transition: background 0.2s;
+}
+.info-cell:hover { background: var(--surface3); }
+.info-cell label {
+  display: block;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 5px;
+}
+.info-cell input {
+  background: transparent; border: none;
+  border-bottom: 1px solid transparent;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300;
+  width: 100%; outline: none;
+  padding-bottom: 2px; transition: border-color 0.2s;
+}
+.info-cell input::placeholder { color: var(--text-dim); font-style: italic; }
+.info-cell input:focus { border-bottom-color: var(--accent-bdr); }
+
+/* ── MAIN ────────────────────────────────────────────────── */
+main { padding: 36px 48px 80px; position: relative; z-index: 1; }
+
+/* ── SAVE INSTRUCTIONS (details/summary) ──────────────────── */
+.save-instructions {
+  background: var(--surface);
+  border: 1px solid var(--gold-bdr);
+  border-radius: 4px;
+  margin-bottom: 28px;
+  overflow: hidden;
+  transition: background 0.2s;
+}
+.save-inst-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px; cursor: pointer; user-select: none;
+  list-style: none; transition: background 0.15s;
+}
+.save-inst-header::-webkit-details-marker { display: none; }
+.save-inst-header::marker { display: none; }
+.save-inst-header:hover { background: var(--gold-dim); }
+.save-inst-title {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--gold);
+}
+.save-inst-chevron { transition: transform 0.2s ease; flex-shrink: 0; }
+details[open] .save-inst-chevron { transform: rotate(180deg); }
+.save-inst-body { border-top: 1px solid var(--border); padding: 20px 18px; }
+.save-inst-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 12px; margin-bottom: 14px;
+}
+.save-inst-method {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 14px;
+}
+.save-inst-method-label {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 10px; line-height: 1.4;
+}
+.save-inst-badge {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 3px; border: 1px solid; white-space: nowrap; flex-shrink: 0;
+}
+.save-inst-steps { padding-left: 15px; margin: 0; }
+.save-inst-steps li { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 5px; font-weight: 300; }
+.save-inst-steps li strong { color: var(--text); font-weight: 500; }
+.save-inst-steps li em { font-size: 11px; color: var(--text-dim); }
+kbd {
+  display: inline-block; background: var(--surface2);
+  border: 1px solid var(--border2); border-bottom-width: 2px;
+  border-radius: 3px; padding: 1px 5px;
+  font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text);
+}
+.save-inst-tip {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: var(--gold-dim); border: 1px solid var(--gold-bdr);
+  border-radius: 4px; padding: 10px 13px;
+  font-size: 12px; color: var(--text-muted); line-height: 1.5; font-weight: 300;
+}
+.save-inst-tip strong { color: var(--text); font-weight: 500; }
+
+/* ── PROGRESS BAR ────────────────────────────────────────── */
+.progress-bar-wrap {
+  margin-bottom: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px; padding: 16px 20px;
+  display: flex; align-items: center; gap: 20px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.progress-label {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  text-transform: uppercase; letter-spacing: .14em; color: var(--text-muted);
+  white-space: nowrap;
+}
+.progress-bar-bg {
+  flex: 1; height: 3px; background: var(--surface3);
+  border-radius: 999px; overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%; background: var(--accent); border-radius: 999px;
+  width: 0%; transition: width 0.4s ease;
+}
+.progress-pct {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 700; color: var(--accent);
+  min-width: 44px; text-align: right;
+}
+
+/* ── SECTION HEADS ───────────────────────────────────────── */
+.section { margin-bottom: 44px; }
+.section-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 18px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.section-header .section-num {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent); opacity: .7; flex-shrink: 0;
+}
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px; font-weight: 700; color: var(--text); letter-spacing: -.01em;
+}
+.section-header .section-rule {
+  margin-left: auto; width: 24px; height: 1px;
+  background: var(--accent); opacity: .3; flex-shrink: 0;
+}
+.section-header .week-tag {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-dim); border: 1px solid var(--border2);
+  padding: 3px 9px; border-radius: 3px; margin-left: 0;
+}
+
+/* ── RAMP CARDS ──────────────────────────────────────────── */
+.ramp-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
+  margin-bottom: 44px;
+}
+.ramp-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: 18px 16px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+}
+.ramp-card:hover { border-color: var(--accent-bdr); }
+.ramp-card::before {
+  content: attr(data-week);
+  position: absolute; top: 10px; right: 12px;
+  font-family: 'Playfair Display', serif;
+  font-size: 36px; font-weight: 700;
+  color: var(--border2); line-height: 1;
+}
+.ramp-week {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: 6px;
+}
+.ramp-theme {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--text);
+}
+.ramp-focus { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.5; font-weight: 300; }
+.ramp-good {
+  background: var(--gold-dim); border-left: 2px solid var(--gold);
+  padding: 7px 10px; font-size: 10px; color: var(--gold);
+  border-radius: 0 3px 3px 0; font-style: italic; line-height: 1.4;
+}
+
+/* ── CHECKLIST ───────────────────────────────────────────── */
+.checklist {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; overflow: hidden; margin-bottom: 14px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.checklist-header {
+  display: grid; background: var(--surface2);
+  padding: 9px 18px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+}
+.checklist-header.cols-4 { grid-template-columns: 28px 2fr 0.65fr 2fr 110px; gap: 14px; }
+.checklist-header.cols-4.week1 { grid-template-columns: 28px 2fr 0.65fr 2fr 110px; gap: 14px; }
+.checklist-header.cols-3 { grid-template-columns: 28px 2fr 1fr 110px; gap: 14px; }
+.checklist-header.cols-2 { grid-template-columns: 28px 3fr 110px; gap: 14px; }
+
+.checklist-row {
+  display: grid; align-items: center;
+  padding: 11px 18px; border-bottom: 1px solid var(--border);
+  transition: background 0.15s; cursor: pointer;
+}
+.checklist-row:last-child { border-bottom: none; }
+.checklist-row:hover { background: var(--accent-dim); }
+.checklist-row.cols-4 { grid-template-columns: 28px 2fr 1fr 1fr 110px; gap: 14px; }
+.checklist-row.cols-4.week1 { grid-template-columns: 28px 2fr 0.65fr 2fr 110px; gap: 14px; align-items: start; }
+.checklist-row.cols-3 { grid-template-columns: 28px 2fr 1fr 110px; gap: 14px; }
+.checklist-row.cols-2 { grid-template-columns: 28px 3fr 110px; gap: 14px; }
+.checklist-row.done { opacity: .4; }
+.checklist-row.done .item-name { text-decoration: line-through; }
+
+/* Custom checkbox */
+.check-wrap { position: relative; width: 16px; height: 16px; }
+.check-wrap input[type="checkbox"] { opacity: 0; width: 0; height: 0; position: absolute; }
+.check-box {
+  position: absolute; inset: 0;
+  border: 1px solid var(--border2); border-radius: 2px;
+  background: transparent; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.check-box svg { opacity: 0; transition: opacity 0.15s; }
+input[type="checkbox"]:checked + .check-box {
+  background: var(--accent); border-color: var(--accent);
+}
+input[type="checkbox"]:checked + .check-box svg { opacity: 1; }
+
+.item-name { font-size: 13px; color: var(--text); font-weight: 300; }
+.item-sub { font-size: 11px; color: var(--text-dim); margin-top: 1px; font-weight: 300; }
+.item-who { font-size: 11px; color: var(--text-muted); font-family: 'DM Mono', monospace; letter-spacing: .03em; }
+.item-purpose { font-size: 12px; color: var(--text-muted); line-height: 1.4; font-weight: 300; }
+
+/* Status badge */
+.status {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .06em; padding: 3px 8px; border-radius: 3px;
+  text-transform: uppercase; border: 1px solid transparent; white-space: nowrap;
+}
+.status.pending { background: var(--surface2); border-color: var(--border2); color: var(--text-dim); }
+.status.complete { background: var(--green-dim); border-color: var(--green-bdr); color: var(--green); }
+
+/* ── WEEK 1 INLINE EDITS ─────────────────────────────────── */
+.row-edit {
+  background: transparent; border: none;
+  border-bottom: 1px dashed transparent;
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 300; width: 100%; outline: none;
+  padding: 1px 0 2px; transition: border-color 0.15s; cursor: text;
+}
+.row-edit:hover { border-bottom-color: var(--text-dim); }
+.row-edit:focus { border-bottom-color: var(--accent-bdr); border-bottom-style: solid; }
+.row-edit-day {
+  color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 11px;
+}
+.row-edit-purpose {
+  color: var(--text-muted); font-size: 12px; font-weight: 300;
+  resize: none; overflow: hidden; line-height: 1.5;
+  min-height: 22px; display: block; padding-top: 2px; padding-bottom: 2px;
+}
+.checklist-row.done .row-edit { text-decoration: line-through; opacity: 0.5; }
+
+/* ── SUB-LABEL ───────────────────────────────────────────── */
+.sub-label {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 8px; margin-top: 22px;
+}
+
+/* ── SCHEDULE GRID ───────────────────────────────────────── */
+.schedule-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+.schedule-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: 15px 16px;
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+}
+.schedule-item:hover { border-color: var(--border2); }
+
+.sched-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.sched-name-input {
+  background: transparent; border: none;
+  border-bottom: 1px dashed transparent;
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 400; width: 100%; outline: none;
+  padding-bottom: 2px; transition: border-color 0.2s; flex: 1; min-width: 0;
+}
+.sched-name-input:hover { border-bottom-color: var(--text-dim); }
+.sched-name-input:focus { border-bottom-color: var(--accent-bdr); border-bottom-style: solid; }
+
+.sched-tag {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .06em;
+  padding: 2px 7px; border-radius: 3px; flex-shrink: 0; margin-left: 6px;
+  cursor: pointer; user-select: none; position: relative;
+  transition: opacity 0.15s, transform 0.1s; white-space: nowrap;
+}
+.sched-tag:hover { opacity: .8; }
+.sched-tag:active { transform: scale(0.93); }
+.sched-tag::after {
+  content: attr(data-tooltip);
+  position: absolute; top: calc(100% + 5px); right: 0;
+  background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text-muted); font-size: 9px; padding: 3px 7px;
+  border-radius: 3px; white-space: nowrap; opacity: 0;
+  pointer-events: none; transition: opacity 0.15s; z-index: 10;
+}
+.sched-tag:hover::after { opacity: 1; }
+
+.tag-w1 { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-bdr); }
+.tag-w2 { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-bdr); }
+.tag-w3 { background: rgba(247,147,60,0.08); color: #f7933c; border: 1px solid rgba(247,147,60,0.25); }
+[data-theme="light"] .tag-w3 { background: rgba(180,90,0,0.08); color: #b45a00; border-color: rgba(180,90,0,0.22); }
+.tag-w4 { background: var(--teal-dim); color: var(--teal); border: 1px solid var(--teal-bdr); }
+.tag-adhoc { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border2); }
+
+.sched-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sched-field label {
+  display: block; font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 3px;
+}
+.sched-field input {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 3px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 300;
+  padding: 4px 8px; width: 100%; outline: none; transition: border-color 0.2s;
+}
+.sched-field input:focus { border-color: var(--accent-bdr); }
+.sched-field input::placeholder { color: var(--text-dim); font-style: italic; }
+
+.sched-desc-field { margin-top: 2px; }
+.sched-desc-field label {
+  display: block; font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 3px;
+}
+.sched-desc {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 3px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 300;
+  padding: 6px 8px; width: 100%; resize: vertical; min-height: 50px; outline: none;
+  transition: border-color 0.2s; line-height: 1.5;
+}
+.sched-desc:focus { border-color: var(--accent-bdr); }
+.sched-desc::placeholder { color: var(--text-dim); font-style: italic; }
+
+.sched-check-row { display: flex; align-items: center; gap: 7px; padding-top: 2px; }
+.sched-check-label { font-size: 11px; color: var(--text-dim); cursor: pointer; font-weight: 300; }
+
+/* Schedule delete button */
+.sched-delete {
+  position: absolute; top: 8px; right: 8px;
+  width: 20px; height: 20px; border-radius: 3px;
+  background: transparent; border: 1px solid transparent;
+  color: var(--text-dim); font-size: 14px; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.schedule-item:hover .sched-delete { opacity: 1; }
+.sched-delete:hover { background: rgba(240,122,74,0.12); border-color: rgba(240,122,74,0.3); color: var(--danger); }
+.schedule-item .sched-tag { margin-right: 24px; }
+
+@keyframes schedFadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.96); }
+}
+.schedule-item.deleting { animation: schedFadeOut 0.2s ease forwards; pointer-events: none; }
+
+/* ── POC GRID ────────────────────────────────────────────── */
+.poc-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px,1fr));
+  gap: 1px; background: var(--border2);
+  border: 1px solid var(--border2); border-radius: 4px; overflow: hidden;
+}
+.poc-cell { background: var(--surface2); padding: 13px 16px; transition: background 0.2s; }
+.poc-cell:hover { background: var(--surface3); }
+.poc-cell label {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-dim); display: block; margin-bottom: 5px;
+}
+.poc-cell input {
+  background: transparent; border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 300; width: 100%; outline: none;
+  padding-bottom: 2px; transition: border-color 0.2s;
+}
+.poc-cell input:focus { border-color: var(--accent-bdr); }
+.poc-cell input::placeholder { color: var(--text-dim); font-style: italic; }
+
+/* ── METRICS ─────────────────────────────────────────────── */
+.metrics-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: var(--border2);
+  border: 1px solid var(--border2); border-radius: 4px; overflow: hidden;
+}
+.metric-cell { background: var(--surface2); padding: 18px; transition: background 0.2s; }
+.metric-cell:hover { background: var(--surface3); }
+.metric-area {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+}
+.metric-exp { font-size: 12px; color: var(--text-muted); line-height: 1.5; font-weight: 300; }
+
+/* ── RESOURCES SECTION ───────────────────────────────────── */
+.resource-row {
+  display: grid; grid-template-columns: 28px 1fr 32px;
+  gap: 14px; align-items: center;
+  padding: 10px 18px; border-bottom: 1px solid var(--border);
+  transition: background 0.15s; cursor: pointer;
+}
+.resource-row:last-child { border-bottom: none; }
+.resource-row:hover { background: var(--accent-dim); }
+.resource-row.done { opacity: .4; }
+.resource-row.done .resource-edit,
+.resource-row.done .resource-sub { text-decoration: line-through; }
+
+.resource-edit {
+  background: transparent; border: none;
+  border-bottom: 1px dashed transparent;
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 300; width: 100%; outline: none;
+  padding-bottom: 2px; transition: border-color 0.15s;
+}
+.resource-edit:hover { border-bottom-color: var(--text-dim); }
+.resource-edit:focus { border-bottom-color: var(--accent-bdr); border-bottom-style: solid; }
+.resource-sub-input { margin-top: 3px; }
+.resource-sub {
+  background: transparent; border: none;
+  border-bottom: 1px dashed transparent;
+  color: var(--text-muted); font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 300; width: 100%; outline: none;
+  padding-bottom: 1px; transition: border-color 0.15s;
+}
+.resource-sub:hover { border-bottom-color: var(--text-dim); }
+.resource-sub:focus { border-bottom-color: var(--accent-bdr); border-bottom-style: solid; }
+.resource-delete-cell { display: flex; justify-content: center; }
+.resource-delete-btn {
+  width: 20px; height: 20px; border-radius: 3px;
+  background: transparent; border: 1px solid transparent;
+  color: var(--text-dim); font-size: 14px; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.resource-row:hover .resource-delete-btn { opacity: 1; }
+.resource-delete-btn:hover { background: rgba(240,122,74,0.12); border-color: rgba(240,122,74,0.3); color: var(--danger); }
+
+.add-row-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-dim); background: transparent;
+  border: 1px solid var(--border2); border-radius: 3px;
+  padding: 3px 9px; cursor: pointer; transition: all 0.15s;
+}
+.add-row-btn:hover { border-color: var(--accent-bdr); color: var(--accent); }
+
+@keyframes rowFadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.resource-row.new-row { animation: rowFadeIn 0.2s ease; }
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 48px; margin-top: 0;
+  border-top: 1px solid var(--border);
+  position: relative; z-index: 1;
+}
+.footer-text {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim);
+}
+
+/* ── TIMESTAMP ───────────────────────────────────────────── */
+#saveTimestamp {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  color: var(--text-dim); letter-spacing: .04em; opacity: 0; transition: opacity 0.3s;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  header, .hero, main, footer { padding-left: 20px; padding-right: 20px; }
+  .ramp-grid { grid-template-columns: 1fr 1fr; }
+  .schedule-grid { grid-template-columns: 1fr; }
+  .metrics-grid { grid-template-columns: 1fr 1fr; }
+  .save-inst-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 28px; }
+}
+
+@media print {
+  header { position: relative; }
+  .progress-bar-wrap { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header>
+  <div class="topbar-brand">
+    <div class="eyebrow" style="margin-bottom:0;">
+      <span class="eyebrow-dot"></span>
+      Talent Intelligence
+      <span class="eyebrow-dot"></span>
+    </div>
+    <div class="topbar-sep"></div>
+    <span class="topbar-title">Onboarding</span>
+  </div>
+  <div class="topbar-actions">
+    <span id="saveTimestamp"></span>
+    <button class="theme-toggle" onclick="toggleTheme(this)" id="themeBtn" title="Toggle light/dark mode">
+      <svg id="themeIcon" width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M6 1v1M6 10v1M1 6h1M10 6h1M2.5 2.5l.7.7M8.8 8.8l.7.7M8.8 3.2l-.7.7M3.2 8.8l-.7.7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+      </svg>
+      <span id="themeLabel">Light Mode</span>
+    </button>
+    <button class="btn ghost" onclick="saveInPlace(this)" id="saveBtn">
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 2h6.5L10 3.5V10H2V2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M4 2v3h4V2M4 7h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Save
+    </button>
+    <button class="btn" onclick="downloadFilled()">
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3 5.5l3 3 3-3M1 10h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Download
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="eyebrow">
+    <span class="eyebrow-dot"></span>
+    Talent Intelligence Hub
+    <span class="eyebrow-dot"></span>
+    New Hire
+  </div>
+  <h1>Talent Intelligence <em>Onboarding</em></h1>
+
+  <div class="info-grid">
+    <div class="info-cell"><label>Name</label><input type="text" placeholder="New hire name" /></div>
+    <div class="info-cell"><label>Role</label><input type="text" placeholder="Title / role" /></div>
+    <div class="info-cell"><label>Start Date</label><input type="text" placeholder="MM / DD / YYYY" /></div>
+    <div class="info-cell"><label>Team Lead</label><input type="text" placeholder="Lead name" /></div>
+    <div class="info-cell"><label>Recruiting Partner</label><input type="text" placeholder="Partner name" /></div>
+    <div class="info-cell"><label>Onboarding Buddy</label><input type="text" placeholder="Buddy name(s)" /></div>
+    <div class="info-cell"><label>Ramp Model</label><input type="text" placeholder="30-day ramp" /></div>
+    <div class="info-cell"><label>Primary Focus</label><input type="text" placeholder="Focus area" /></div>
+  </div>
+</div>
+
+
+
+  <!-- HOW TO SAVE INSTRUCTIONS -->
+  <details class="save-instructions" id="saveInstructions">
+    <summary class="save-inst-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="var(--gold)" stroke-width="1.4"/><path d="M7 6v4M7 4.5v.5" stroke="var(--gold)" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="save-inst-title">How to save your changes in Chrome</span>
+      </div>
+      <svg class="save-inst-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="save-inst-body">
+      <div class="save-inst-grid">
+
+        <div class="save-inst-method">
+          <div class="save-inst-method-label">
+            <span class="save-inst-badge" style="background:var(--gold-glow);color:var(--gold);border-color:rgba(245,200,66,0.25);">Option 1</span>
+            Save Progress → reopen same file
+          </div>
+          <ol class="save-inst-steps">
+            <li>Click <strong>Save Progress</strong> in the header — your work is saved to Chrome's local storage instantly.</li>
+            <li>Next time you open <em>this same file</em> in Chrome, all your edits, checkboxes, and filled fields will be automatically restored.</li>
+            <li><em>Note: Local storage is tied to this file's location on your computer. Moving or renaming the file will start fresh.</em></li>
+          </ol>
+        </div>
+
+        <div class="save-inst-method">
+          <div class="save-inst-method-label">
+            <span class="save-inst-badge" style="background:var(--blue-dim);color:var(--blue);border-color:rgba(96,165,250,0.25);">Option 2</span>
+            Download → replace your file
+          </div>
+          <ol class="save-inst-steps">
+            <li>Click <strong>Download</strong> — Chrome will save a new copy of the file with all your current edits baked in.</li>
+            <li>Find the downloaded file in your <strong>Downloads</strong> folder.</li>
+            <li>Replace your original file with the new download, or rename it to keep a version history.</li>
+            <li>Open the downloaded file in Chrome to continue — your edits will already be there.</li>
+          </ol>
+        </div>
+
+        <div class="save-inst-method">
+          <div class="save-inst-method-label">
+            <span class="save-inst-badge" style="background:var(--orange-dim);color:var(--orange);border-color:rgba(251,146,60,0.25);">Option 3</span>
+            Chrome keyboard shortcut
+          </div>
+          <ol class="save-inst-steps">
+            <li>Press <kbd>Ctrl</kbd> + <kbd>S</kbd> (Windows) or <kbd>⌘</kbd> + <kbd>S</kbd> (Mac) while the file is open in Chrome.</li>
+            <li>In the Save dialog, choose <strong>"Webpage, HTML Only"</strong> and save over your existing file.</li>
+            <li><em>Note: This saves the page's current visual state but may not capture all dynamic edits — the Download button above is more reliable.</em></li>
+          </ol>
+        </div>
+
+      </div>
+      <div class="save-inst-tip">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.4 2.8 3.1.45-2.25 2.19.53 3.1L6 8.1 3.22 9.54l.53-3.1L1.5 4.25l3.1-.45L6 1z" stroke="var(--gold)" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        <span><strong>Best practice:</strong> Use <strong>Save Progress</strong> while actively working, and <strong>Download</strong> at the end of each session to keep a portable backup you can share or move between computers.</span>
+      </div>
+    </div>
+  </details>
+
+  <!-- PROGRESS -->
+  <div class="progress-bar-wrap">
+    <span class="progress-label">Overall Progress</span>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+
+  <!-- RAMP OVERVIEW -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--gold);"></div>
+      <h2>30-Day Ramp Overview</h2>
+    </div>
+    <div class="ramp-grid">
+      <div class="ramp-card" data-week="01">
+        <div class="ramp-week">Week 1</div>
+        <div class="ramp-theme">Orientation & Context</div>
+        <div class="ramp-focus">Org context, recruiting norms, bar calibration</div>
+        <div class="ramp-good">Clear understanding of roles & quality bar</div>
+      </div>
+      <div class="ramp-card" data-week="02">
+        <div class="ramp-week">Week 2</div>
+        <div class="ramp-theme">Guided Execution</div>
+        <div class="ramp-focus">Begin sourcing & screening with feedback</div>
+        <div class="ramp-good">High-signal candidate submissions</div>
+      </div>
+      <div class="ramp-card" data-week="03">
+        <div class="ramp-week">Week 3</div>
+        <div class="ramp-theme">Ownership</div>
+        <div class="ramp-focus">End-to-end search ownership</div>
+        <div class="ramp-good">Minimal calibration needed</div>
+      </div>
+      <div class="ramp-card" data-week="04">
+        <div class="ramp-week">Week 4</div>
+        <div class="ramp-theme">Full IC Mode</div>
+        <div class="ramp-focus">Autonomous execution</div>
+        <div class="ramp-good">Trusted partner to HMs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 1 SESSIONS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--gold);"></div>
+      <h2>Week 1 — Orientation &amp; Context</h2>
+      <span class="week-tag">Days 1–5</span>
+    </div>
+
+    <div class="checklist">
+      <div class="checklist-header cols-4 week1">
+        <div></div>
+        <div>Session</div>
+        <div>Day</div>
+        <div>Purpose</div>
+        <div>Status</div>
+      </div>
+
+      <label class="checklist-row cols-4 week1" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="row-edit row-edit-name" type="text" value="New Hire Training — Talent Intelligence" onclick="event.stopPropagation()" /></div>
+        <div><input class="row-edit row-edit-day" type="text" value="Day 1" onclick="event.stopPropagation()" /></div>
+        <div><textarea class="row-edit row-edit-purpose" rows="1" onclick="event.stopPropagation()" oninput="autoResize(this)">Expectations, success metrics, working norms</textarea></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4 week1" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="row-edit row-edit-name" type="text" value="New Hire Training — Systems &amp; Collaboration" onclick="event.stopPropagation()" /></div>
+        <div><input class="row-edit row-edit-day" type="text" value="Day 2" onclick="event.stopPropagation()" /></div>
+        <div><textarea class="row-edit row-edit-purpose" rows="1" onclick="event.stopPropagation()" oninput="autoResize(this)">Ashby navigation, partnerships &amp; workflow</textarea></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4 week1" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="row-edit row-edit-name" type="text" value="Recruiting Partnership &amp; Org Overview" onclick="event.stopPropagation()" /></div>
+        <div><input class="row-edit row-edit-day" type="text" value="Day 3" onclick="event.stopPropagation()" /></div>
+        <div><textarea class="row-edit row-edit-purpose" rows="1" onclick="event.stopPropagation()" oninput="autoResize(this)">Overview of Cloud Availability and roles</textarea></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4 week1" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="row-edit row-edit-name" type="text" value="HM Intro" onclick="event.stopPropagation()" /></div>
+        <div><input class="row-edit row-edit-day" type="text" value="Day 3" onclick="event.stopPropagation()" /></div>
+        <div><textarea class="row-edit row-edit-purpose" rows="1" onclick="event.stopPropagation()" oninput="autoResize(this)">Role clarity, bar alignment, partnership</textarea></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4 week1" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="row-edit row-edit-name" type="text" value="Recruiting Ops" onclick="event.stopPropagation()" /></div>
+        <div><input class="row-edit row-edit-day" type="text" value="Day 4" onclick="event.stopPropagation()" /></div>
+        <div><textarea class="row-edit row-edit-purpose" rows="1" onclick="event.stopPropagation()" oninput="autoResize(this)">Process guardrails &amp; workflow</textarea></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4 week1" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="row-edit row-edit-name" type="text" value="New Hire Training — Recruiting Tools" onclick="event.stopPropagation()" /></div>
+        <div><input class="row-edit row-edit-day" type="text" value="Day 5" onclick="event.stopPropagation()" /></div>
+        <div><textarea class="row-edit row-edit-purpose" rows="1" onclick="event.stopPropagation()" oninput="autoResize(this)">Overview of Juicebox, Metaview, AI tools</textarea></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4 week1" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="row-edit row-edit-name" type="text" value="HR / IT Setup" onclick="event.stopPropagation()" /></div>
+        <div><input class="row-edit row-edit-day" type="text" value="As Needed" onclick="event.stopPropagation()" /></div>
+        <div><textarea class="row-edit row-edit-purpose" rows="1" onclick="event.stopPropagation()" oninput="autoResize(this)">Setup &amp; logistics</textarea></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- WEEKS 2–4 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--blue);"></div>
+      <h2>Weeks 2–4 — Execution &amp; Ownership</h2>
+      <span class="week-tag">Weeks 2–4</span>
+    </div>
+
+    <div class="checklist">
+      <div class="checklist-header cols-4">
+        <div></div>
+        <div>Focus</div>
+        <div>Week</div>
+        <div>Expected Output</div>
+        <div>Status</div>
+      </div>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><div class="item-name">Guided Execution</div><div class="item-sub">Shadow as many screens as possible</div></div>
+        <div class="item-who">Week 2</div>
+        <div class="item-purpose">Initial pipeline + early submissions</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><div class="item-name">Ownership</div><div class="item-sub">Reverse shadow if ready</div></div>
+        <div class="item-who">Week 3</div>
+        <div class="item-purpose">Full search ownership</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><div class="item-name">Autonomous Mode</div><div class="item-sub">Own the process</div></div>
+        <div class="item-who">Week 4</div>
+        <div class="item-purpose">Independent execution</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- TOOLS & ACCESS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--orange);"></div>
+      <h2>Tools &amp; Access</h2>
+    </div>
+
+    <div class="checklist">
+      <div class="checklist-header cols-4">
+        <div></div>
+        <div>App / Tool</div>
+        <div>Type</div>
+        <div>Purpose</div>
+        <div>Status</div>
+      </div>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">Rippling</div>
+        <div class="item-who">Access · IT</div>
+        <div class="item-purpose">Employee Directory</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">Slack</div>
+        <div class="item-who">Access · IT</div>
+        <div class="item-purpose">Communication</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">LinkedIn Recruiter</div>
+        <div class="item-who">Tool · Rec Ops</div>
+        <div class="item-purpose">Sourcing</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">Ashby</div>
+        <div class="item-who">Tool · Rec Ops</div>
+        <div class="item-purpose">ATS &amp; sourcing</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">Juicebox</div>
+        <div class="item-who">Tool · Nicole Shiu</div>
+        <div class="item-purpose">Sourcing</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">Metaview <span style="color:var(--text-dim); font-size:11px;">(Optional)</span></div>
+        <div class="item-who">Tool · Rec Ops</div>
+        <div class="item-purpose">Interview notes</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">Google Drive</div>
+        <div class="item-who">Access · Rec Ops</div>
+        <div class="item-purpose">Docs &amp; shared resources</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">Confluence</div>
+        <div class="item-who">Access · IT</div>
+        <div class="item-purpose">Docs &amp; shared resources</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">Coupa</div>
+        <div class="item-who">Access · IT</div>
+        <div class="item-purpose">Expense reports</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">Pave</div>
+        <div class="item-who">Access · IT</div>
+        <div class="item-purpose">Compensation portal</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">Claude + Gemini</div>
+        <div class="item-who">Tool · IT</div>
+        <div class="item-purpose">AI tools</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><div class="item-name">Google Group: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a9dbcccadbdcc0ddc0c7cee9cadbdcdac6cc87c8c0">[email&#160;protected]</a></div></div>
+        <div class="item-who">Access · IT</div>
+        <div class="item-purpose">All recruiting; essential comms</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-4" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><div class="item-name">Google Group: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="126677717a7c7b71737e60777160677b667b7c7552716067617d773c737b">[email&#160;protected]</a></div></div>
+        <div class="item-who">Access · Rec Ops</div>
+        <div class="item-purpose">Tech recruiting; essential comms</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- SLACK CHANNELS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--purple);"></div>
+      <h2>Meetings &amp; Communication</h2>
+    </div>
+
+    <div class="sub-label" style="margin-top:0;">Slack Channels</div>
+    <div class="checklist">
+      <div class="checklist-header cols-3">
+        <div></div>
+        <div>Channel / Resource</div>
+        <div>Purpose</div>
+        <div>Status</div>
+      </div>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#crusoe/office/general</div>
+        <div class="item-purpose">Company-wide general</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#announcements</div>
+        <div class="item-purpose">Company announcements</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#sfoffice</div>
+        <div class="item-purpose">Office announcements &amp; connection</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#recruiting-announcements</div>
+        <div class="item-purpose">All recruiting; essential comms</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#tech-support</div>
+        <div class="item-purpose">IT support</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#recruiting-ops-help</div>
+        <div class="item-purpose">RecOps support</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#recruiting-social</div>
+        <div class="item-purpose">Non-essential recruiting chatter</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#sf-recruiting</div>
+        <div class="item-purpose">Bay Area recruiting team</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#technical-recruiting</div>
+        <div class="item-purpose">Technical recruiting team</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#peopleteam</div>
+        <div class="item-purpose">People Team (Tara's org)</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#talent-intelligence-team</div>
+        <div class="item-purpose">Talent Intelligence Team</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+
+      <label class="checklist-row cols-3" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="item-name">#hiring-managed-ai</div>
+        <div class="item-purpose">Active candidates, pipeline &amp; progress</div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+    </div>
+
+    <div class="sub-label" style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;">
+      <span>Resources</span>
+      <button onclick="addResourceRow()" class="add-row-btn" title="Add resource">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add Row
+      </button>
+    </div>
+    <div class="checklist" id="resourcesChecklist">
+      <div class="checklist-header" style="grid-template-columns:32px 1fr 36px;gap:16px;display:grid;background:var(--surface2);padding:10px 20px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--border);">
+        <div></div><div>Resource / Notes</div><div></div>
+      </div>
+      <label class="checklist-row resource-row" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="resource-edit" type="text" value="Company Knowledge" onclick="event.stopPropagation()" placeholder="Resource name" /><div class="resource-sub-input"><input class="resource-sub" type="text" value="Company documentation" onclick="event.stopPropagation()" placeholder="Notes" /></div></div>
+        <div class="resource-delete-cell"><button class="resource-delete-btn" onclick="event.stopPropagation();deleteResourceRow(this)" title="Delete">×</button></div>
+      </label>
+      <label class="checklist-row resource-row" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="resource-edit" type="text" value="Employee Resources" onclick="event.stopPropagation()" placeholder="Resource name" /><div class="resource-sub-input"><input class="resource-sub" type="text" value="HR &amp; benefits resources" onclick="event.stopPropagation()" placeholder="Notes" /></div></div>
+        <div class="resource-delete-cell"><button class="resource-delete-btn" onclick="event.stopPropagation();deleteResourceRow(this)" title="Delete">×</button></div>
+      </label>
+      <label class="checklist-row resource-row" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="resource-edit" type="text" value="Talent Team Resources" onclick="event.stopPropagation()" placeholder="Resource name" /><div class="resource-sub-input"><input class="resource-sub" type="text" value="Recruiting documentation" onclick="event.stopPropagation()" placeholder="Notes" /></div></div>
+        <div class="resource-delete-cell"><button class="resource-delete-btn" onclick="event.stopPropagation();deleteResourceRow(this)" title="Delete">×</button></div>
+      </label>
+      <label class="checklist-row resource-row" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="resource-edit" type="text" value="Crusoe Department Directory" onclick="event.stopPropagation()" placeholder="Resource name" /><div class="resource-sub-input"><input class="resource-sub" type="text" value="Rippling — org reference" onclick="event.stopPropagation()" placeholder="Notes" /></div></div>
+        <div class="resource-delete-cell"><button class="resource-delete-btn" onclick="event.stopPropagation();deleteResourceRow(this)" title="Delete">×</button></div>
+      </label>
+      <label class="checklist-row resource-row" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><input class="resource-edit" type="text" value="Talent Intelligence Hub" onclick="event.stopPropagation()" placeholder="Resource name" /><div class="resource-sub-input"><input class="resource-sub" type="text" value="" onclick="event.stopPropagation()" placeholder="Notes" /></div></div>
+        <div class="resource-delete-cell"><button class="resource-delete-btn" onclick="event.stopPropagation();deleteResourceRow(this)" title="Delete">×</button></div>
+      </label>
+    </div>
+
+    <div class="sub-label">Recurring Meetings</div>
+    <div class="checklist">
+      <div class="checklist-header cols-2">
+        <div></div>
+        <div>Meeting</div>
+        <div>Status</div>
+      </div>
+      <label class="checklist-row cols-2" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><div class="item-name">Bi-Weekly Technical Recruiting Team</div><div class="item-sub">Team alignment &amp; priorities</div></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+      <label class="checklist-row cols-2" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><div class="item-name">Monthly Recruiting Team</div><div class="item-sub">Recruiting org updates</div></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+      <label class="checklist-row cols-2" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><div class="item-name">Monthly People Team</div><div class="item-sub">People org updates</div></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+      <label class="checklist-row cols-2" onclick="toggleRow(this)">
+        <div class="check-wrap"><input type="checkbox" /><div class="check-box"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><div class="item-name">Bi-Weekly Talent Intelligence Team Sync</div><div class="item-sub">Team alignment &amp; intelligence sharing</div></div>
+        <div><span class="status pending">● Pending</span></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- SCHEDULE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--green);"></div>
+      <h2>Sessions to Schedule</h2>
+    </div>
+
+    <div class="schedule-grid">
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Welcome Lunch (Day 1)" />
+          <span class="sched-tag tag-w1">Wk 1</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="1:1s (Week 1)" />
+          <span class="sched-tag tag-w1">Wk 1</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Onboarding Training Session 1" />
+          <span class="sched-tag tag-w1">Wk 1</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Onboarding Training Session 2" />
+          <span class="sched-tag tag-w1">Wk 1</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Intro to Hiring to Cloud Availability" />
+          <span class="sched-tag tag-w1">Wk 1</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="RecOps: Process Guardrails &amp; Workflow" />
+          <span class="sched-tag tag-w1">Wk 1</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Pitching Crusoe" />
+          <span class="sched-tag tag-w1">Wk 1</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Onboarding Training — Recruiting Tools" />
+          <span class="sched-tag tag-w1">Wk 1</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Topic Sessions (Week 2)" />
+          <span class="sched-tag tag-w2">Wk 2</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Follow-Up Sync (Week 2)" />
+          <span class="sched-tag tag-w2">Wk 2</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Meet &amp; Greets" />
+          <span class="sched-tag tag-w2">Wk 2</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Topic Sessions (Week 3)" />
+          <span class="sched-tag tag-w3">Wk 3</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Follow-Up Sync (Week 3)" />
+          <span class="sched-tag tag-w3">Wk 3</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Topic Sessions (Week 4)" />
+          <span class="sched-tag tag-w4">Wk 4</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Follow-Up Sync (Week 4)" />
+          <span class="sched-tag tag-w4">Wk 4</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sched-top">
+          <input class="sched-name-input" type="text" value="Adhoc Support" />
+          <span class="sched-tag tag-adhoc">Adhoc</span>
+        </div>
+        <div class="sched-fields">
+          <div class="sched-field"><label>Date &amp; Time</label><input type="text" placeholder="—" /></div>
+          <div class="sched-field"><label>Location</label><input type="text" placeholder="—" /></div>
+        </div>
+        <div class="sched-field sched-desc-field"><label>Description</label><textarea class="sched-desc" placeholder="Add notes or context…"></textarea></div>
+        <div class="sched-check-row">
+          <label class="check-wrap" style="width:16px;height:16px;"><input type="checkbox" /><div class="check-box" style="border-radius:2px;"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label>
+          <span class="sched-check-label">Completed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POC -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--text-muted);"></div>
+      <h2>Points of Contact</h2>
+    </div>
+    <div class="poc-grid">
+      <div class="poc-cell"><label>POC — Role</label><input type="text" placeholder="e.g. Recruiting Partner" /></div>
+      <div class="poc-cell"><label>Name</label><input type="text" placeholder="Full name" /></div>
+      <div class="poc-cell"><label>POC — Role</label><input type="text" placeholder="e.g. Team Lead" /></div>
+      <div class="poc-cell"><label>Name</label><input type="text" placeholder="Full name" /></div>
+      <div class="poc-cell"><label>POC — Role</label><input type="text" placeholder="e.g. Onboarding Buddy" /></div>
+      <div class="poc-cell"><label>Name</label><input type="text" placeholder="Full name" /></div>
+      <div class="poc-cell"><label>POC — Role</label><input type="text" placeholder="e.g. Rec Ops Contact" /></div>
+      <div class="poc-cell"><label>Name</label><input type="text" placeholder="Full name" /></div>
+      <div class="poc-cell" style="grid-column: span 2;"><label>Talent Intelligence Team</label><input type="text" placeholder="Team members" /></div>
+    </div>
+  </div>
+
+  <!-- SUCCESS METRICS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--gold);"></div>
+      <h2>Success Metrics (Qualitative)</h2>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-cell">
+        <div class="metric-area">Candidate Quality</div>
+        <div class="metric-exp">Fewer submissions, higher signal — quality over quantity</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-area">Judgment</div>
+        <div class="metric-exp">Proactive, independent point of view on pipeline and bar</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-area">HM Partnership</div>
+        <div class="metric-exp">Pushes for clarity and bar alignment with hiring managers</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-area">Autonomy</div>
+        <div class="metric-exp">Increasing week over week — minimal hand-holding by Week 4</div>
+      </div>
+    </div>
+  </div>
+
+
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-text">Talent Intelligence Hub · Onboarding</span>
+  <span class="footer-text">Internal · Confidential</span>
+</footer>
+
+<script>
+  // ── THEME TOGGLE ──────────────────────────────────────────
+  function toggleTheme(btn) {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    const newTheme = isDark ? 'light' : 'dark';
+    html.setAttribute('data-theme', newTheme);
+    const label = document.getElementById('themeLabel');
+    const icon = document.getElementById('themeIcon');
+    if (label) label.textContent = isDark ? 'Dark Mode' : 'Light Mode';
+    if (icon) {
+      icon.innerHTML = isDark
+        ? '<path d="M9.5 6.5A4 4 0 0 1 4 2.5a4.5 4.5 0 1 0 5.5 4z" fill="currentColor"/>' // moon
+        : '<circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M6 1v1M6 10v1M1 6h1M10 6h1M2.5 2.5l.7.7M8.8 8.8l.7.7M8.8 3.2l-.7.7M3.2 8.8l-.7.7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>'; // sun
+    }
+    try { localStorage.setItem('TI_theme', newTheme); } catch(e) {}
+  }
+
+  // Restore saved theme on load
+  try {
+    const saved = localStorage.getItem('TI_theme');
+    if (saved && saved !== 'dark') {
+      document.documentElement.setAttribute('data-theme', saved);
+      const label = document.getElementById('themeLabel');
+      const icon = document.getElementById('themeIcon');
+      if (label) label.textContent = 'Dark Mode';
+      if (icon) icon.innerHTML = '<path d="M9.5 6.5A4 4 0 0 1 4 2.5a4.5 4.5 0 1 0 5.5 4z" fill="currentColor"/>';
+    }
+  } catch(e) {}
+
+
+  function addResourceRow() {
+    const checklist = document.getElementById('resourcesChecklist');
+    const checkSVG = `<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0a0c0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const row = document.createElement('label');
+    row.className = 'checklist-row resource-row new-row';
+    row.setAttribute('onclick', 'toggleRow(this)');
+    row.innerHTML = `
+      <div class="check-wrap"><input type="checkbox" /><div class="check-box">${checkSVG}</div></div>
+      <div>
+        <input class="resource-edit" type="text" value="" onclick="event.stopPropagation()" placeholder="Resource name" />
+        <div class="resource-sub-input"><input class="resource-sub" type="text" value="" onclick="event.stopPropagation()" placeholder="Notes" /></div>
+      </div>
+      <div class="resource-delete-cell"><button class="resource-delete-btn" onclick="event.stopPropagation();deleteResourceRow(this)" title="Delete">×</button></div>
+    `;
+    checklist.appendChild(row);
+    // Re-wire the new checkbox
+    row.querySelector('input[type="checkbox"]').addEventListener('change', (e) => e.stopPropagation());
+    row.querySelector('.resource-edit').focus();
+    updateProgress();
+  }
+
+  function deleteResourceRow(btn) {
+    const row = btn.closest('.resource-row');
+    row.style.transition = 'opacity 0.2s, transform 0.2s';
+    row.style.opacity = '0';
+    row.style.transform = 'scale(0.97)';
+    setTimeout(() => { row.remove(); updateProgress(); }, 200);
+  }
+
+  function updateProgress() {
+    const all = document.querySelectorAll('main input[type="checkbox"]');
+    const checked = document.querySelectorAll('main input[type="checkbox"]:checked');
+    const pct = all.length ? Math.round((checked.length / all.length) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+  }
+
+  // Week tag cycle definition (used by toggle + download)
+  const weekCycle = [
+    { label: 'Wk 1',  cls: 'tag-w1' },
+    { label: 'Wk 2',  cls: 'tag-w2' },
+    { label: 'Wk 3',  cls: 'tag-w3' },
+    { label: 'Wk 4',  cls: 'tag-w4' },
+    { label: 'Adhoc', cls: 'tag-adhoc' },
+  ];
+  const allTagClasses = weekCycle.map(w => w.cls);
+
+  function toggleRow(row) {
+    const cb = row.querySelector('input[type="checkbox"]');
+    if (!cb) return;
+    const statusEl = row.querySelector('.status');
+    if (cb.checked) {
+      row.classList.add('done');
+      if (statusEl) {
+        statusEl.classList.remove('pending');
+        statusEl.classList.add('complete');
+        statusEl.textContent = '✓ Complete';
+      }
+    } else {
+      row.classList.remove('done');
+      if (statusEl) {
+        statusEl.classList.add('pending');
+        statusEl.classList.remove('complete');
+        statusEl.innerHTML = '● Pending';
+      }
+    }
+    updateProgress();
+  }
+
+  // Prevent double-toggle from label click
+  document.querySelectorAll('.checklist-row input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', (e) => e.stopPropagation());
+  });
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }
+
+  // Init all purpose textareas to their natural height on load
+  document.querySelectorAll('.row-edit-purpose').forEach(ta => autoResize(ta));
+
+  // Restore saved state from localStorage if available
+  try {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved) {
+      restoreState(JSON.parse(saved));
+      const ts = document.getElementById('saveTimestamp');
+      if (ts) { ts.textContent = 'Progress restored from last save'; ts.style.opacity = '1'; }
+    }
+  } catch(e) {}
+
+  // Inject delete buttons into every schedule card
+  document.querySelectorAll('.schedule-item').forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'sched-delete';
+    btn.title = 'Delete this session';
+    btn.innerHTML = '&times;';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      item.classList.add('deleting');
+      setTimeout(() => {
+        item.remove();
+        updateProgress();
+      }, 200);
+    });
+    item.appendChild(btn);
+  });
+
+  function wireWeekTag(tag) {
+    tag.setAttribute('data-tooltip', 'Click to change week');
+    tag.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const current = weekCycle.findIndex(w => tag.classList.contains(w.cls));
+      const next = weekCycle[(current + 1) % weekCycle.length];
+      allTagClasses.forEach(c => tag.classList.remove(c));
+      tag.classList.add(next.cls);
+      tag.textContent = next.label;
+    });
+  }
+
+  document.querySelectorAll('.sched-tag').forEach(wireWeekTag);
+
+  updateProgress();
+
+  // ── SERIALIZE LIVE STATE (shared by save + download) ──────────────────────
+  function serializeState() {
+    // Collect all text inputs
+    const inputs = {};
+    document.querySelectorAll('input[type="text"]').forEach((inp, i) => {
+      inputs[i] = inp.value;
+    });
+
+    // Collect all checkboxes
+    const checkboxes = {};
+    document.querySelectorAll('input[type="checkbox"]').forEach((cb, i) => {
+      checkboxes[i] = cb.checked;
+    });
+
+    // Collect all textareas
+    const textareas = {};
+    document.querySelectorAll('textarea').forEach((ta, i) => {
+      textareas[i] = ta.value;
+    });
+
+    // Collect checklist row done states
+    const rows = {};
+    document.querySelectorAll('.checklist-row').forEach((row, i) => {
+      rows[i] = row.classList.contains('done');
+    });
+
+    // Collect week tag states
+    const tags = {};
+    document.querySelectorAll('.sched-tag').forEach((tag, i) => {
+      tags[i] = { cls: allTagClasses.find(c => tag.classList.contains(c)), text: tag.textContent };
+    });
+
+    // Collect which schedule items still exist (by index)
+    const schedItems = Array.from(document.querySelectorAll('.schedule-item')).map(el => el.dataset.cardId || null);
+
+    return { inputs, checkboxes, textareas, rows, tags, schedItems };
+  }
+
+  function restoreState(state) {
+    if (!state) return;
+
+    if (state.inputs) {
+      document.querySelectorAll('input[type="text"]').forEach((inp, i) => {
+        if (state.inputs[i] !== undefined) inp.value = state.inputs[i];
+      });
+    }
+    if (state.checkboxes) {
+      document.querySelectorAll('input[type="checkbox"]').forEach((cb, i) => {
+        cb.checked = !!state.checkboxes[i];
+      });
+    }
+    if (state.textareas) {
+      document.querySelectorAll('textarea').forEach((ta, i) => {
+        if (state.textareas[i] !== undefined) {
+          ta.value = state.textareas[i];
+          autoResize(ta);
+        }
+      });
+    }
+    if (state.rows) {
+      document.querySelectorAll('.checklist-row').forEach((row, i) => {
+        if (state.rows[i]) {
+          row.classList.add('done');
+          const statusEl = row.querySelector('.status');
+          if (statusEl) { statusEl.classList.remove('pending'); statusEl.classList.add('complete'); statusEl.textContent = '✓ Complete'; }
+          const cb = row.querySelector('input[type="checkbox"]');
+          if (cb) cb.checked = true;
+        }
+      });
+    }
+    if (state.tags) {
+      document.querySelectorAll('.sched-tag').forEach((tag, i) => {
+        if (state.tags[i]) {
+          allTagClasses.forEach(c => tag.classList.remove(c));
+          if (state.tags[i].cls) tag.classList.add(state.tags[i].cls);
+          tag.textContent = state.tags[i].text;
+        }
+      });
+    }
+    updateProgress();
+  }
+
+  // ── AUTO-SAVE TO LOCALSTORAGE ──────────────────────────────────────────────
+  const LS_KEY = 'TI_onboarding_state';
+
+  function autoSaveToLS() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(serializeState())); } catch(e) {}
+  }
+
+  // Debounced auto-save on any input change
+  let autoSaveTimer;
+  document.addEventListener('input', () => {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(autoSaveToLS, 800);
+  });
+  document.addEventListener('change', () => {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(autoSaveToLS, 800);
+  });
+
+  // ── SAVE PROGRESS → localStorage only ────────────────────────────────────
+  function saveInPlace(btn) {
+    try {
+      autoSaveToLS();
+      // Update timestamp label
+      const ts = document.getElementById('saveTimestamp');
+      if (ts) {
+        const now = new Date();
+        ts.textContent = 'Last saved ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        ts.style.opacity = '1';
+      }
+      // Flash button confirmation
+      const originalHTML = btn.innerHTML;
+      const originalColor = btn.style.color;
+      const originalBorder = btn.style.borderColor;
+      btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 9L4.5 11.5L10 4" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> Saved!';
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'var(--green)';
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.style.color = originalColor;
+        btn.style.borderColor = originalBorder;
+      }, 2000);
+    } catch(err) {
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '⚠ Error saving';
+      btn.style.color = '#f87171';
+      setTimeout(() => { btn.innerHTML = originalHTML; btn.style.color = 'var(--text-muted)'; }, 2500);
+    }
+  }
+
+  function downloadFilled() {
+    // 1. Write all live input values into their value attributes
+    document.querySelectorAll('input[type="text"]').forEach(inp => {
+      inp.setAttribute('value', inp.value);
+    });
+
+    // 2. Write all checkbox states
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      if (cb.checked) cb.setAttribute('checked', 'checked');
+      else cb.removeAttribute('checked');
+    });
+
+    // 3. Write all textarea values as textContent
+    document.querySelectorAll('textarea').forEach(ta => {
+      ta.textContent = ta.value;
+      if (ta.style.height) ta.setAttribute('style', 'height:' + ta.style.height);
+    });
+
+    // 4. Temporarily remove injected delete buttons so they don't appear in saved HTML
+    //    (they get re-injected by the script on load)
+    const deleteBtns = document.querySelectorAll('.sched-delete');
+    deleteBtns.forEach(btn => btn.remove());
+
+    // 5. Serialize the live DOM (which already reflects deletions, tag changes, etc.)
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+    // 6. Re-inject delete buttons so the page keeps working after download
+    document.querySelectorAll('.schedule-item').forEach(item => {
+      const btn = document.createElement('button');
+      btn.className = 'sched-delete';
+      btn.title = 'Delete this session';
+      btn.innerHTML = '&times;';
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        item.classList.add('deleting');
+        setTimeout(() => { item.remove(); updateProgress(); }, 200);
+      });
+      item.appendChild(btn);
+    });
+
+    // 7. Trigger download
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'TI_Onboarding_Checklist_Offline.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>

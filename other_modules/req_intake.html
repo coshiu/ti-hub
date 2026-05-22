@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talent Intelligence — Req Intake</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0b0f;--surface:#111318;--surface2:#181c24;--surface3:#1e2530;
+  --border:#1e2330;--border2:#252d3d;
+  --text:#e8eaf0;--text-muted:#6b7491;--text-dim:#3d4560;
+  --accent:#5b8fff;--accent-dim:rgba(91,143,255,0.08);--accent-bdr:rgba(91,143,255,0.22);
+  --teal:#47c5a8;--teal-dim:rgba(71,197,168,0.07);--teal-bdr:rgba(71,197,168,0.2);
+  --gold:#e8c547;--gold-dim:rgba(232,197,71,0.07);--gold-bdr:rgba(232,197,71,0.18);
+  --green:#4ade80;--green-dim:rgba(74,222,128,0.08);--green-bdr:rgba(74,222,128,0.22);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;padding-bottom:100px}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.022;pointer-events:none;z-index:0}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(10,11,15,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:56px;gap:12px}
+.topbar-brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.topbar-mono{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted)}
+.topbar-sep{width:1px;height:14px;background:var(--border2)}
+.topbar-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)}
+.topbar-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:4px;font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:1px solid var(--accent-bdr);background:var(--accent-dim);color:var(--accent);transition:all .15s;text-decoration:none;letter-spacing:.02em;white-space:nowrap}
+.btn:hover{background:rgba(91,143,255,0.14);border-color:var(--accent)}
+.btn.teal{border-color:var(--teal-bdr);background:var(--teal-dim);color:var(--teal)}
+.btn.teal:hover{background:rgba(71,197,168,0.14);border-color:var(--teal)}
+.btn.green{border-color:var(--green-bdr);background:var(--green-dim);color:var(--green)}
+.btn.green:hover{background:rgba(74,222,128,0.14);border-color:var(--green)}
+
+/* SHARE BAR */
+.share-bar{position:sticky;top:56px;z-index:99;background:rgba(10,11,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:8px 48px;display:flex;align-items:center;gap:10px}
+.share-url-wrap{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
+.share-url-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);flex-shrink:0}
+.share-url{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:6px 10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);outline:none;min-width:0;cursor:text;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.share-url:focus{border-color:var(--accent-bdr);color:var(--text)}
+.share-actions{display:flex;gap:8px;flex-shrink:0}
+.copy-feedback{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--green);opacity:0;transition:opacity .3s;text-transform:uppercase}
+.copy-feedback.show{opacity:1}
+
+/* HERO */
+.hero{position:relative;z-index:1;padding:52px 48px 44px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--surface) 0%,var(--bg) 65%);overflow:hidden}
+.hero::after{content:'';position:absolute;top:-120px;right:-80px;width:520px;height:520px;background:radial-gradient(circle,rgba(91,143,255,0.05) 0%,transparent 65%);pointer-events:none}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted)}
+.hero-dot{width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:.6}
+.hero-title{font-family:'Playfair Display',serif;font-size:48px;font-weight:700;line-height:1.04;letter-spacing:-.02em;color:var(--text);margin-bottom:10px}
+.hero-title em{color:var(--accent);font-style:italic}
+.hero-sub{font-size:13px;color:var(--text-muted);font-weight:300;margin-bottom:28px;line-height:1.7;max-width:540px;font-family:'DM Sans',sans-serif}
+.hero-meta{display:flex;gap:8px;flex-wrap:wrap}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:3px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border2);color:var(--text-muted);background:var(--surface2)}
+.hero-tag.blue{border-color:var(--accent-bdr);color:var(--accent);background:var(--accent-dim)}
+.hero-tag.teal{border-color:var(--teal-bdr);color:var(--teal);background:var(--teal-dim)}
+
+/* MAIN */
+.main{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:48px 48px 0}
+
+/* SECTION */
+.section{margin-bottom:52px}
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:13px;border-bottom:1px solid var(--border)}
+.section-num{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);opacity:.7;flex-shrink:0}
+.section-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.section-rule{margin-left:auto;width:24px;height:1px;background:var(--accent);opacity:.3;flex-shrink:0}
+
+/* CALLOUT */
+.callout{display:flex;gap:0;border-radius:4px;overflow:hidden;margin-bottom:20px;border:1px solid var(--accent-bdr)}
+.callout-bar{width:2px;flex-shrink:0;background:var(--accent)}
+.callout-body{padding:11px 14px;font-size:12px;line-height:1.75;color:var(--text-muted);font-weight:300;background:var(--accent-dim);flex:1;font-family:'DM Sans',sans-serif}
+.callout.teal{border-color:var(--teal-bdr)}.callout.teal .callout-bar{background:var(--teal)}.callout.teal .callout-body{background:var(--teal-dim)}
+.callout.gold{border-color:var(--gold-bdr)}.callout.gold .callout-bar{background:var(--gold)}.callout.gold .callout-body{background:var(--gold-dim)}
+
+/* FORM TABLE */
+.form-table{width:100%;border-collapse:collapse;border:1px solid var(--border2);border-radius:4px;overflow:hidden;margin-bottom:16px}
+.form-table .lbl{background:var(--surface2);border-right:1px solid var(--border2);border-bottom:1px solid var(--border);padding:12px 16px;vertical-align:top;width:220px}
+.form-table .lbl-text{font-size:12px;font-weight:500;color:var(--text);line-height:1.4;font-family:'DM Sans',sans-serif}
+.form-table .lbl-hint{font-size:10px;color:var(--text-dim);font-style:italic;margin-top:3px;line-height:1.4;font-family:'DM Sans',sans-serif}
+.form-table .fld{background:rgba(255,255,255,0.015);border-bottom:1px solid var(--border);padding:0;vertical-align:top}
+.form-table tr:last-child .lbl,.form-table tr:last-child .fld{border-bottom:none}
+.fld-input{width:100%;min-height:42px;background:transparent;border:none;outline:none;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:var(--text);resize:vertical;display:block}
+.fld-input.tall{min-height:90px}
+.fld-input.xtall{min-height:120px}
+.fld-input::placeholder{color:var(--text-dim);font-style:italic}
+.fld-input:focus{background:rgba(91,143,255,0.03)}
+
+/* INPUT ROW */
+.input-row{margin-bottom:14px}
+.input-label{font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;font-family:'DM Mono',monospace}
+.input-label span{font-weight:300;text-transform:none;letter-spacing:0;color:var(--text-dim);font-style:italic;font-size:10px;margin-left:6px;font-family:'DM Sans',sans-serif}
+.input-field{width:100%;background:rgba(255,255,255,0.02);border:1px solid var(--border2);border-radius:4px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;transition:border-color .2s;resize:none;display:block}
+.input-field.tall{min-height:80px}
+.input-field::placeholder{color:var(--text-dim);font-style:italic}
+.input-field:focus{border-color:var(--accent-bdr);background:rgba(91,143,255,0.02)}
+
+/* INTERVIEW TABLE */
+.iv-wrap{overflow:hidden;border-radius:4px;border:1px solid var(--border2);margin-bottom:16px}
+.iv-table{width:100%;border-collapse:collapse}
+.iv-table thead th{background:var(--surface2);padding:10px 12px;font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);text-align:left;border-bottom:1px solid var(--border2)}
+.iv-table tbody tr{border-bottom:1px solid var(--border)}
+.iv-table tbody tr:last-child{border-bottom:none}
+.iv-table .iv-stage{padding:12px;font-size:12px;font-weight:500;color:var(--text);background:var(--surface2);border-right:1px solid var(--border2);white-space:nowrap;width:150px;vertical-align:middle}
+.iv-table .iv-stage.dim{color:var(--text-dim)}
+.iv-table .iv-cell{padding:0;border-right:1px solid var(--border);vertical-align:middle}
+.iv-table .iv-cell:last-child{border-right:none}
+.iv-cell-input{width:100%;height:44px;background:transparent;border:none;outline:none;padding:0 12px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:var(--text)}
+.iv-cell-input::placeholder{color:var(--text-dim);font-style:italic}
+.iv-cell-input:focus{background:rgba(91,143,255,0.03)}
+
+/* SLA TABLE */
+.sla-table{width:100%;border-collapse:collapse;border:1px solid var(--border2);border-radius:4px;overflow:hidden;margin-bottom:16px}
+.sla-table tr{border-bottom:1px solid var(--border)}
+.sla-table tr:last-child{border-bottom:none}
+.sla-table .sla-lbl{background:var(--surface2);border-right:1px solid var(--border2);padding:14px 16px;vertical-align:top;width:180px}
+.sla-table .sla-lbl-text{font-size:12px;font-weight:500;font-family:'DM Mono',monospace}
+.sla-table .sla-val{background:rgba(255,255,255,0.015);padding:14px 16px;font-size:12px;font-weight:300;color:var(--text-muted);line-height:1.7;vertical-align:top;font-family:'DM Sans',sans-serif}
+
+/* BOOL */
+.bool-template{background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:10px 14px;margin-bottom:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.7}
+.bool-input{font-family:'DM Mono',monospace!important;font-size:11px!important;background:rgba(10,11,15,0.5)!important;color:#7ab8f0!important}
+
+/* DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg,var(--accent-bdr),transparent);margin:44px 0}
+
+/* FOOTER */
+.doc-footer{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:0 48px 60px;display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.footer-text{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)}
+
+/* TOAST */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface2);border:1px solid var(--green-bdr);border-radius:6px;padding:12px 20px;font-size:12px;color:var(--green);font-family:'DM Mono',monospace;letter-spacing:.06em;opacity:0;transition:all .25s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <span class="topbar-title">Talent Intelligence Hub</span>
+    <div class="topbar-sep"></div>
+    <span class="topbar-title">Req Intake</span>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn teal" onclick="openInGoogleDocs()">↗ Open in Google Docs</button>
+    <button class="btn" onclick="clearForm()">↺ Clear</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow"><span class="hero-dot"></span>Talent Intelligence Hub<span class="hero-dot"></span>Sourcing &amp; Calibration</div>
+  <h1 class="hero-title">Intake <em>Meeting Form</em></h1>
+  <p class="hero-sub">Fill in each section during or before the intake meeting. Download when ready to open directly in Google Docs.</p>
+  <div class="hero-meta">
+    <span class="hero-tag blue">6 Sections</span>
+    <span class="hero-tag teal">Google Docs Ready</span>
+    <span class="hero-tag">Talent Intelligence</span>
+    <span class="hero-tag">Confidential</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- 01 POSITION OVERVIEW -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <span class="section-title">Position Overview</span>
+      <div class="section-rule"></div>
+    </div>
+    <table class="form-table">
+      <tr><td class="lbl"><div class="lbl-text">Position ID</div></td><td class="fld"><input data-field="pos_id" class="fld-input" placeholder="e.g. REQ-2025-042"></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Department</div></td><td class="fld"><input data-field="dept" class="fld-input" placeholder="e.g. Cloud Engineering"></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Title(s)</div></td><td class="fld"><input data-field="title" class="fld-input" placeholder="Official title(s)"></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Targeted Level(s) &amp; Number of Openings</div><div class="lbl-hint">e.g. L4–L5 · 2 openings</div></td><td class="fld"><input data-field="levels" class="fld-input" placeholder="e.g. L5 · 1 opening"></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Location(s)</div></td><td class="fld"><input data-field="location" class="fld-input" placeholder="e.g. Denver / Remote"></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Hiring Manager</div></td><td class="fld"><input data-field="hm" class="fld-input" placeholder="Name"></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Compensation</div></td><td class="fld"><input data-field="comp" class="fld-input" placeholder="Range or band"></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Reason for Opening</div></td><td class="fld"><input data-field="reason" class="fld-input" placeholder="Net new / Backfill"></td></tr>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 02 POSITION DESCRIPTION -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <span class="section-title">Position Description &amp; Qualifications</span>
+      <div class="section-rule"></div>
+    </div>
+    <table class="form-table">
+      <tr><td class="lbl"><div class="lbl-text">Brief Position Overview &amp; Core Responsibilities</div></td><td class="fld"><textarea data-field="overview" class="fld-input xtall" placeholder="Describe the role's purpose, key responsibilities, and what the person will own…"></textarea></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Must-Have Skills</div><div class="lbl-hint">Non-negotiables — disqualify without these</div></td><td class="fld"><textarea data-field="must_have" class="fld-input tall" placeholder="List each on its own line…"></textarea></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Nice-to-Have Skills</div><div class="lbl-hint">Stretch — willing to train or grow into</div></td><td class="fld"><textarea data-field="nice_have" class="fld-input tall" placeholder="Aspirational vs. required…"></textarea></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Growth Opportunities</div><div class="lbl-hint">If applicable</div></td><td class="fld"><textarea data-field="growth" class="fld-input" placeholder="Career growth, scope expansion…"></textarea></td></tr>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 03 SELLING / SOURCING -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <span class="section-title">Selling the Role, Targeting &amp; Sourcing</span>
+      <div class="section-rule"></div>
+    </div>
+    <table class="form-table">
+      <tr><td class="lbl"><div class="lbl-text">Key Features or Interesting Projects</div></td><td class="fld"><textarea data-field="features" class="fld-input tall" placeholder="What makes this role compelling? What problems are being solved?"></textarea></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Common Job Titles</div><div class="lbl-hint">What would this person's LinkedIn title say?</div></td><td class="fld"><textarea data-field="common_titles" class="fld-input" placeholder="e.g. Platform Engineer, Infra Engineer, SRE…"></textarea></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Target Companies</div><div class="lbl-hint">Tier 1 &amp; Tier 2 sources</div></td><td class="fld"><textarea data-field="target_cos" class="fld-input tall" placeholder="e.g. Tier 1: AWS, Google, Meta · Tier 2: Nutanix, NetApp…"></textarea></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Link to Job Description</div></td><td class="fld"><input data-field="jd_link" class="fld-input" placeholder="Paste URL here"></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Green / Red Flags</div></td><td class="fld"><textarea data-field="flags" class="fld-input tall" placeholder="Green: signals that indicate strong fit&#10;Red: patterns that look good on paper but don't succeed here…"></textarea></td></tr>
+      <tr><td class="lbl"><div class="lbl-text">Business Impact</div></td><td class="fld"><textarea data-field="biz_impact" class="fld-input" placeholder="What happens if this role isn't filled? What's the business case?"></textarea></td></tr>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 04 INTERVIEW PANEL -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">04</span>
+      <span class="section-title">Interview Panel &amp; Structure</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="callout teal">
+      <div class="callout-bar"></div>
+      <div class="callout-body">Define stages, owners, and time commitments before the first candidate reaches the loop. All interviewers should attend the Pre-Brief.</div>
+    </div>
+    <div class="iv-wrap">
+      <table class="iv-table">
+        <thead><tr>
+          <th style="width:150px">Stage</th>
+          <th>Purpose / Focus Area</th>
+          <th style="width:110px">Owner</th>
+          <th style="width:110px">Time &amp; Location</th>
+          <th style="width:90px">Notes</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="iv-stage">Recruiter Screen</td><td class="iv-cell"><input data-field="iv1_purpose" class="iv-cell-input" value="Initial Screening"></td><td class="iv-cell"><input data-field="iv1_owner" class="iv-cell-input" value="Recruiter"></td><td class="iv-cell"><input data-field="iv1_time" class="iv-cell-input" value="30 min"></td><td class="iv-cell"><input data-field="iv1_notes" class="iv-cell-input" placeholder=""></td></tr>
+          <tr><td class="iv-stage">HM Interview</td><td class="iv-cell"><input data-field="iv2_purpose" class="iv-cell-input" value="First Interview"></td><td class="iv-cell"><input data-field="iv2_owner" class="iv-cell-input" value="Hiring Manager"></td><td class="iv-cell"><input data-field="iv2_time" class="iv-cell-input" placeholder=""></td><td class="iv-cell"><input data-field="iv2_notes" class="iv-cell-input" placeholder=""></td></tr>
+          <tr><td class="iv-stage">Technical Screen</td><td class="iv-cell"><input data-field="iv3_purpose" class="iv-cell-input" value="Skill Screen / Technical Assessment"></td><td class="iv-cell"><input data-field="iv3_owner" class="iv-cell-input" placeholder="Interviewer"></td><td class="iv-cell"><input data-field="iv3_time" class="iv-cell-input" placeholder=""></td><td class="iv-cell"><input data-field="iv3_notes" class="iv-cell-input" placeholder=""></td></tr>
+          <tr><td class="iv-stage">Panel / Loop</td><td class="iv-cell"><input data-field="iv4_purpose" class="iv-cell-input" value="In-depth Interview"></td><td class="iv-cell"><input data-field="iv4_owner" class="iv-cell-input" value="Interview Team"></td><td class="iv-cell"><input data-field="iv4_time" class="iv-cell-input" placeholder=""></td><td class="iv-cell"><input data-field="iv4_notes" class="iv-cell-input" placeholder=""></td></tr>
+          <tr><td class="iv-stage">Debrief</td><td class="iv-cell"><input data-field="iv5_purpose" class="iv-cell-input" value="HM Hears Input & Makes Hiring Decision"></td><td class="iv-cell"><input data-field="iv5_owner" class="iv-cell-input" value="Recruiter + Team"></td><td class="iv-cell"><input data-field="iv5_time" class="iv-cell-input" placeholder=""></td><td class="iv-cell"><input data-field="iv5_notes" class="iv-cell-input" placeholder=""></td></tr>
+          <tr><td class="iv-stage">Offer</td><td class="iv-cell"><input data-field="iv6_purpose" class="iv-cell-input" value="Verbal Offer, Written Offer"></td><td class="iv-cell"><input data-field="iv6_owner" class="iv-cell-input" value="Recruiter"></td><td class="iv-cell"><input data-field="iv6_time" class="iv-cell-input" placeholder=""></td><td class="iv-cell"><input data-field="iv6_notes" class="iv-cell-input" placeholder=""></td></tr>
+          <tr><td class="iv-stage dim">Custom Stage</td><td class="iv-cell"><input data-field="iv7_purpose" class="iv-cell-input" placeholder="Add stage…"></td><td class="iv-cell"><input data-field="iv7_owner" class="iv-cell-input" placeholder=""></td><td class="iv-cell"><input data-field="iv7_time" class="iv-cell-input" placeholder=""></td><td class="iv-cell"><input data-field="iv7_notes" class="iv-cell-input" placeholder=""></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 05 SLA AGREEMENTS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">05</span>
+      <span class="section-title">SLA Agreements</span>
+      <div class="section-rule"></div>
+    </div>
+    <table class="sla-table">
+      <tr><td class="sla-lbl"><span class="sla-lbl-text" style="color:var(--accent)">Recruiter</span></td><td class="sla-val">Recruiter will process applicants within one week and either archive, forward to the Hiring Manager for feedback, or schedule a recruiter screening. Recruiter will maintain a sense of urgency throughout the search, tapping into additional resources and shifting search strategies as required.</td></tr>
+      <tr><td class="sla-lbl"><span class="sla-lbl-text" style="color:var(--teal)">Hiring Manager</span></td><td class="sla-val">Hiring Manager to submit feedback in Ashby within 24 hours of interview. Hiring Manager ensures their calendar is current so interviews can be directly scheduled and an efficient process is maintained.</td></tr>
+      <tr><td class="sla-lbl"><span class="sla-lbl-text" style="color:var(--text-muted)">Recruiting Meetings</span></td><td class="sla-val">We agree to meet on a mutually agreed-upon cadence (e.g. weekly) and provide honest, timely feedback.</td></tr>
+      <tr><td class="sla-lbl"><span class="sla-lbl-text" style="color:var(--gold)">Pre-Brief</span></td><td class="sla-val">Intake Meeting Document completed before Pre-Brief. All interviewers attend and participate in Pre-Brief.</td></tr>
+      <tr><td class="sla-lbl"><span class="sla-lbl-text" style="color:var(--teal)">Debrief</span></td><td class="sla-val">All interview feedback completed prior to Debrief. All interviewers attend and participate in Debrief.</td></tr>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 06 BOOLEAN STRINGS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">06</span>
+      <span class="section-title">Boolean Search Strings</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="callout gold">
+      <div class="callout-bar"></div>
+      <div class="callout-body">Build your boolean <em>after</em> calibration — not before. Let must-haves and target companies drive the structure.</div>
+    </div>
+    <div class="input-row">
+      <div class="input-label">Option 1 <span>title + must-haves + nice-to-haves + location + companies</span></div>
+      <div class="bool-template">("Job Title" OR "Alt Title") AND ("Must Have") AND ("Must Have") AND ("Nice" OR "Nice") AND ("City" OR "City") AND ("Company" OR "Company")</div>
+      <textarea data-field="bool1" class="input-field bool-input tall" placeholder='("Staff Engineer" OR "Senior Infrastructure Engineer") AND ("GPU" OR "RDMA") AND ...'></textarea>
+    </div>
+    <div class="input-row">
+      <div class="input-label">Option 2 <span>title + tech framework + required tech + tools/methods</span></div>
+      <div class="bool-template">("Job Title") AND ("Tech Framework") AND ("Required Tech") AND ("Second Required Tech") AND ("Tools / Methods") AND ("Action")</div>
+      <textarea data-field="bool2" class="input-field bool-input tall" placeholder='("Platform Engineer") AND ("Kubernetes") AND ("Go" OR "Golang") AND ...'></textarea>
+    </div>
+    <div class="input-row">
+      <div class="input-label">Custom / Refined String <span>built after initial calibration pass</span></div>
+      <textarea data-field="bool3" class="input-field bool-input tall" placeholder="Paste your working boolean string here…"></textarea>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <span class="footer-text">Crusoe · Talent Intelligence · Confidential</span>
+  <div style="display:flex;gap:8px">
+    <button class="btn teal" onclick="openInGoogleDocs()">↗ Open in Google Docs</button>
+  </div>
+</div>
+
+<!-- GOOGLE DOCS MODAL -->
+<div id="gdocsModal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:24px">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:8px;width:100%;max-width:680px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.5)">
+    <div style="padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:4px">Export to Google Docs</div>
+        <div style="font-size:13px;color:var(--text-muted);font-weight:300;font-family:'DM Sans',sans-serif">Copy the text below, then paste into a new Google Doc</div>
+      </div>
+      <button onclick="gdocsClose()" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:20px;line-height:1;padding:4px">✕</button>
+    </div>
+    <textarea id="gdocsText" readonly style="flex:1;background:var(--surface2);border:none;outline:none;padding:18px 20px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);line-height:1.7;resize:none;overflow-y:auto"></textarea>
+    <div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--surface)">
+      <button id="gdocsCopyBtn" class="btn teal" onclick="gdocsCopy()">⎘ Copy All</button>
+      <a href="https://docs.new" target="_blank" class="btn">↗ Open Google Docs</a>
+      <span style="font-size:11px;color:var(--text-dim);margin-left:4px;font-family:'DM Sans',sans-serif">Copy first, then paste with Cmd+V / Ctrl+V</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script>
+// -- ALL FIELD KEYS ----------------------------------------------
+const FIELDS = [
+  'pos_id','dept','title','levels','location','hm','comp','reason',
+  'overview','must_have','nice_have','growth',
+  'features','common_titles','target_cos','jd_link','flags','biz_impact',
+  'iv1_purpose','iv1_owner','iv1_time','iv1_notes',
+  'iv2_purpose','iv2_owner','iv2_time','iv2_notes',
+  'iv3_purpose','iv3_owner','iv3_time','iv3_notes',
+  'iv4_purpose','iv4_owner','iv4_time','iv4_notes',
+  'iv5_purpose','iv5_owner','iv5_time','iv5_notes',
+  'iv6_purpose','iv6_owner','iv6_time','iv6_notes',
+  'iv7_purpose','iv7_owner','iv7_time','iv7_notes',
+  'bool1','bool2','bool3'
+];
+
+// -- GET / SET FIELD VALUES --------------------------------------
+function getField(key) {
+  const el = document.querySelector(`[data-field="${key}"]`);
+  return el ? el.value : '';
+}
+function setField(key, val) {
+  const el = document.querySelector(`[data-field="${key}"]`);
+  if (el) el.value = val;
+}
+
+// -- ENCODE STATE INTO URL ---------------------------------------
+function buildState() {
+  const state = {};
+  FIELDS.forEach(k => {
+    const v = getField(k);
+    if (v) state[k] = v;
+  });
+  return state;
+}
+
+function encodeState(state) {
+  try {
+    const json = JSON.stringify(state);
+    const b64 = btoa(unescape(encodeURIComponent(json)));
+    return b64;
+  } catch(e) { return ''; }
+}
+
+function decodeState(b64) {
+  try {
+    const json = decodeURIComponent(escape(atob(b64)));
+    return JSON.parse(json);
+  } catch(e) { return {}; }
+}
+
+function buildShareUrl() {
+  const state = buildState();
+  if (!Object.keys(state).length) return window.location.href.split('?')[0].split('#')[0];
+  const encoded = encodeState(state);
+  const base = window.location.href.split('?')[0].split('#')[0];
+  return `${base}?d=${encoded}`;
+}
+
+function updateShareUrl() {
+  const url = buildShareUrl();
+  const el = document.getElementById('shareUrl');
+  if (el) el.value = url;
+}
+
+// -- LOAD STATE FROM URL ON PAGE LOAD ---------------------------
+function loadFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const data = params.get('d');
+  if (!data) return;
+  const state = decodeState(data);
+  Object.entries(state).forEach(([k, v]) => setField(k, v));
+}
+
+// -- OPEN IN GOOGLE DOCS -----------------------------------------
+function openInGoogleDocs() {
+  var g = function(k) { return getField(k) || ''; };
+  var D = '--------------------------------------------------------';
+  var nl = '\n';
+  var iv = function(stage, p, o, t, n) {
+    var parts = [g(p), g(o), g(t), g(n)].filter(function(x){ return x; });
+    return '  ' + stage + ': ' + parts.join(' | ');
+  };
+  var lines = [
+    'TALENT INTELLIGENCE  ·  INTAKE MEETING FORM', D, '',
+    '-- 01  POSITION OVERVIEW',
+    'Position ID:          ' + (g('pos_id') || '—'),
+    'Department:           ' + (g('dept')   || '—'),
+    'Title(s):             ' + (g('title')  || '—'),
+    'Level(s) / Openings:  ' + (g('levels') || '—'),
+    'Location(s):          ' + (g('location') || '—'),
+    'Hiring Manager:       ' + (g('hm')    || '—'),
+    'Compensation:         ' + (g('comp')  || '—'),
+    'Reason for Opening:   ' + (g('reason') || '—'),
+    '',
+    '-- 02  POSITION DESCRIPTION & QUALIFICATIONS',
+    'Overview & Core Responsibilities:',
+    g('overview') || '—', '',
+    'Must-Have Skills:',
+    g('must_have') || '—', '',
+    'Nice-to-Have Skills:',
+    g('nice_have') || '—', '',
+    'Growth Opportunities:',
+    g('growth') || '—', '',
+    '-- 03  SELLING THE ROLE, TARGETING & SOURCING',
+    'Key Features / Projects:',
+    g('features') || '—', '',
+    'Common Job Titles:',
+    g('common_titles') || '—', '',
+    'Target Companies:',
+    g('target_cos') || '—', '',
+    'Link to JD:           ' + (g('jd_link') || '—'),
+    'Green / Red Flags:',
+    g('flags') || '—', '',
+    'Business Impact:',
+    g('biz_impact') || '—', '',
+    '-- 04  INTERVIEW PANEL & STRUCTURE',
+    iv('Recruiter Screen', 'iv1_purpose','iv1_owner','iv1_time','iv1_notes'),
+    iv('HM Interview',     'iv2_purpose','iv2_owner','iv2_time','iv2_notes'),
+    iv('Technical Screen', 'iv3_purpose','iv3_owner','iv3_time','iv3_notes'),
+    iv('Panel / Loop',     'iv4_purpose','iv4_owner','iv4_time','iv4_notes'),
+    iv('Debrief',          'iv5_purpose','iv5_owner','iv5_time','iv5_notes'),
+    iv('Offer',            'iv6_purpose','iv6_owner','iv6_time','iv6_notes'),
+    g('iv7_purpose') ? iv('Custom Stage','iv7_purpose','iv7_owner','iv7_time','iv7_notes') : '',
+    '',
+    '-- 05  SLA AGREEMENTS',
+    'Recruiter: Process applicants within one week — archive, forward, or schedule. Maintain urgency throughout the search.',
+    'Hiring Manager: Submit feedback in Ashby within 24 hrs. Keep calendar current for direct scheduling.',
+    'Recruiting Meetings: Meet on agreed cadence (e.g. weekly). Provide honest, timely feedback.',
+    'Pre-Brief: Intake doc completed before Pre-Brief. All interviewers attend.',
+    'Debrief: All feedback completed before Debrief. All interviewers attend.',
+    '',
+    '-- 06  BOOLEAN SEARCH STRINGS',
+    'Option 1:', g('bool1') || '—', '',
+    'Option 2:', g('bool2') || '—', '',
+    'Custom / Refined:', g('bool3') || '—', '',
+    D,
+    'Talent Intelligence  ·  Confidential  ·  Internal Use Only'
+  ];
+
+  var text = lines.join(nl);
+  var modal = document.getElementById('gdocsModal');
+  var ta = document.getElementById('gdocsText');
+  ta.value = text;
+  modal.style.display = 'flex';
+  setTimeout(function() { ta.focus(); ta.select(); }, 50);
+}
+
+function gdocsCopy() {
+  var ta = document.getElementById('gdocsText');
+  ta.select();
+  try {
+    document.execCommand('copy');
+    var btn = document.getElementById('gdocsCopyBtn');
+    var orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.style.background = '#4ade80';
+    btn.style.color = '#0a0b0f';
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 2500);
+  } catch(e) { ta.select(); }
+}
+
+function gdocsClose() {
+  document.getElementById('gdocsModal').style.display = 'none';
+}
+
+
+
+// -- CLEAR FORM
+function clearForm() {
+  if (!confirm('Clear all fields?')) return;
+  FIELDS.forEach(k => setField(k, ''));
+  // Restore interview table defaults
+  setField('iv1_purpose','Initial Screening'); setField('iv1_owner','Recruiter'); setField('iv1_time','30 min');
+  setField('iv2_purpose','First Interview'); setField('iv2_owner','Hiring Manager');
+  setField('iv3_purpose','Skill Screen / Technical Assessment');
+  setField('iv4_purpose','In-depth Interview'); setField('iv4_owner','Interview Team');
+  setField('iv5_purpose','HM Hears Input & Makes Hiring Decision'); setField('iv5_owner','Recruiter + Team');
+  setField('iv6_purpose','Verbal Offer, Written Offer'); setField('iv6_owner','Recruiter');
+  history.replaceState(null,'', window.location.pathname);
+  updateShareUrl();
+}
+
+// -- TOAST --------------------------------------------------------
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// -- LIVE URL UPDATE ON INPUT -------------------------------------
+let updateTimer;
+function scheduleUpdate() {
+  clearTimeout(updateTimer);
+  updateTimer = setTimeout(() => {
+    updateShareUrl();
+    // Update browser URL bar without reloading
+    const url = buildShareUrl();
+    history.replaceState(null, '', url);
+  }, 400);
+}
+
+// -- INIT ---------------------------------------------------------
+document.addEventListener('DOMContentLoaded', () => {
+  loadFromUrl();
+  updateShareUrl();
+  // Listen for all input/change events
+  document.querySelectorAll('[data-field]').forEach(el => {
+    el.addEventListener('input', scheduleUpdate);
+  });
+});
+</script>
+</body>
+</html>

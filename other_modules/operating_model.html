@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Crusoe · Technical Sourcing Operating Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK TOKENS ── */
+:root,[data-theme="dark"]{
+  --bg:#0a0b0f;--surface:#111318;--surface2:#181c24;--surface3:#1e2530;
+  --border:#1e2330;--border2:#252d3d;
+  --text:#e8eaf0;--text-muted:#6b7491;--text-dim:#3d4560;
+  --accent:#5b8fff;--accent-dim:rgba(91,143,255,0.08);--accent-bdr:rgba(91,143,255,0.22);
+  --teal:#47c5a8;--teal-dim:rgba(71,197,168,0.07);--teal-bdr:rgba(71,197,168,0.2);
+  --gold:#e8c547;--gold-dim:rgba(232,197,71,0.07);--gold-bdr:rgba(232,197,71,0.18);
+  --green:#4ade80;--green-dim:rgba(74,222,128,0.08);--green-bdr:rgba(74,222,128,0.22);
+  --danger:#f07a4a;
+  --topbar-bg:rgba(10,11,15,0.95);
+  --input-bg:rgba(255,255,255,0.02);
+  --noise-opacity:.022;
+  /* swimlane role pill colors */
+  --pill-primary-bg:rgba(71,197,168,0.15);--pill-primary-color:#47c5a8;--pill-primary-bdr:rgba(71,197,168,0.4);
+  --pill-secondary-bg:rgba(91,143,255,0.12);--pill-secondary-color:#5b8fff;--pill-secondary-bdr:rgba(91,143,255,0.35);
+  --pill-dedicated-bg:rgba(232,197,71,0.14);--pill-dedicated-color:#e8c547;--pill-dedicated-bdr:rgba(232,197,71,0.4);
+  --pill-flex-bg:rgba(255,255,255,0.07);--pill-flex-color:rgba(232,234,240,0.6);--pill-flex-bdr:rgba(255,255,255,0.18);
+}
+
+/* ── LIGHT TOKENS ── */
+[data-theme="light"]{
+  --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0ede8;--surface3:#e8e4de;
+  --border:#ddd9d2;--border2:#ccc8c0;
+  --text:#1a1a1e;--text-muted:#6b6860;--text-dim:#aaa59e;
+  --accent:#2a5fd4;--accent-dim:rgba(42,95,212,0.07);--accent-bdr:rgba(42,95,212,0.22);
+  --teal:#1a9e85;--teal-dim:rgba(26,158,133,0.07);--teal-bdr:rgba(26,158,133,0.22);
+  --gold:#b08a00;--gold-dim:rgba(176,138,0,0.08);--gold-bdr:rgba(176,138,0,0.22);
+  --green:#1a8c4e;--green-dim:rgba(26,140,78,0.08);--green-bdr:rgba(26,140,78,0.22);
+  --danger:#c44b1a;
+  --topbar-bg:rgba(245,244,240,0.96);
+  --input-bg:var(--surface);
+  --noise-opacity:0;
+  --pill-primary-bg:rgba(26,158,133,0.12);--pill-primary-color:#1a9e85;--pill-primary-bdr:rgba(26,158,133,0.35);
+  --pill-secondary-bg:rgba(42,95,212,0.09);--pill-secondary-color:#2a5fd4;--pill-secondary-bdr:rgba(42,95,212,0.3);
+  --pill-dedicated-bg:rgba(176,138,0,0.1);--pill-dedicated-color:#b08a00;--pill-dedicated-bdr:rgba(176,138,0,0.35);
+  --pill-flex-bg:rgba(0,0,0,0.05);--pill-flex-color:#6b6860;--pill-flex-bdr:rgba(0,0,0,0.15);
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'DM Sans',sans-serif;font-weight:300;
+  min-height:100vh;line-height:1.6;
+  transition:background .25s,color .25s;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:var(--noise-opacity);pointer-events:none;z-index:0;transition:opacity .25s;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:var(--topbar-bg);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:0 40px;display:flex;align-items:center;
+  justify-content:space-between;height:56px;gap:12px;
+}
+.topbar-brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.topbar-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
+.topbar-sep{width:1px;height:14px;background:var(--border2)}
+.topbar-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+
+/* Theme toggle */
+.theme-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:3px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--border2);color:var(--text-muted);background:var(--surface2);
+  transition:all .15s;
+}
+.theme-btn:hover{border-color:var(--accent-bdr);color:var(--accent);background:var(--accent-dim)}
+
+/* ── TABS ── */
+.tabs{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 40px;position:sticky;top:56px;z-index:90;
+}
+.tabs-inner{max-width:900px;margin:0 auto;display:flex;gap:2px}
+.tab{
+  padding:13px 16px;font-family:'DM Mono',monospace;font-size:10px;
+  font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  border:none;background:transparent;cursor:pointer;
+  color:var(--text-dim);border-bottom:2px solid transparent;
+  transition:all .15s;
+}
+.tab:hover{color:var(--text-muted)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── CONTENT ── */
+.content{max-width:900px;margin:0 auto;padding:40px 40px 64px;position:relative;z-index:1}
+.pane{display:none}.pane.active{display:block}
+
+/* ── EYEBROW ── */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--text-muted);
+}
+.eyebrow-dot{width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:.7}
+
+/* ── PAGE TITLE ── */
+.page-title{
+  font-family:'Playfair Display',serif;font-size:36px;font-weight:700;
+  line-height:1.1;letter-spacing:-.02em;color:var(--text);margin-bottom:8px;
+}
+.page-title em{color:var(--accent);font-style:italic}
+.page-sub{font-size:13px;color:var(--text-muted);font-weight:300;margin-bottom:28px;line-height:1.7;max-width:600px}
+
+/* ── SECTION HEAD ── */
+.section{margin-bottom:36px}
+.section-head{
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+  padding-bottom:10px;border-bottom:1px solid var(--border);
+}
+.section-num{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);opacity:.8;flex-shrink:0}
+.section-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.section-rule{margin-left:auto;width:20px;height:1px;background:var(--accent);opacity:.3;flex-shrink:0}
+
+/* ── CALLOUT ── */
+.callout{display:flex;border-radius:4px;overflow:hidden;margin-bottom:18px;border:1px solid var(--accent-bdr)}
+.callout-bar{width:2px;flex-shrink:0;background:var(--accent)}
+.callout-body{padding:10px 14px;font-size:12px;line-height:1.75;color:var(--text-muted);font-weight:300;background:var(--accent-dim);flex:1;font-family:'DM Sans',sans-serif}
+.callout.teal{border-color:var(--teal-bdr)}.callout.teal .callout-bar{background:var(--teal)}.callout.teal .callout-body{background:var(--teal-dim)}
+.callout.gold{border-color:var(--gold-bdr)}.callout.gold .callout-bar{background:var(--gold)}.callout.gold .callout-body{background:var(--gold-dim)}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:16px 18px;transition:border-color .15s}
+.card-teal{background:var(--teal-dim);border-color:var(--teal-bdr)}
+.card-blue{background:var(--accent-dim);border-color:var(--accent-bdr)}
+.card-gold{background:var(--gold-dim);border-color:var(--gold-bdr)}
+
+/* ── GRIDS ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+
+/* ── STAT CARD ── */
+.stat-card{border-radius:4px;padding:16px;text-align:center;border:1px solid}
+.stat-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;line-height:1}
+.stat-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-top:6px}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:3px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border2);color:var(--text-muted);background:var(--surface2)}
+.tag.teal{border-color:var(--teal-bdr);color:var(--teal);background:var(--teal-dim)}
+.tag.blue{border-color:var(--accent-bdr);color:var(--accent);background:var(--accent-dim)}
+.tag.gold{border-color:var(--gold-bdr);color:var(--gold);background:var(--gold-dim)}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:linear-gradient(90deg,var(--accent-bdr),transparent);margin:32px 0}
+
+/* ── DOMAIN CARD ── */
+.domain-card{background:var(--surface);border:1px solid var(--border2);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.domain-card.sub-domain{margin-left:20px;border-style:dashed;opacity:.85}
+.domain-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.domain-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+
+/* ── LAYER ROW ── */
+.layer-row{display:flex;gap:16px;align-items:flex-start;margin-bottom:14px}
+.layer-num{width:26px;height:26px;border-radius:50%;border:1px solid var(--accent-bdr);background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--accent);flex-shrink:0;margin-top:2px}
+
+/* ── MATRIX ── */
+.matrix-wrap{width:100%;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+th{text-align:center;padding:8px 4px;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;font-weight:500;color:var(--text-muted);border-bottom:1px solid var(--border2);white-space:nowrap;overflow:hidden}
+td{padding:7px 4px;text-align:center;border-bottom:1px solid var(--border);vertical-align:middle}
+td:first-child{text-align:left;padding-left:8px}
+tr:nth-child(even) td{background:rgba(128,128,128,0.03)}
+tr:hover td{background:var(--accent-dim)}
+.editable-input{background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;width:100%}
+.remove-btn{background:none;border:none;color:var(--text-dim);font-size:14px;cursor:pointer;padding:2px 4px;border-radius:3px;transition:color .15s;line-height:1}
+.remove-btn:hover{color:var(--danger)}
+.cell-wrap{display:inline-flex;align-items:center;justify-content:center;border-radius:3px;padding:4px 6px;font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.04em;width:100%;gap:3px;position:relative;cursor:pointer;user-select:none;transition:filter .15s}
+.cell-wrap:hover{filter:brightness(1.12)}
+.cell-empty{display:inline-flex;align-items:center;justify-content:center;width:100%;padding:4px 6px;color:var(--text-dim);cursor:pointer;transition:color .15s;border-radius:3px;font-size:13px}
+.cell-empty:hover{color:var(--text-muted);background:var(--surface2)}
+.cell-del{position:absolute;top:-5px;right:-5px;width:13px;height:13px;border-radius:50%;background:var(--surface);border:1px solid var(--danger);color:var(--danger);font-size:8px;line-height:13px;text-align:center;cursor:pointer;font-weight:700;z-index:10;opacity:0;transition:opacity .15s}
+.cell-wrap:hover .cell-del{opacity:1}
+
+/* ── BTN ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:3px;font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--text-muted);transition:all .15s}
+.btn:hover{border-color:var(--accent-bdr);color:var(--accent);background:var(--accent-dim)}
+.btn.teal{border-color:var(--teal-bdr);background:var(--teal-dim);color:var(--teal)}
+.btn.teal:hover{background:var(--teal-dim);border-color:var(--teal)}
+
+/* ── FOOTER ── */
+.footer{display:flex;align-items:center;justify-content:space-between;padding:20px 0 0;margin-top:40px;border-top:1px solid var(--border)}
+.footer-text{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <span class="topbar-name">Talent Intelligence</span>
+    <div class="topbar-sep"></div>
+    <span class="topbar-eyebrow">Technical Sourcing Operating Model</span>
+  </div>
+  <div class="topbar-right">
+    <span class="tag" id="theme-label">Dark Mode</span>
+    <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">☀ Light Mode</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tabs-inner">
+    <button class="tab active" onclick="show('model',this)">Model</button>
+    <button class="tab" onclick="show('standards',this)">Standards</button>
+    <button class="tab" onclick="show('matrix',this)">Team Assignments</button>
+    <button class="tab" onclick="show('domains',this)">Coverage Areas</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ══ MODEL ══ -->
+  <div class="pane active" id="pane-model">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>Crusoe · Talent Intelligence<span class="eyebrow-dot"></span>Operating Model</div>
+    <h1 class="page-title">Technical Sourcing <em>Operating Model</em></h1>
+    <p class="page-sub">A structured framework for deploying sourcing capacity across Crusoe's Technical Orgs.</p>
+
+    <!-- Stats -->
+    <div class="grid3" style="margin-bottom:20px">
+      <div class="stat-card" style="background:var(--teal-dim);border-color:var(--teal-bdr)">
+        <div class="stat-num" style="color:var(--teal)">8</div>
+        <div class="stat-label">Sourcers</div>
+      </div>
+      <div class="stat-card" style="background:var(--accent-dim);border-color:var(--accent-bdr)">
+        <div class="stat-num" style="color:var(--accent)">9</div>
+        <div class="stat-label">Engineering Orgs</div>
+      </div>
+      <div class="stat-card" style="background:var(--gold-dim);border-color:var(--gold-bdr)">
+        <div class="stat-num" style="color:var(--gold)">3</div>
+        <div class="stat-label">Sourcing Buckets</div>
+      </div>
+    </div>
+
+    <!-- Scope + partnership -->
+    <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:28px;padding:0;overflow:hidden">
+      <div style="padding:16px 18px;border-right:1px solid var(--border)">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Scope</div>
+        <p style="font-size:12px;color:var(--text);font-weight:400;line-height:1.7">P4 &amp; above across all orgs. <span style="color:var(--text-muted)">Exception: Foundations includes P3 support given the niche technical depth of those roles.</span></p>
+      </div>
+      <div style="padding:16px 18px">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px">Sourcer &amp; Recruiter Partnership</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.7">Sourcing and recruiting operate as equal strategic partners. Full engagement model lives in the <span style="color:var(--accent)">Recruiter / Sourcer Partnership Framework</span>.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Operating structure -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">01</span>
+        <span class="section-title">Operating Structure</span>
+        <div class="section-rule"></div>
+      </div>
+      <div class="callout teal">
+        <div class="callout-bar"></div>
+        <div class="callout-body">This model organizes sourcing across technical domains with clear primary ownership, complexity-weighted resource allocation, and a controlled flex layer. Unlike ad hoc or evenly distributed models, it concentrates effort where it drives the highest hiring impact — reducing search stall risk, improving pipeline quality, and preserving continuity at every stage.</div>
+      </div>
+
+      <div class="grid3" style="margin-bottom:12px">
+        <div class="card card-teal">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:8px">The Metal 🟢</div>
+          <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Foundations &amp; Infrastructure</div>
+          <div style="font-size:11px;color:var(--text-muted)">Core systems · Storage · Compute · Networking</div>
+        </div>
+        <div class="card card-blue">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">The Fabric 🔵</div>
+          <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Managed AI &amp; Platform</div>
+          <div style="font-size:11px;color:var(--text-muted)">Managed AI · Cloud Management · Data</div>
+        </div>
+        <div class="card card-gold">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">The Shield 🔴</div>
+          <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">IT &amp; Security</div>
+          <div style="font-size:11px;color:var(--text-muted)">Internal Systems · Security Engineering</div>
+        </div>
+      </div>
+
+      <!-- Decision engine -->
+      <div class="card" style="margin-bottom:12px">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Decision Engine · Complexity-Based Allocation</div>
+        <div class="grid4">
+          <div style="background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:3px;padding:10px">
+            <div style="font-size:11px;font-weight:500;color:var(--gold);margin-bottom:3px">Role complexity</div>
+            <div style="font-size:10px;color:var(--text-muted)">Niche skillset · market scarcity</div>
+          </div>
+          <div style="background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:3px;padding:10px">
+            <div style="font-size:11px;font-weight:500;color:var(--gold);margin-bottom:3px">Stall risk</div>
+            <div style="font-size:10px;color:var(--text-muted)">Impact if search delays</div>
+          </div>
+          <div style="background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:3px;padding:10px">
+            <div style="font-size:11px;font-weight:500;color:var(--gold);margin-bottom:3px">Business criticality</div>
+            <div style="font-size:10px;color:var(--text-muted)">Org priority · urgency</div>
+          </div>
+          <div style="background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:3px;padding:10px">
+            <div style="font-size:11px;font-weight:500;color:var(--gold);margin-bottom:3px">Leveling ambiguity</div>
+            <div style="font-size:10px;color:var(--text-muted)">Stakeholder alignment needed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="card" style="display:flex;gap:12px;align-items:center">
+          <div style="width:4px;height:28px;border-radius:2px;background:var(--teal);flex-shrink:0"></div>
+          <div><div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:2px">Deep investment</div><div style="font-size:11px;color:var(--text-muted)">High complexity · high risk roles</div></div>
+        </div>
+        <div class="card" style="display:flex;gap:12px;align-items:center">
+          <div style="width:4px;height:28px;border-radius:2px;background:var(--border2);flex-shrink:0"></div>
+          <div><div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px">Light support</div><div style="font-size:11px;color:var(--text-muted)">Lower complexity · available pipeline</div></div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-bar"></div>
+        <div class="callout-body"><strong style="color:var(--accent)">Flex capacity layer</strong> — Responds to spikes, priority shifts, and pipeline gaps without breaking primary ownership or continuity.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Design principles -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">02</span>
+        <span class="section-title">Design Principles</span>
+        <div class="section-rule"></div>
+      </div>
+      <div class="grid3" style="gap:8px">
+        <div style="font-size:12px;color:var(--text-muted)">— Depth without siloing</div>
+        <div style="font-size:12px;color:var(--text-muted)">— Clear ownership &amp; accountability</div>
+        <div style="font-size:12px;color:var(--text-muted)">— Flexibility without chaos</div>
+        <div style="font-size:12px;color:var(--text-muted)">— Candidate continuity</div>
+        <div style="font-size:12px;color:var(--text-muted)">— Scalability &amp; stability</div>
+        <div style="font-size:12px;color:var(--text-muted)">— Impact over equal distribution</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Outcomes -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">03</span>
+        <span class="section-title">Outcomes</span>
+        <div class="section-rule"></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">01</div>
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">Faster time-to-pipeline</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Domain depth reduces ramp-up. Sourcers already know communities, titles, and signals.</div>
+          <div style="font-size:11px;color:var(--teal);font-weight:400">No cold starts on every new req.</div>
+        </div>
+        <div class="card">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">02</div>
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">Risk-weighted effort</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Hard-to-fill, high-stakes roles receive proportionally more investment — not equal splits.</div>
+          <div style="font-size:11px;color:var(--teal);font-weight:400">Scarce talent gets the attention it deserves.</div>
+        </div>
+        <div class="card">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">03</div>
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">Continuity &amp; trust</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Consistent ownership builds HM and candidate relationships that improve offer acceptance.</div>
+          <div style="font-size:11px;color:var(--teal);font-weight:400">Fewer re-starts. Stronger close rates.</div>
+        </div>
+        <div class="card">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">04</div>
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">Scalable without chaos</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Flex expands coverage during spikes without breaking accountability or creating ambiguity.</div>
+          <div style="font-size:11px;color:var(--teal);font-weight:400">Hiring surges don't break the system.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="footer-text">Crusoe · Talent Intelligence · Technical Sourcing Operating Model</span>
+      <span class="footer-text">designed by Nicole Shiu</span>
+    </div>
+  </div>
+
+  <!-- ══ STANDARDS ══ -->
+  <div class="pane" id="pane-standards">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>Crusoe · Talent Intelligence<span class="eyebrow-dot"></span>Standards</div>
+    <h1 class="page-title">Operating <em>Standards</em></h1>
+    <p class="page-sub">Internal operating targets and model parameters effective for the current sourcing structure.</p>
+
+    <div class="callout teal">
+      <div class="callout-bar"></div>
+      <div class="callout-body">The sourcing model is shifting to a defined-role, complexity-aligned structure. Sourcers now have clearly defined roles assigned to them, moving away from the previous model where sourcers were broadly aligned to an org.</div>
+    </div>
+
+    <div class="grid3" style="margin-bottom:12px">
+      <div class="card">
+        <div style="display:inline-flex;align-items:center;justify-content:center;background:var(--teal-dim);border:1px solid var(--teal-bdr);color:var(--teal);font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:3px;margin-bottom:12px">P4+</div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Scope: P4 &amp; Above + Leadership</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.7">Sourcing support allocated to P4+ and all leadership levels. Exception: Foundations org includes P3 sourcing support given the niche technical depth of those roles.</p>
+      </div>
+      <div class="card">
+        <div style="display:inline-flex;align-items:center;justify-content:center;background:var(--accent-dim);border:1px solid var(--accent-bdr);color:var(--accent);font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:3px;margin-bottom:12px">10 min</div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Minimum 10 Roles per Sourcer</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.7">Each sourcer carries a minimum of 10 active roles at any time. This ensures full utilization and focused, quality execution across the portfolio.</p>
+      </div>
+      <div class="card">
+        <div style="display:inline-flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:3px;margin-bottom:12px">→</div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Defined Role Assignments</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.7">Sourcers now have clearly defined roles assigned to them, moving away from the previous model where sourcers were broadly aligned to an org.</p>
+      </div>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <div style="display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border:1px solid var(--gold-bdr);color:var(--gold);font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:3px;margin-bottom:12px">3 / mo</div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Goal: 3 Offer Extends / Month</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.7">Each sourcer is goaled at 3 offer extends per month — an average target reflecting balanced allocation across complexity tiers.</p>
+      </div>
+      <div class="card">
+        <div style="display:inline-flex;align-items:center;justify-content:center;background:var(--teal-dim);border:1px solid var(--teal-bdr);color:var(--teal);font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:3px;margin-bottom:12px">80 / wk</div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Outreach Goal: 80 / Week</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.7">Baseline outreach target is 80 per week per sourcer. Subject to change by role complexity — higher-complexity roles may require fewer, higher-quality touches.</p>
+      </div>
+      <div class="card">
+        <div style="display:inline-flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border2);color:var(--text-muted);font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:3px;margin-bottom:12px">≡ form</div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Request Form for Sourcing Support</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.7">Recruiters or HMs requesting support outside defined scope may submit a request form. Allocations reviewed and approved by leadership.</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="footer-text">Crusoe · Talent Intelligence · Standards</span>
+      <span class="footer-text">Internal Use Only</span>
+    </div>
+  </div>
+
+  <!-- ══ TEAM ASSIGNMENTS ══ -->
+  <div class="pane" id="pane-matrix">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>Crusoe · Talent Intelligence<span class="eyebrow-dot"></span>Team Assignments</div>
+    <h1 class="page-title">Team <em>Assignments</em></h1>
+    <p class="page-sub">How sourcers are deployed across the nine Cloud Engineering orgs.</p>
+
+    <div class="callout gold" style="margin-bottom:16px">
+      <div class="callout-bar"></div>
+      <div class="callout-body"><strong style="color:var(--gold)">Tentative — subject to change.</strong> Assignments reflect Q2/Q3 2026 allocations based on business priorities. Role-level view sourced from Ashby.</div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--teal)"></div>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)">Q2/Q3 2026 · 8 sourcers · 124 active reqs</span>
+      </div>
+    </div>
+
+    <div class="matrix-wrap">
+      <table id="matrix-table">
+        <thead><tr id="matrix-head"></tr></thead>
+        <tbody id="matrix-body"></tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;gap:14px;margin-top:14px;flex-wrap:wrap;align-items:center">
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:2px;background:var(--teal-dim);border:1px solid var(--teal-bdr)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Foundations / Network</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:2px;background:var(--accent-dim);border:1px solid var(--accent-bdr)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Managed AI / Cloud Availability / Cloud Mgmt</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:2px;background:var(--gold-dim);border:1px solid var(--gold-bdr)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Security / GRC</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:2px;background:var(--green-dim);border:1px solid var(--green-bdr)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">SRE</span></div>
+    </div>
+
+    <div class="footer">
+      <span class="footer-text">Crusoe · Talent Intelligence · Team Assignments</span>
+      <span class="footer-text">Internal Use Only</span>
+    </div>
+  </div>
+
+  <!-- ══ COVERAGE AREAS ══ -->
+  <div class="pane" id="pane-domains">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>Crusoe · Talent Intelligence<span class="eyebrow-dot"></span>Coverage Areas</div>
+    <h1 class="page-title">Coverage <em>Areas</em></h1>
+    <p class="page-sub">Per-domain sourcing profiles, key signals, communities, and routing guidance across the three sourcing buckets.</p>
+
+    <div class="domain-card">
+      <div class="domain-header" style="background:var(--teal-dim)">
+        <div><div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px">Foundations &amp; Infrastructure</div><div style="font-size:11px;color:var(--text-muted)">Core systems · Storage · Compute · Networking</div></div>
+        <span class="tag teal">The Metal 🟢</span>
+      </div>
+      <div class="domain-body">
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Sample Roles</div><div style="font-size:12px;color:var(--text);line-height:2">→ Datacenter Engineer<br>→ Network Engineer<br>→ Systems Engineer<br>→ Storage Engineer<br>→ Kernel/OS Engineer</div></div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Key Signals</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
+            <span class="tag teal">bare metal</span><span class="tag teal">RDMA</span><span class="tag teal">NVMe</span><span class="tag teal">PCIe</span><span class="tag teal">firmware</span><span class="tag teal">DC ops</span>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Communities</div>
+          <div style="font-size:11px;color:var(--text-muted);line-height:2">· Open Compute Project<br>· USENIX / HotOS<br>· HPC forums &amp; mailing lists</div>
+        </div>
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Routing Note</div><p style="font-size:12px;color:var(--text);line-height:1.7">This is a referral-driven community — warm intros go a long way. Build relationships slowly and prioritize depth over volume. Every hire is a potential door to the next one.</p></div>
+      </div>
+    </div>
+
+    <div class="domain-card">
+      <div class="domain-header" style="background:var(--accent-dim)">
+        <div><div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px">Managed AI &amp; Cloud Management</div><div style="font-size:11px;color:var(--text-muted)">Managed AI · Cloud Management · ML Infrastructure</div></div>
+        <span class="tag blue">The Fabric 🔵</span>
+      </div>
+      <div class="domain-body">
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Sample Roles</div><div style="font-size:12px;color:var(--text);line-height:2">→ ML Platform Engineer<br>→ Inference Infra Engineer<br>→ SRE<br>→ Platform Engineer<br>→ MLOps Engineer</div></div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Key Signals</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
+            <span class="tag blue">control plane</span><span class="tag blue">Kubernetes</span><span class="tag blue">GPU topology</span><span class="tag blue">NVLink</span><span class="tag blue">observability</span>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Communities</div>
+          <div style="font-size:11px;color:var(--text-muted);line-height:2">· KubeCon / CNCF<br>· GitHub: k8s, Prometheus, Envoy<br>· Ex-hyperscaler platform eng</div>
+        </div>
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Routing Note</div><p style="font-size:12px;color:var(--text);line-height:1.7">Start with the platform and software layer, then look for signs of GPU or infrastructure fluency as a differentiator. Crusoe's energy-efficient GPU story resonates strongly here — lean into it early in the outreach.</p></div>
+      </div>
+    </div>
+
+    <div class="domain-card">
+      <div class="domain-header" style="background:var(--gold-dim)">
+        <div><div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px">IT &amp; Security</div><div style="font-size:11px;color:var(--text-muted)">Internal Systems · Security Engineering</div></div>
+        <span class="tag gold">The Shield 🔴</span>
+      </div>
+      <div class="domain-body">
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Sample Roles</div><div style="font-size:12px;color:var(--text);line-height:2">→ Security Engineer<br>→ IAM Engineer<br>→ IT Engineer<br>→ Compliance Analyst<br>→ SecOps</div></div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Key Signals</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
+            <span class="tag gold">zero trust</span><span class="tag gold">FedRAMP</span><span class="tag gold">SOC2</span><span class="tag gold">IAM</span><span class="tag gold">ITAR</span><span class="tag gold">incident response</span>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Communities</div>
+          <div style="font-size:11px;color:var(--text-muted);line-height:2">· DEF CON / Black Hat / BSides<br>· SANS community<br>· Security Slack / Discord</div>
+        </div>
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Routing Note</div><p style="font-size:12px;color:var(--text);line-height:1.7">Security is its own world — candidates here move through referrals and community trust, not job boards. Don't cross-pollinate with general tech pipelines. Take the time to show up in the right spaces and let credibility build naturally.</p></div>
+      </div>
+    </div>
+
+    <div class="domain-card sub-domain">
+      <div class="domain-header" style="background:var(--accent-dim)">
+        <div><div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px">Data</div><div style="font-size:11px;color:var(--text-muted)">Data Engineering · Analytics · Infrastructure</div></div>
+        <span class="tag blue">The Fabric 🔵</span>
+      </div>
+      <div class="domain-body">
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Sample Roles</div><div style="font-size:12px;color:var(--text);line-height:2">→ Data Engineer<br>→ Analytics Engineer<br>→ Data Platform Engineer<br>→ Data Scientist<br>→ BI Engineer</div></div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Key Signals</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
+            <span class="tag blue">dbt</span><span class="tag blue">Spark</span><span class="tag blue">Airflow</span><span class="tag blue">data pipelines</span><span class="tag blue">warehouse</span>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Communities</div>
+          <div style="font-size:11px;color:var(--text-muted);line-height:2">· dbt Community / Coalesce<br>· Data Engineering Weekly<br>· LinkedIn: data engineer, analytics eng</div>
+        </div>
+        <div><div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Routing Note</div><p style="font-size:12px;color:var(--text);line-height:1.7">The data community is active and well-networked — meet them where they are. Look for candidates who can speak to both the engineering and the analytical side. For roles that sit closer to the ML stack, there's natural overlap worth exploring.</p></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="footer-text">Crusoe · Talent Intelligence · Coverage Areas</span>
+      <span class="footer-text">designed by Nicole Shiu</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var ROLE_STYLE = {
+  'Primary':   { bg:'var(--pill-primary-bg)',   color:'var(--pill-primary-color)',   border:'var(--pill-primary-bdr)' },
+  'Secondary': { bg:'var(--pill-secondary-bg)', color:'var(--pill-secondary-color)', border:'var(--pill-secondary-bdr)' },
+  'Dedicated': { bg:'var(--pill-dedicated-bg)', color:'var(--pill-dedicated-color)', border:'var(--pill-dedicated-bdr)' },
+  'Flex':      { bg:'var(--pill-flex-bg)',       color:'var(--pill-flex-color)',       border:'var(--pill-flex-bdr)' },
+  '—':         { bg:'transparent',              color:'var(--text-dim)',              border:'transparent' }
+};
+
+var sourcers = [
+  {
+    name: 'Jimmy Tran',
+    roles: [
+      { id:'CRUS-2805', role:'Sr Staff SWE', team:'Cloud Mgmt & Data' },
+      { id:'CRUS-2749', role:'Staff SWE', team:'Foundations' },
+      { id:'CRUS-2750', role:'Staff SWE', team:'Foundations' },
+      { id:'CRUS-2748', role:'Staff SWE', team:'Foundations' },
+      { id:'CRUS-132',  role:'Staff SWE', team:'Cloud Availability' },
+      { id:'CRUS-3003', role:'TBC - Director, Engineering', team:'Cloud Engineering' },
+      { id:'CRUS-2822', role:'Sr Staff SWE', team:'Managed AI Services' },
+      { id:'CRUS-3619', role:'Staff Cloud Infra Engineer', team:'Cloud Availability' },
+      { id:'CRUS-3497', role:'Sr Staff SWE', team:'Network Engineering' },
+      { id:'CRUS-2926', role:'Sr Staff SWE', team:'Cloud Availability' },
+      { id:'CRUS-2927', role:'Sr Staff SWE', team:'Cloud Availability' },
+      { id:'CRUS-3572', role:'Sr Staff SWE', team:'Cloud Availability' },
+      { id:'CRUS-2996', role:'TBC - Sr Director, Engineering', team:'Cloud Mgmt & Data' },
+      { id:'CRUS-2968', role:'TBC - Sr Staff SWE', team:'Foundations' },
+    ]
+  },
+  {
+    name: 'Dan Dougherty',
+    roles: [
+      { id:'CRUS-3544', role:'Sr Director, Engineering', team:'Network Engineering' },
+      { id:'CRUS-2979', role:'Sr EM, Data Plane Systems', team:'Foundations' },
+      { id:'CRUS-2978', role:'Sr EM, Compute', team:'Foundations' },
+      { id:'CRUS-2715', role:'Senior Manager, Engineering', team:'Foundations' },
+      { id:'CRUS-2718', role:'Senior Manager, Engineering', team:'Foundations' },
+      { id:'CRUS-1332', role:'Principal Infra Engineer', team:'Foundations' },
+      { id:'CRUS-2981', role:'Principal Systems SW Architect', team:'Foundations' },
+      { id:'CRUS-61',   role:'Principal SWE', team:'Foundations' },
+      { id:'CRUS-2983', role:'TBC - Principal SWE', team:'Foundations' },
+      { id:'CRUS-2982', role:'TBC - Principal SWE', team:'Foundations' },
+      { id:'CRUS-2909', role:'TBC - Staff Network Engineer', team:'Network Engineering' },
+      { id:'CRUS-2921', role:'TBC - Staff Network Engineer', team:'Network Engineering' },
+      { id:'CRUS-2905', role:'TBC - Staff Network Engineer', team:'Network Engineering' },
+    ]
+  },
+  {
+    name: 'Ali Aguayo',
+    roles: [
+      { id:'CRUS-2788', role:'TBC - Sr SWE', team:'Foundations' },
+      { id:'CRUS-2830', role:'Sr SWE', team:'Foundations' },
+      { id:'CRUS-1833', role:'TBD', team:'Foundations' },
+      { id:'CRUS-2955', role:'Staff SWE', team:'Foundations' },
+      { id:'CRUS-2804', role:'Sr SWE', team:'Foundations' },
+      { id:'CRUS-2823', role:'Sr Staff SWE, Managed Orch', team:'Foundations' },
+      { id:'CRUS-2806', role:'TBC - Staff SWE', team:'Cloud Mgmt & Data' },
+      { id:'CRUS-2812', role:'TBC - Staff SWE', team:'Cloud Mgmt & Data' },
+      { id:'CRUS-2990', role:'TBC - Manager, Engineering', team:'Cloud Mgmt & Data' },
+      { id:'CRUS-2809', role:'TBC - Staff SWE', team:'Cloud Mgmt & Data' },
+      { id:'CRUS-2841', role:'TBC - Sr SWE', team:'Foundations' },
+      { id:'CRUS-2897', role:'TBC - Sr SWE', team:'Foundations' },
+      { id:'CRUS-2759', role:'TBC - Sr Staff SWE', team:'Managed AI Services' },
+    ]
+  },
+  {
+    name: 'Luis Valencia',
+    roles: [
+      { id:'CRUS-3241', role:'Staff Product Security Eng', team:'Security' },
+      { id:'CRUS-2751', role:'Staff SWE', team:'Foundations' },
+      { id:'CRUS-2753', role:'Staff SWE', team:'Foundations' },
+      { id:'CRUS-2752', role:'Staff SWE', team:'Foundations' },
+      { id:'CRUS-2930', role:'Staff SWE', team:'Cloud Mgmt & Data' },
+      { id:'CRUS-2952', role:'TBC - Staff SWE', team:'Foundations' },
+      { id:'CRUS-2941', role:'TBC - Staff SWE', team:'Foundations' },
+      { id:'CRUS-2954', role:'TBC - Staff SWE', team:'Foundations' },
+      { id:'CRUS-2852', role:'TBC - Sr SWE', team:'Foundations' },
+      { id:'CRUS-2864', role:'TBC - Sr SWE', team:'Foundations' },
+      { id:'CRUS-2757', role:'TBC - Sr Staff SWE', team:'Managed AI Services' },
+    ]
+  },
+  {
+    name: 'Troy Liebesman',
+    roles: [
+      { id:'CRUS-2966', role:'Sr Staff Storage Engineer', team:'Foundations' },
+      { id:'CRUS-2956', role:'Staff SWE, Storage', team:'Foundations' },
+      { id:'CRUS-2886', role:'Sr SWE, Storage', team:'Foundations' },
+      { id:'CRUS-203',  role:'Sr Storage Systems Engineer', team:'Foundations' },
+      { id:'CRUS-335',  role:'Sr EM, Cloud Storage', team:'Foundations' },
+      { id:'CRUS-2726', role:'Sr Staff SWE', team:'Foundations' },
+      { id:'CRUS-2811', role:'TBC - Staff SWE', team:'Cloud Mgmt & Data' },
+      { id:'CRUS-2814', role:'TBC - Staff SWE', team:'Cloud Mgmt & Data' },
+      { id:'CRUS-2967', role:'TBC - Sr Staff SWE', team:'Foundations' },
+      { id:'CRUS-2951', role:'TBC - Staff SWE', team:'Foundations' },
+      { id:'CRUS-2969', role:'TBC - Sr Staff SWE', team:'Foundations' },
+      { id:'CRUS-2970', role:'TBC - Sr Staff SWE', team:'Foundations' },
+      { id:'CRUS-2819', role:'TBC - Sr SWE', team:'Foundations' },
+      { id:'CRUS-2875', role:'TBC - Sr SWE', team:'Foundations' },
+    ]
+  },
+  {
+    name: 'Zachary Beecher',
+    roles: [
+      { id:'CRUS-3253', role:'Director, Physical Security', team:'Security' },
+      { id:'CRUS-3236', role:'Staff GRC Engineer', team:'GRC' },
+      { id:'CRUS-3220', role:'Staff Corporate Security Eng', team:'Security' },
+      { id:'CRUS-3244', role:'TBC - Principal Security Eng', team:'Security' },
+      { id:'CRUS-3239', role:'Staff Product Security Eng', team:'Security' },
+      { id:'CRUS-3243', role:'TBC - EM, Infra Security', team:'Security' },
+      { id:'CRUS-3247', role:'Staff SWE, Security', team:'Security' },
+      { id:'CRUS-3249', role:'Staff Security Eng - D&R', team:'Security' },
+      { id:'CRUS-3234', role:'SOX IT Manager', team:'GRC' },
+      { id:'CRUS-3238', role:'TBC - Sr Manager / Staff PSE', team:'Security' },
+      { id:'CRUS-3254', role:'TBC - Physical Security Mgr', team:'Security' },
+    ]
+  },
+  {
+    name: 'Bianca Lucarelli',
+    roles: [
+      { id:'CRUS-2901', role:'Staff SWE', team:'SRE' },
+      { id:'CRUS-2899', role:'Staff SWE', team:'SRE' },
+      { id:'CRUS-2953', role:'Staff SWE', team:'SRE' },
+      { id:'CRUS-2910', role:'TBC - Staff SRE', team:'SRE' },
+      { id:'CRUS-2863', role:'Senior Manager, Engineering', team:'SRE' },
+      { id:'CRUS-3007', role:'Sr Staff Production Engineer', team:'SRE' },
+      { id:'CRUS-1589', role:'Sr Staff SWE', team:'SRE' },
+      { id:'CRUS-2931', role:'Principal Production Engineer', team:'SRE' },
+      { id:'CRUS-2932', role:'TBC - Principal SRE', team:'SRE' },
+      { id:'CRUS-2697', role:'Staff SWE', team:'Cloud Availability' },
+      { id:'CRUS-3630', role:'Staff Cloud Infra Engineer', team:'Cloud Availability' },
+    ]
+  },
+  {
+    name: 'Justin Lewis',
+    roles: [
+      { id:'CRUS-284',  role:'Manager, Software Engineering', team:'Managed AI Services' },
+      { id:'CRUS-2744', role:'Sr Staff SWE, AI Model LifeCycle', team:'Managed AI Services' },
+      { id:'CRUS-1815', role:'Sr SWE', team:'Foundations' },
+      { id:'CRUS-2791', role:'TBC - Staff SWE', team:'Cloud Engineering' },
+      { id:'CRUS-2798', role:'TBC - Staff SWE', team:'Cloud Engineering' },
+      { id:'CRUS-2792', role:'TBC - Staff SWE', team:'Cloud Engineering' },
+      { id:'CRUS-2796', role:'TBC - Staff SWE', team:'Cloud Engineering' },
+      { id:'CRUS-505',  role:'Staff SWE, AI Performance', team:'Managed AI Services' },
+      { id:'CRUS-79',   role:'Principal, Compute', team:'Foundations' },
+      { id:'CRUS-2808', role:'Sr Virtualization Validation Eng', team:'Foundations' },
+      { id:'CRUS-2821', role:'Sr Staff SWE, AI Model LifeCycle', team:'Managed AI Services' },
+      { id:'CRUS-52',   role:'Sr Director, AI Model LifeCycle', team:'Managed AI Services' },
+      { id:'CRUS-2722', role:'Staff SWE, AI Model LifeCycle', team:'Managed AI Services' },
+      { id:'CRUS-2721', role:'Staff SWE', team:'Managed AI Services' },
+      { id:'CRUS-2760', role:'TBC - Sr Staff SWE', team:'Managed AI Services' },
+      { id:'CRUS-2756', role:'TBC - Sr Staff SWE', team:'Managed AI Services' },
+    ]
+  }
+];
+
+var drag = { active:false, si:0, ci:0, val:'', moved:false };
+var ghostEl = null;
+
+function cellCSS(val) {
+  var s = ROLE_STYLE[val] || ROLE_STYLE['—'];
+  return 'background:' + s.bg + ';color:' + s.color + ';border:1px solid ' + s.border;
+}
+
+function renderHeader() {
+  var tr = document.getElementById('matrix-head');
+  tr.innerHTML = '<th style="text-align:left;min-width:130px">Sourcer</th><th style="text-align:center;min-width:40px">#</th><th style="text-align:left;min-width:200px">Roles</th><th style="text-align:left;min-width:160px">Teams</th>';
+}
+
+function getTeamColor(team) {
+  if (!team) return { bg:'var(--surface2)', color:'var(--text-muted)', border:'var(--border2)' };
+  var t = team.toLowerCase();
+  if (t.includes('foundation')) return { bg:'var(--teal-dim)', color:'var(--teal)', border:'var(--teal-bdr)' };
+  if (t.includes('managed ai') || t.includes('ai services')) return { bg:'var(--accent-dim)', color:'var(--accent)', border:'var(--accent-bdr)' };
+  if (t.includes('security') || t.includes('grc')) return { bg:'var(--gold-dim)', color:'var(--gold)', border:'var(--gold-bdr)' };
+  if (t.includes('sre')) return { bg:'var(--green-dim)', color:'var(--green)', border:'var(--green-bdr)' };
+  if (t.includes('cloud availability')) return { bg:'var(--accent-dim)', color:'var(--accent)', border:'var(--accent-bdr)' };
+  if (t.includes('network')) return { bg:'var(--teal-dim)', color:'var(--teal)', border:'var(--teal-bdr)' };
+  if (t.includes('cloud mgmt') || t.includes('cloud management') || t.includes('data')) return { bg:'var(--accent-dim)', color:'var(--accent)', border:'var(--accent-bdr)' };
+  return { bg:'var(--surface2)', color:'var(--text-muted)', border:'var(--border2)' };
+}
+
+function renderMatrix() {
+  renderHeader();
+  var tbody = document.getElementById('matrix-body');
+  tbody.innerHTML = '';
+  for (var si = 0; si < sourcers.length; si++) {
+    var s = sourcers[si];
+    var tr = document.createElement('tr');
+    tr.setAttribute('data-si', si);
+    tr.style.verticalAlign = 'top';
+
+    // Name
+    var nameTd = document.createElement('td');
+    nameTd.style.cssText = 'padding:10px 8px;border-bottom:1px solid var(--border);vertical-align:top';
+    nameTd.innerHTML = '<div style="font-family:\'DM Sans\',sans-serif;font-size:12px;font-weight:500;color:var(--text)">' + s.name + '</div>';
+    tr.appendChild(nameTd);
+
+    // Count
+    var countTd = document.createElement('td');
+    countTd.style.cssText = 'padding:10px 6px;border-bottom:1px solid var(--border);text-align:center;vertical-align:top';
+    countTd.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:11px;font-weight:500;color:var(--teal)">' + s.roles.length + '</div>';
+    tr.appendChild(countTd);
+
+    // Roles
+    var rolesTd = document.createElement('td');
+    rolesTd.style.cssText = 'padding:8px 6px;border-bottom:1px solid var(--border);vertical-align:top';
+    var rolesHtml = '';
+    for (var ri = 0; ri < s.roles.length; ri++) {
+      var r = s.roles[ri];
+      rolesHtml += '<div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid var(--border);margin-bottom:0">'
+        + '<span style="font-family:\'DM Mono\',monospace;font-size:8px;color:var(--text-dim);flex-shrink:0">' + r.id + '</span>'
+        + '<span style="font-size:11px;color:var(--text);font-weight:300">' + r.role + '</span>'
+        + '</div>';
+    }
+    rolesTd.innerHTML = rolesHtml;
+    tr.appendChild(rolesTd);
+
+    // Teams
+    var teamsTd = document.createElement('td');
+    teamsTd.style.cssText = 'padding:8px 6px;border-bottom:1px solid var(--border);vertical-align:top';
+    var teamsHtml = '';
+    for (var ri2 = 0; ri2 < s.roles.length; ri2++) {
+      var tc = getTeamColor(s.roles[ri2].team);
+      teamsHtml += '<div style="padding:3px 0;border-bottom:1px solid var(--border)">'
+        + '<span style="display:inline-flex;align-items:center;font-family:\'DM Mono\',monospace;font-size:8px;font-weight:500;letter-spacing:.04em;padding:2px 6px;border-radius:2px;background:' + tc.bg + ';color:' + tc.color + ';border:1px solid ' + tc.border + '">' + s.roles[ri2].team + '</span>'
+        + '</div>';
+    }
+    teamsTd.innerHTML = teamsHtml;
+    tr.appendChild(teamsTd);
+
+    tbody.appendChild(tr);
+  }
+}
+
+function cycleCell(si, ci, e) {
+  if (drag.moved) return;
+  openPicker(si, ci);
+}
+
+function deleteCell(e, si, ci) {
+  e.stopPropagation(); e.preventDefault();
+  sourcers[si].cols[ci] = '—';
+  closePicker(); renderMatrix();
+}
+
+var pickerState = { open:false, si:-1, ci:-1 };
+
+function openPicker(si, ci) {
+  closePicker();
+  pickerState = { open:true, si:si, ci:ci };
+  var rowEl = document.querySelector('tr[data-si="' + si + '"]');
+  if (!rowEl) return;
+  var cells = rowEl.querySelectorAll('td');
+  var anchor = cells[ci + 1];
+  if (!anchor) return;
+  var rect = anchor.getBoundingClientRect();
+  var cur = sourcers[si].cols[ci];
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  var picker = document.createElement('div');
+  picker.id = 'cell-picker';
+  picker.style.cssText = 'position:fixed;z-index:9999;background:' + (isDark ? '#111318' : '#ffffff') + ';border:1px solid ' + (isDark ? 'rgba(255,255,255,.12)' : '#ccc8c0') + ';border-radius:4px;padding:5px;display:flex;flex-direction:column;gap:3px;box-shadow:0 8px 24px rgba(0,0,0,.3);min-width:120px';
+  picker.style.top  = (rect.bottom + 5) + 'px';
+  picker.style.left = rect.left + 'px';
+
+  var opts = ['Primary','Secondary','Dedicated','Flex','—'];
+  opts.forEach(function(opt) {
+    var btn = document.createElement('button');
+    var isActive = opt === cur;
+    btn.style.cssText = 'display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:3px;cursor:pointer;font-family:\'DM Mono\',monospace;font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;text-align:left;border:none;background:transparent;color:' + (isDark ? '#6b7491' : '#6b6860');
+    if (isActive) btn.style.background = isDark ? 'rgba(255,255,255,.06)' : '#f0ede8';
+    btn.textContent = opt === '—' ? 'Clear' : opt;
+    btn.onmouseenter = function() { this.style.background = isDark ? 'rgba(255,255,255,.06)' : '#f0ede8'; };
+    btn.onmouseleave = function() { this.style.background = isActive ? (isDark ? 'rgba(255,255,255,.06)' : '#f0ede8') : 'transparent'; };
+    btn.onclick = function(e) {
+      e.stopPropagation();
+      sourcers[si].cols[ci] = opt;
+      closePicker(); renderMatrix();
+    };
+    picker.appendChild(btn);
+  });
+
+  document.body.appendChild(picker);
+  setTimeout(function() { document.addEventListener('click', onPickerOutside); }, 0);
+}
+
+function closePicker() {
+  var p = document.getElementById('cell-picker');
+  if (p) p.remove();
+  document.removeEventListener('click', onPickerOutside);
+  pickerState = { open:false, si:-1, ci:-1 };
+}
+
+function onPickerOutside(e) {
+  var p = document.getElementById('cell-picker');
+  if (p && !p.contains(e.target)) closePicker();
+}
+
+function startDrag(e, si, ci) {
+  e.preventDefault();
+  var val = sourcers[si].cols[ci];
+  drag = { active:true, si:si, ci:ci, val:val, moved:false };
+  ghostEl = document.createElement('div');
+  ghostEl.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;opacity:.85;border-radius:3px;padding:4px 8px;font-family:\'DM Mono\',monospace;font-size:9px;font-weight:500;white-space:nowrap;' + cellCSS(val);
+  ghostEl.textContent = val;
+  document.body.appendChild(ghostEl);
+  moveGhost(e);
+  document.addEventListener('mousemove', onDragMove);
+  document.addEventListener('mouseup', onDragEnd);
+}
+
+function moveGhost(e) {
+  if (!ghostEl) return;
+  ghostEl.style.left = (e.clientX + 10) + 'px';
+  ghostEl.style.top  = (e.clientY - 14) + 'px';
+}
+
+function onDragMove(e) {
+  if (!drag.active) return;
+  drag.moved = true; moveGhost(e);
+}
+
+function getCellUnder(e, si) {
+  var row = document.querySelector('tr[data-si="' + si + '"]');
+  if (!row) return -1;
+  var cells = row.querySelectorAll('td');
+  for (var i = 1; i < cells.length - 1; i++) {
+    var r = cells[i].getBoundingClientRect();
+    if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) return i - 1;
+  }
+  return -1;
+}
+
+function onDragEnd(e) {
+  document.removeEventListener('mousemove', onDragMove);
+  document.removeEventListener('mouseup', onDragEnd);
+  if (ghostEl) { ghostEl.remove(); ghostEl = null; }
+  if (drag.active && drag.moved) {
+    var targetCi = getCellUnder(e, drag.si);
+    if (targetCi >= 0 && targetCi !== drag.ci) {
+      var tmp = sourcers[drag.si].cols[drag.ci];
+      sourcers[drag.si].cols[drag.ci] = sourcers[drag.si].cols[targetCi];
+      sourcers[drag.si].cols[targetCi] = tmp;
+    }
+  }
+  drag.active = false;
+  setTimeout(function() { drag.moved = false; }, 50);
+  renderMatrix();
+}
+
+function addSourcer() {
+  var newCols = [];
+  for (var i = 0; i < columns.length; i++) newCols.push('—');
+  sourcers.push({ name:'New sourcer', cols:newCols });
+  renderMatrix();
+  var rows = document.querySelectorAll('#matrix-body tr');
+  var inp = rows[rows.length - 1].querySelector('input');
+  if (inp) { inp.focus(); inp.select(); }
+}
+
+function removeSourcer(si) {
+  if (sourcers.length <= 1) return;
+  sourcers.splice(si, 1); renderMatrix();
+}
+
+function addColumn() {
+  columns.push('New Org');
+  for (var i = 0; i < sourcers.length; i++) sourcers[i].cols.push('—');
+  renderMatrix();
+  var inputs = document.querySelectorAll('#matrix-head input');
+  var last = inputs[inputs.length - 1];
+  if (last) { last.focus(); last.select(); }
+}
+
+function removeColumn(ci) {
+  if (columns.length <= 1) return;
+  columns.splice(ci, 1);
+  for (var i = 0; i < sourcers.length; i++) sourcers[i].cols.splice(ci, 1);
+  renderMatrix();
+}
+
+function show(id, btn) {
+  document.querySelectorAll('.pane').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('pane-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleTheme() {
+  var html = document.documentElement;
+  var isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isDark ? '☾ Dark Mode' : '☀ Light Mode';
+  document.getElementById('theme-label').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+}
+
+renderMatrix();
+</script>
+</body>
+</html>
