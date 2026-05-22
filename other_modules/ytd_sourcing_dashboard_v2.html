@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>YTD Sourcing Impact · Crusoe · Talent Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK TOKENS ── */
+[data-theme="dark"]{
+  --bg:#0a0b0f;--surface:#111318;--surface2:#181c24;--surface3:#1e2530;
+  --border:#1e2330;--border2:#252d3d;
+  --text:#e8eaf0;--text-muted:#6b7491;--text-dim:#3d4560;
+  --accent:#5b8fff;--accent-dim:rgba(91,143,255,0.08);--accent-bdr:rgba(91,143,255,0.22);
+  --teal:#47c5a8;--teal-dim:rgba(71,197,168,0.07);--teal-bdr:rgba(71,197,168,0.2);
+  --gold:#e8c547;--gold-dim:rgba(232,197,71,0.07);--gold-bdr:rgba(232,197,71,0.18);
+  --green:#4ade80;--green-dim:rgba(74,222,128,0.08);--green-bdr:rgba(74,222,128,0.22);
+  --danger:#f07a4a;--red:#f07a4a;
+  --noise-opacity:.022;
+  --nav-bg:#111318;--card-bg:#111318;--row-bg:#0a0b0f;
+  --input-bg:rgba(255,255,255,0.02);
+  --white:#e8eaf0;
+}
+
+/* ── LIGHT TOKENS ── */
+[data-theme="light"]{
+  --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0ede8;--surface3:#e8e4de;
+  --border:#ddd9d2;--border2:#ccc8c0;
+  --text:#1a1a1e;--text-muted:#6b6860;--text-dim:#aaa59e;
+  --accent:#2a5fd4;--accent-dim:rgba(42,95,212,0.07);--accent-bdr:rgba(42,95,212,0.22);
+  --teal:#1a9e85;--teal-dim:rgba(26,158,133,0.07);--teal-bdr:rgba(26,158,133,0.22);
+  --gold:#b08a00;--gold-dim:rgba(176,138,0,0.08);--gold-bdr:rgba(176,138,0,0.22);
+  --green:#1a8c4e;--green-dim:rgba(26,140,78,0.08);--green-bdr:rgba(26,140,78,0.22);
+  --danger:#c44b1a;--red:#c44b1a;
+  --noise-opacity:0;
+  --nav-bg:#ffffff;--card-bg:#ffffff;--row-bg:#f0ede8;
+  --input-bg:rgba(0,0,0,0.02);
+  --white:#1a1a1e;
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;font-weight:300;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;font-size:14px;line-height:1.6;
+  transition:background .2s,color .2s;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:var(--noise-opacity);
+}
+
+/* ── NAV ── */
+.nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:0;transition:background .2s,border-color .2s}
+.nav-brand{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;display:flex;align-items:center;gap:8px;padding:15px 0;flex-shrink:0}
+.nav-brand::before{content:'';width:5px;height:5px;background:var(--accent);border-radius:50%;display:inline-block;opacity:.7}
+.nav-tabs{display:flex;gap:0;align-items:center}
+.nav-tab{font-size:12px;font-weight:400;padding:16px 18px;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;user-select:none;letter-spacing:.01em}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-actions{display:flex;align-items:center;gap:8px;padding:8px 0 8px 16px;flex-shrink:0}
+
+/* ── MODE TOGGLE ── */
+.mode-toggle{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;padding:6px 12px;border-radius:4px;border:1px solid var(--border2);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap;text-transform:uppercase}
+.mode-toggle:hover{border-color:var(--accent-bdr);color:var(--accent);background:var(--accent-dim)}
+
+/* ── SAVE / DL BUTTONS ── */
+.dl-btn{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:400;padding:6px 12px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--text-muted);cursor:pointer;transition:color .12s,background .12s,border-color .12s;letter-spacing:.01em}
+.dl-btn:hover{color:var(--text);background:var(--surface2);border-color:var(--accent-bdr)}
+.save-btn{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;padding:6px 14px;border-radius:4px;border:1px solid var(--accent-bdr);background:var(--accent-dim);color:var(--accent);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap;flex-shrink:0;text-transform:uppercase}
+.save-btn:hover{background:rgba(91,143,255,0.14);border-color:var(--accent)}
+.save-btn.saved{border-color:var(--green-bdr);background:var(--green-dim);color:var(--green)}
+.save-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ── PAGE LAYOUT ── */
+.page{position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:40px 40px 80px}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* ── REPORT HEADER ── */
+.report-header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid var(--border)}
+.rh-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.rh-eyebrow-dot{width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:.6}
+.rh-left h1{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1.1;margin-bottom:10px}
+.rh-left h1 em{color:var(--accent);font-style:italic}
+.rh-meta{display:flex;gap:20px;flex-wrap:wrap}
+.rh-meta span{font-size:12px;color:var(--text-muted);font-weight:300}
+.rh-meta span b{color:var(--text);font-weight:500}
+.conf-tag{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+
+/* ── SECTION HEADER ── */
+.sh{display:flex;align-items:center;gap:14px;margin-bottom:18px;margin-top:36px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.sh:first-child{margin-top:0}
+.sh-num{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);opacity:.7;flex-shrink:0}
+.sh-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.sh-rule{margin-left:auto;width:20px;height:1px;background:var(--accent);opacity:.3;flex-shrink:0}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:36px}
+@media(max-width:900px){.stat-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:18px 18px 14px;transition:background .2s,border-color .2s}
+.stat-card.accent{border-color:var(--accent-bdr)}
+.stat-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+.stat-val{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--text);line-height:1;letter-spacing:-.02em}
+.stat-card.accent .stat-val{color:var(--accent)}
+.stat-sub{font-size:11px;color:var(--text-muted);margin-top:5px;font-weight:300}
+
+/* ── DATA ENTRY ── */
+.entry-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:4px;overflow:hidden;margin-bottom:32px;transition:background .2s}
+.entry-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;background:var(--surface2)}
+.entry-toolbar-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.toolbar-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)}
+.btn{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;padding:6px 14px;border-radius:4px;border:1px solid var(--accent-bdr);background:var(--accent-dim);color:var(--accent);cursor:pointer;transition:all .12s;letter-spacing:.02em}
+.btn:hover{background:rgba(91,143,255,0.14);border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{opacity:.88}
+.btn.teal{border-color:var(--teal-bdr);background:var(--teal-dim);color:var(--teal)}
+.btn.teal:hover{background:rgba(71,197,168,0.14);border-color:var(--teal)}
+.entry-table-wrap{overflow-x:auto}
+.entry-table{width:100%;border-collapse:collapse;font-size:12px}
+.entry-table th{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);padding:9px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;background:var(--surface2)}
+.entry-table td{padding:4px 5px;border-bottom:1px solid var(--border)}
+.entry-table tr:last-child td{border-bottom:none}
+.entry-table tr:hover td{background:var(--accent-dim)}
+.entry-table td input,.entry-table td select{width:100%;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;padding:5px 8px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--text);outline:none;transition:border-color .12s,background .12s}
+.entry-table td input:focus,.entry-table td select:focus{border-color:var(--accent-bdr);background:var(--input-bg)}
+.entry-table td input::placeholder{color:var(--text-dim);font-style:italic}
+.entry-table td select option{background:var(--surface);color:var(--text)}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--text-dim);font-size:14px;padding:3px 7px;border-radius:4px;transition:color .12s,background .12s}
+.del-btn:hover{color:var(--danger);background:rgba(240,122,74,0.08)}
+
+/* ── SOURCER CARDS ── */
+.sourcer-scroll{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:32px}
+.sc-card{background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:20px 22px;display:flex;flex-direction:column;gap:14px;transition:background .2s}
+.sc-head{display:flex;align-items:center;gap:12px}
+.sc-avatar{width:38px;height:38px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent-bdr);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--accent);flex-shrink:0}
+.sc-name{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--text)}
+.sc-role{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin-top:2px}
+.sc-contrib{font-family:'DM Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-bdr);margin-left:auto;white-space:nowrap;flex-shrink:0;letter-spacing:.05em}
+.sc-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sc-num{background:var(--surface2);border-radius:4px;padding:10px 10px;text-align:center;border:1px solid var(--border)}
+.sc-num-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);line-height:1}
+.sc-num.hi .sc-num-val{color:var(--accent)}
+.sc-num-lbl{font-family:'DM Mono',monospace;font-size:8px;color:var(--text-dim);margin-top:4px;letter-spacing:.08em;text-transform:uppercase}
+.sc-domains-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.sc-domain-tags{display:flex;flex-wrap:wrap;gap:4px}
+.sc-domain-tag{font-family:'DM Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;border:1px solid var(--border2);color:var(--text-muted);background:var(--surface2);letter-spacing:.04em}
+.sc-offers-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+.sc-offer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;gap:8px}
+.sc-offer-domain{font-size:11px;color:var(--text-muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:300}
+.sc-offer-bar-wrap{width:80px;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;flex-shrink:0}
+.sc-offer-bar{height:100%;background:var(--accent);border-radius:2px}
+.sc-offer-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);width:16px;text-align:right;flex-shrink:0}
+.sc-empty{font-size:11px;color:var(--text-dim);font-style:italic;font-weight:300}
+
+/* ── SUMMARY TABLE ── */
+.tbl-wrap{overflow-x:auto;margin-bottom:36px}
+.data-table{width:100%;border-collapse:collapse;font-size:13px;border:1px solid var(--border2);border-radius:4px;overflow:hidden}
+.data-table thead th{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);padding:11px 14px;border-bottom:1px solid var(--border2);text-align:left;white-space:nowrap;background:var(--surface2)}
+.data-table tbody td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;font-weight:300}
+.data-table tbody tr:last-child td{border-bottom:none}
+.data-table tbody tr:hover td{background:var(--accent-dim)}
+.td-name{font-weight:500;color:var(--text)}
+.td-mono{font-family:'DM Mono',monospace;font-size:11px}
+.td-blue{color:var(--accent)}
+.td-dim{color:var(--text-muted);font-size:12px;font-weight:300}
+.bar-inline{height:3px;background:var(--accent);border-radius:2px;margin-top:4px;opacity:.7}
+
+/* ── DOMAIN TABLE ── */
+.domain-sourcers{display:flex;flex-wrap:wrap;gap:4px}
+.d-sourcer-pill{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-bdr);letter-spacing:.03em}
+
+/* ── INSIGHTS ── */
+.insights-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:36px}
+.insight-card{background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;overflow:hidden;transition:background .2s}
+.insight-card.positive{border-left:2px solid var(--green)}
+.insight-card.watch{border-left:2px solid var(--gold)}
+.insight-card.risk{border-left:2px solid var(--danger)}
+.insight-card.info{border-left:2px solid var(--accent)}
+.insight-type{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase}
+.insight-card.positive .insight-type{color:var(--green)}
+.insight-card.watch .insight-type{color:var(--gold)}
+.insight-card.risk .insight-type{color:var(--danger)}
+.insight-card.info .insight-type{color:var(--accent)}
+.insight-text{font-size:13px;color:var(--text-muted);line-height:1.65;font-weight:300}
+
+/* ── SETTINGS ── */
+.settings-wrap{max-width:600px}
+.settings-group{background:var(--surface);border:1px solid var(--border2);border-radius:4px;overflow:hidden;margin-bottom:20px}
+.settings-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.settings-row:last-child{border-bottom:none}
+.settings-label{font-size:13px;color:var(--text);flex:1;font-weight:400}
+.settings-sub{font-size:11px;color:var(--text-dim);margin-top:2px;font-weight:300}
+.settings-row input,.settings-row select{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;padding:6px 10px;border:1px solid var(--border2);border-radius:4px;background:var(--input-bg);color:var(--text);width:220px;outline:none;transition:border-color .15s}
+.settings-row input:focus,.settings-row select:focus{border-color:var(--accent-bdr)}
+.insight-entry{background:var(--surface);border:1px solid var(--border2);border-radius:4px;overflow:hidden;margin-bottom:20px}
+.insight-row{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border)}
+.insight-row:last-child{border-bottom:none}
+.insight-row select{font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 8px;border:1px solid var(--border2);border-radius:4px;background:var(--input-bg);color:var(--text);width:100px;outline:none;flex-shrink:0}
+.insight-row textarea{flex:1;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;padding:5px 8px;border:1px solid var(--border2);border-radius:4px;background:var(--input-bg);color:var(--text);resize:none;height:52px;outline:none;line-height:1.45}
+.insight-row textarea:focus,.insight-row select:focus{border-color:var(--accent-bdr)}
+
+/* ── PASSWORD GATE ── */
+#pw-gate{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.pw-box{width:100%;max-width:360px;padding:40px 36px;background:var(--surface);border:1px solid var(--border2);border-radius:4px;display:flex;flex-direction:column;gap:20px}
+.pw-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.pw-eyebrow::before{content:'';width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:.6;display:inline-block}
+.pw-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.pw-sub{font-size:13px;color:var(--text-muted);font-weight:300}
+.pw-input{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;padding:10px 12px;border:1px solid var(--border2);border-radius:4px;background:var(--input-bg);color:var(--text);outline:none;width:100%;transition:border-color .2s}
+.pw-input:focus{border-color:var(--accent-bdr);box-shadow:0 0 0 3px rgba(91,143,255,0.06)}
+.pw-input.error{border-color:var(--danger)}
+.pw-btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:4px;border:none;background:var(--accent);color:#fff;cursor:pointer;transition:opacity .12s;letter-spacing:.02em}
+.pw-btn:hover{opacity:.88}
+.pw-error{font-size:12px;color:var(--danger);min-height:16px;text-align:center;font-weight:300}
+
+/* ── CSV MODAL ── */
+#csv-modal{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+.csv-modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:4px;width:100%;max-width:560px;margin:20px;overflow:hidden}
+.csv-modal-head{padding:20px 24px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.csv-modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
+.csv-modal-sub{font-size:12px;color:var(--text-muted);font-weight:300}
+.csv-modal-body{padding:20px 24px;display:flex;flex-direction:column;gap:10px}
+.csv-modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--surface2)}
+
+/* ── FOOTER ── */
+.footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.footer-note{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
+
+/* ── EMPTY STATE ── */
+.empty-state{padding:40px;text-align:center;color:var(--text-dim);font-size:13px;font-style:italic;font-weight:300}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="pw-gate">
+  <div class="pw-box">
+    <div class="pw-eyebrow">Crusoe · Talent Intelligence</div>
+    <div class="pw-title">YTD Sourcing <em style="font-style:italic;color:var(--accent)">Impact</em></div>
+    <div class="pw-sub">Enter password to continue</div>
+    <input class="pw-input" id="pw-input" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')checkPassword()"/>
+    <button class="pw-btn" onclick="checkPassword()">Unlock →</button>
+    <div class="pw-error" id="pw-error"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">Crusoe · Talent Intelligence</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" data-tab="dashboard" onclick="switchTab('dashboard',this)">Dashboard</div>
+    <div class="nav-tab" data-tab="data" onclick="switchTab('data',this)">Data Entry</div>
+    <div class="nav-tab" data-tab="settings" onclick="switchTab('settings',this)">Report Settings</div>
+  </div>
+  <div class="nav-actions">
+    <button class="mode-toggle" id="mode-toggle" onclick="toggleMode()">☀ Light</button>
+    <button class="dl-btn" onclick="downloadWithData()">Download backup</button>
+    <button class="save-btn" id="save-btn" onclick="saveToStorage()">
+      <span class="save-dot"></span><span id="save-label">Save</span>
+    </button>
+  </div>
+</nav>
+
+<div class="page">
+
+<!-- ══════════════════ TAB: DASHBOARD ══════════════════ -->
+<div id="tab-dashboard" class="tab-panel active">
+
+  <div class="report-header">
+    <div class="rh-left">
+      <div class="rh-eyebrow"><span class="rh-eyebrow-dot"></span>Talent Intelligence Hub<span class="rh-eyebrow-dot"></span>Sourcing Impact</div>
+      <h1>YTD <em>Sourcing</em> Impact</h1>
+      <div class="rh-meta">
+        <span>Period: <b id="d-title">—</b></span>
+        <span>As of: <b id="d-asof">—</b></span>
+        <span>By: <b id="d-prepby">—</b></span>
+        <span>Audience: <b id="d-audience">—</b></span>
+      </div>
+    </div>
+    <div><div class="conf-tag">Confidential · Internal</div></div>
+  </div>
+
+  <div class="sh"><span class="sh-num">01</span><span class="sh-title">At a glance</span><div class="sh-rule"></div></div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-lbl">Total offers ext.</div><div class="stat-val" id="d-tot-offers">0</div></div>
+    <div class="stat-card"><div class="stat-lbl">Offers accepted</div><div class="stat-val" id="d-tot-accepted">0</div></div>
+    <div class="stat-card accent"><div class="stat-lbl">Accept rate</div><div class="stat-val" id="d-accept-rate">—</div></div>
+    <div class="stat-card"><div class="stat-lbl">Offers declined</div><div class="stat-val" id="d-tot-declined">0</div></div>
+    <div class="stat-card"><div class="stat-lbl">Active sourcers</div><div class="stat-val" id="d-sourcers">0</div></div>
+    <div class="stat-card"><div class="stat-lbl">Domains covered</div><div class="stat-val" id="d-domains">0</div></div>
+  </div>
+
+  <div class="sh"><span class="sh-num">02</span><span class="sh-title">Sourcer performance</span><div class="sh-rule"></div></div>
+  <div class="sourcer-scroll" id="sourcer-cards"></div>
+
+  <div class="sh"><span class="sh-num">03</span><span class="sh-title">Sourcer summary</span><div class="sh-rule"></div></div>
+  <div class="tbl-wrap">
+    <table class="data-table">
+      <thead><tr>
+        <th>Sourcer</th><th>Offers ext.</th><th>Accepted</th><th>Declined</th>
+        <th>Accept rate</th><th>% of total</th><th>Domains owned</th>
+      </tr></thead>
+      <tbody id="sourcer-table-body"></tbody>
+    </table>
+  </div>
+
+  <div class="sh"><span class="sh-num">04</span><span class="sh-title">Domain breakdown</span><div class="sh-rule"></div></div>
+  <div class="tbl-wrap">
+    <table class="data-table">
+      <thead><tr>
+        <th>Domain / team</th><th>Offers ext.</th><th>Accepted</th>
+        <th>Accept rate</th><th>% of total</th><th>Sourcers</th>
+      </tr></thead>
+      <tbody id="domain-table-body"></tbody>
+    </table>
+  </div>
+
+  <div class="sh"><span class="sh-num">05</span><span class="sh-title">Key insights</span><div class="sh-rule"></div></div>
+  <div class="insights-grid" id="insights-grid"></div>
+
+  <div class="footer">
+    <div class="footer-note">Crusoe · Talent Intelligence · Confidential · Internal</div>
+    <div class="footer-note">Ashby ATS + sourcer self-report</div>
+  </div>
+</div>
+
+<!-- ══════════════════ TAB: DATA ENTRY ══════════════════ -->
+<div id="tab-data" class="tab-panel">
+
+  <div class="sh" style="margin-top:0"><span class="sh-num">01</span><span class="sh-title">Offer log</span><div class="sh-rule"></div></div>
+  <div class="entry-wrap">
+    <div class="entry-toolbar">
+      <div class="entry-toolbar-left">
+        <span class="toolbar-label">One row per offer extended</span>
+        <button class="btn teal" onclick="document.getElementById('csv-file-input').click()">Import Ashby CSV</button>
+        <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCSVUpload(event)"/>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="addOfferRow()">+ Add row</button>
+        <button class="btn primary" onclick="refreshDashboard()">Refresh dashboard ↗</button>
+      </div>
+    </div>
+    <div class="entry-table-wrap">
+      <table class="entry-table">
+        <thead><tr>
+          <th>Sourcer name</th><th>Candidate (opt.)</th><th>Role / req</th>
+          <th>Domain / team</th><th>Org</th><th>Status</th><th>Month</th><th></th>
+        </tr></thead>
+        <tbody id="offer-log-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sh"><span class="sh-num">02</span><span class="sh-title">Sourcer roster</span><div class="sh-rule"></div></div>
+  <div class="entry-wrap">
+    <div class="entry-toolbar">
+      <div class="entry-toolbar-left">
+        <span class="toolbar-label">Domains = comma-separated</span>
+      </div>
+      <button class="btn" onclick="addSourcerRow()">+ Add sourcer</button>
+    </div>
+    <div class="entry-table-wrap">
+      <table class="entry-table">
+        <thead><tr>
+          <th>Full name</th><th>Initials</th><th>Title / role</th>
+          <th>Owned domains (comma-separated)</th><th></th>
+        </tr></thead>
+        <tbody id="sourcer-roster-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px">
+    <button class="btn primary" onclick="refreshDashboard()">Refresh dashboard ↗</button>
+  </div>
+</div>
+
+<!-- ══════════════════ TAB: SETTINGS ══════════════════ -->
+<div id="tab-settings" class="tab-panel">
+  <div class="sh" style="margin-top:0"><span class="sh-num">01</span><span class="sh-title">Report metadata</span><div class="sh-rule"></div></div>
+  <div class="settings-wrap">
+    <div class="settings-group">
+      <div class="settings-row">
+        <div><div class="settings-label">Reporting period</div><div class="settings-sub">e.g. Jan – Jun 2025 or YTD 2025</div></div>
+        <input type="text" id="s-period" placeholder="YTD 2025" oninput="saveSettings()"/>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">As of date</div></div>
+        <input type="text" id="s-asof" placeholder="e.g. June 30, 2025" oninput="saveSettings()"/>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Prepared by</div></div>
+        <input type="text" id="s-prepby" placeholder="e.g. Nicole Shiu" oninput="saveSettings()"/>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Audience</div></div>
+        <input type="text" id="s-audience" placeholder="e.g. VP Talent, CTO" oninput="saveSettings()"/>
+      </div>
+    </div>
+
+    <div class="sh"><span class="sh-num">02</span><span class="sh-title">Key insights</span><div class="sh-rule"></div></div>
+    <div class="insight-entry" id="insight-entry-wrap"></div>
+    <button class="btn" onclick="addInsightRow()" style="margin-bottom:24px">+ Add insight</button>
+
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn primary" onclick="saveSettings();refreshDashboard();switchTab('dashboard',document.querySelector('[data-tab=dashboard]'))">Save & view dashboard ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- CSV MODAL -->
+<div id="csv-modal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.65);align-items:center;justify-content:center;">
+  <div class="csv-modal-box">
+    <div class="csv-modal-head">
+      <div class="csv-modal-title">Map Ashby CSV columns</div>
+      <div class="csv-modal-sub">Match your CSV headers to dashboard fields. Unmatched fields will be left blank.</div>
+    </div>
+    <div class="csv-modal-body" id="csv-mapping-body"></div>
+    <div class="csv-modal-foot">
+      <button class="btn" onclick="closeCSVModal()">Cancel</button>
+      <button class="btn primary" onclick="applyCSVImport()">Import rows</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+const STATUS_OPTS = ['Extended','Accepted','Declined','Pending'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const INSIGHT_TYPES = ['positive','watch','risk','info'];
+let offerRows=[], sourcerRows=[], insightRows=[];
+let meta={ period:'', asof:'', prepby:'', audience:'' };
+
+// ── MODE TOGGLE ──
+function toggleMode(){
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('mode-toggle').textContent = isDark ? '☽ Dark' : '☀ Light';
+}
+
+// ── TAB SWITCHING ──
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+  if(id==='dashboard') refreshDashboard();
+}
+
+function pct(a,b){ return b>0?Math.round(a/b*100):0; }
+function inits(name){ return name.trim().split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?'; }
+function esc(s){ const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML; }
+
+// ── OFFER LOG ──
+function addOfferRow(d) {
+  d=d||{};
+  const tbody=document.getElementById('offer-log-body');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><input type="text" placeholder="Sourcer name" value="${esc(d.sourcer||'')}" oninput="batchSyncOffers()"/></td>
+    <td><input type="text" placeholder="optional" value="${esc(d.candidate||'')}"/></td>
+    <td><input type="text" placeholder="Role / req title" value="${esc(d.role||'')}" oninput="batchSyncOffers()"/></td>
+    <td><input type="text" placeholder="e.g. Networking" value="${esc(d.domain||'')}" oninput="batchSyncOffers()"/></td>
+    <td><input type="text" placeholder="e.g. Cloud Eng" value="${esc(d.org||'')}" oninput="batchSyncOffers()"/></td>
+    <td><select onchange="batchSyncOffers()">${STATUS_OPTS.map(s=>`<option${d.status===s?' selected':''}>${s}</option>`).join('')}</select></td>
+    <td><select onchange="batchSyncOffers()" style="width:72px"><option value="">—</option>${MONTHS.map(m=>`<option value="${m}"${d.month===m?' selected':''}>${m}</option>`).join('')}</select></td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove();batchSyncOffers()">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+function batchSyncOffers(){
+  offerRows=[];
+  document.querySelectorAll('#offer-log-body tr').forEach(tr=>{
+    const c=tr.querySelectorAll('input,select');
+    offerRows.push({ sourcer:c[0].value.trim(), candidate:c[1].value.trim(), role:c[2].value.trim(), domain:c[3].value.trim(), org:c[4].value.trim(), status:c[5].value, month:c[6].value });
+  });
+}
+
+// ── SOURCER ROSTER ──
+function addSourcerRow(d) {
+  d=d||{};
+  const tbody=document.getElementById('sourcer-roster-body');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><input type="text" placeholder="Full name" value="${esc(d.name||'')}" oninput="batchSyncSourcers()"/></td>
+    <td><input type="text" placeholder="auto" value="${esc(d.initials||'')}" style="width:56px" oninput="batchSyncSourcers()"/></td>
+    <td><input type="text" placeholder="Sourcer" value="${esc(d.title||'')}" oninput="batchSyncSourcers()"/></td>
+    <td><input type="text" placeholder="Compute, SDN, Security" value="${esc(d.domains||'')}" oninput="batchSyncSourcers()"/></td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove();batchSyncSourcers()">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+function batchSyncSourcers(){
+  sourcerRows=[];
+  document.querySelectorAll('#sourcer-roster-body tr').forEach(tr=>{
+    const c=tr.querySelectorAll('input');
+    sourcerRows.push({ name:c[0].value.trim(), initials:c[1].value.trim(), title:c[2].value.trim(), domains:c[3].value.trim() });
+  });
+}
+
+// ── INSIGHTS ──
+function addInsightRow(d) {
+  d=d||{};
+  const wrap=document.getElementById('insight-entry-wrap');
+  const div=document.createElement('div');
+  div.className='insight-row';
+  div.innerHTML=`
+    <select onchange="batchSyncInsights()">${INSIGHT_TYPES.map(t=>`<option value="${t}"${d.type===t?' selected':''}>${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('')}</select>
+    <textarea placeholder="Write insight here…" oninput="batchSyncInsights()">${esc(d.text||'')}</textarea>
+    <button class="del-btn" onclick="this.closest('.insight-row').remove();batchSyncInsights()">✕</button>`;
+  wrap.appendChild(div);
+}
+function batchSyncInsights(){
+  insightRows=[];
+  document.querySelectorAll('#insight-entry-wrap .insight-row').forEach(row=>{
+    const sel=row.querySelector('select'), ta=row.querySelector('textarea');
+    if(ta.value.trim()) insightRows.push({ type:sel.value, text:ta.value.trim() });
+  });
+}
+
+// ── SETTINGS ──
+function saveSettings(){
+  meta.period=document.getElementById('s-period').value.trim();
+  meta.asof=document.getElementById('s-asof').value.trim();
+  meta.prepby=document.getElementById('s-prepby').value.trim();
+  meta.audience=document.getElementById('s-audience').value.trim();
+  batchSyncInsights();
+}
+
+// ── CSV IMPORT ──
+let csvParsedRows=[], csvHeaders=[];
+const CSV_FIELD_HINTS={ sourcer:['sourcer','sourced by','sourcer name','credited to','source credit'], candidate:['candidate','candidate name','name','full name'], role:['job','job title','role','position','req','requisition','opening'], domain:['team','domain','sub-team','subteam','department team'], org:['department','org','organization','dept'], status:['offer status','status','offer state','offer'], month:['month','offer date','date','created at','offer sent date','extended date'] };
+const DASHBOARD_FIELDS=['sourcer','candidate','role','domain','org','status','month'];
+const FIELD_LABELS={ sourcer:'Sourcer name', candidate:'Candidate (opt.)', role:'Role / req', domain:'Domain / team', org:'Org', status:'Offer status', month:'Month' };
+
+function parseCSV(text){
+  const lines=text.trim().split(/\r?\n/);
+  if(lines.length<2) return{headers:[],rows:[]};
+  const headers=lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
+  const rows=lines.slice(1).map(line=>{
+    const cols=[];let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){cols.push(cur.trim());cur='';}else{cur+=c;}}
+    cols.push(cur.trim());
+    const row={};headers.forEach((h,i)=>row[h]=(cols[i]||'').replace(/^"|"$/g,'').trim());return row;
+  });
+  return{headers,rows};
+}
+function guessMapping(headers){
+  const mapping={};
+  DASHBOARD_FIELDS.forEach(field=>{const hints=CSV_FIELD_HINTS[field];const match=headers.find(h=>hints.some(hint=>h.toLowerCase().includes(hint)));mapping[field]=match||'';});
+  return mapping;
+}
+function handleCSVUpload(e){
+  const file=e.target.files[0];if(!file)return;e.target.value='';
+  const reader=new FileReader();
+  reader.onload=evt=>{const{headers,rows}=parseCSV(evt.target.result);if(!headers.length){alert('Could not parse CSV.');return;}csvHeaders=headers;csvParsedRows=rows;renderCSVModal(headers,guessMapping(headers));};
+  reader.readAsText(file);
+}
+function renderCSVModal(headers,mapping){
+  const body=document.getElementById('csv-mapping-body');
+  body.innerHTML=DASHBOARD_FIELDS.map(field=>`
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);width:130px;flex-shrink:0">${FIELD_LABELS[field]}</span>
+      <select id="map-${field}" style="flex:1;font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 10px;border:1px solid var(--border2);border-radius:4px;background:var(--input-bg);color:var(--text);outline:none">
+        ${['(skip)',...headers].map(h=>`<option value="${h}"${mapping[field]===h?' selected':''}>${h}</option>`).join('')}
+      </select>
+    </div>`).join('');
+  document.getElementById('csv-modal').style.display='flex';
+}
+function closeCSVModal(){document.getElementById('csv-modal').style.display='none';}
+function normalizeStatus(raw){
+  if(!raw)return'Extended';const v=raw.toLowerCase().trim();
+  if(v.includes('accept')||v==='hired')return'Accepted';
+  if(v.includes('declin')||v.includes('reject')||v==='archived')return'Declined';
+  if(v.includes('pend')||v.includes('draft'))return'Pending';
+  if(v==='active'||v.includes('extend')||v.includes('sent'))return'Extended';
+  return'Extended';
+}
+function normalizeMonth(raw){
+  if(!raw)return'';const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  for(const m of months){if(raw.toLowerCase().includes(m.toLowerCase()))return m;}
+  const d=new Date(raw);if(!isNaN(d))return months[d.getMonth()];return'';
+}
+function applyCSVImport(){
+  const mapping={};DASHBOARD_FIELDS.forEach(f=>{const s=document.getElementById('map-'+f);mapping[f]=s?s.value:'(skip)';});
+  document.getElementById('offer-log-body').innerHTML='';
+  csvParsedRows.forEach(row=>{const d={};DASHBOARD_FIELDS.forEach(f=>{const col=mapping[f];d[f]=col==='(skip)'?'':(row[col]||'');});d.status=normalizeStatus(d.status);d.month=normalizeMonth(d.month);addOfferRow(d);});
+  closeCSVModal();batchSyncOffers();refreshDashboard();switchTab('data',document.querySelector('[data-tab=data]'));
+}
+
+// ── DASHBOARD RENDER ──
+function refreshDashboard(){
+  batchSyncOffers();batchSyncSourcers();batchSyncInsights();
+  const offers=offerRows.filter(r=>r.sourcer&&r.status&&r.status!=='Pending'&&r.status!=='');
+  const accepted=offers.filter(r=>r.status==='Accepted');
+  const declined=offers.filter(r=>r.status==='Declined');
+  const total=offers.length;
+  document.getElementById('d-title').textContent=meta.period||'YTD Sourcing Impact';
+  document.getElementById('d-asof').textContent=meta.asof||'—';
+  document.getElementById('d-prepby').textContent=meta.prepby||'—';
+  document.getElementById('d-audience').textContent=meta.audience||'—';
+  document.getElementById('d-tot-offers').textContent=total;
+  document.getElementById('d-tot-accepted').textContent=accepted.length;
+  document.getElementById('d-tot-declined').textContent=declined.length;
+  document.getElementById('d-accept-rate').textContent=total>0?pct(accepted.length,total)+'%':'—';
+
+  const sMap={};
+  offers.forEach(r=>{const key=r.sourcer;if(!sMap[key])sMap[key]={offers:0,accepted:0,declined:0,domains:{}};sMap[key].offers++;if(r.status==='Accepted')sMap[key].accepted++;if(r.status==='Declined')sMap[key].declined++;if(r.domain)sMap[key].domains[r.domain]=(sMap[key].domains[r.domain]||0)+1;});
+  const rosterMap={};
+  sourcerRows.filter(s=>s.name).forEach(s=>{rosterMap[s.name]=s;if(!sMap[s.name])sMap[s.name]={offers:0,accepted:0,declined:0,domains:{}};});
+  const allSourcerNames=Object.keys(sMap).sort((a,b)=>sMap[b].offers-sMap[a].offers);
+  const dMap={};
+  offers.forEach(r=>{const key=r.domain||'(unspecified)';if(!dMap[key])dMap[key]={offers:0,accepted:0,sourcers:new Set()};dMap[key].offers++;if(r.status==='Accepted')dMap[key].accepted++;if(r.sourcer)dMap[key].sourcers.add(r.sourcer);});
+  document.getElementById('d-sourcers').textContent=9;
+  document.getElementById('d-domains').textContent=Object.keys(dMap).filter(d=>d!=='(unspecified)').length;
+
+  // sourcer cards
+  const scDiv=document.getElementById('sourcer-cards');scDiv.innerHTML='';
+  if(allSourcerNames.length===0){scDiv.innerHTML='<div class="empty-state">No offer data yet — add rows in the Data Entry tab.</div>';}
+  else{allSourcerNames.forEach(name=>{
+    const s=sMap[name],r=rosterMap[name]||{};
+    const contrib=pct(s.offers,total);
+    const initStr=r.initials||inits(name);
+    const titleStr=r.title||'Sourcer';
+    const ownedDomains=r.domains?r.domains.split(',').map(d=>d.trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b)):[];
+    const offerDomains=Object.entries(s.domains).sort((a,b)=>b[1]-a[1]);
+    const maxDomainCount=offerDomains.length>0?offerDomains[0][1]:1;
+    const domainTagsHtml=ownedDomains.length?ownedDomains.map(d=>`<span class="sc-domain-tag">${esc(d)}</span>`).join(''):'<span class="sc-empty">—</span>';
+    const offerDomainHtml=offerDomains.length?offerDomains.map(([d,cnt])=>`<div class="sc-offer-row"><span class="sc-offer-domain">${esc(d)}</span><div class="sc-offer-bar-wrap"><div class="sc-offer-bar" style="width:${Math.round(cnt/maxDomainCount*100)}%"></div></div><span class="sc-offer-count">${cnt}</span></div>`).join(''):'<span class="sc-empty">No offers logged</span>';
+    scDiv.innerHTML+=`<div class="sc-card"><div class="sc-head"><div class="sc-avatar">${esc(initStr)}</div><div style="flex:1;min-width:0"><div class="sc-name">${esc(name)}</div><div class="sc-role">${esc(titleStr)}</div></div><div class="sc-contrib">${contrib}% of offers</div></div><div class="sc-nums"><div class="sc-num hi"><div class="sc-num-val">${s.offers}</div><div class="sc-num-lbl">Offers ext.</div></div><div class="sc-num"><div class="sc-num-val">${s.accepted}</div><div class="sc-num-lbl">Accepted</div></div><div class="sc-num"><div class="sc-num-val">${s.offers>0?pct(s.accepted,s.offers)+'%':'—'}</div><div class="sc-num-lbl">Accept rate</div></div></div><div><div class="sc-domains-lbl">Owned domains</div><div class="sc-domain-tags">${domainTagsHtml}</div></div><div><div class="sc-offers-lbl">Offers by domain</div>${offerDomainHtml}</div></div>`;
+  });}
+
+  // sourcer summary table
+  const stBody=document.getElementById('sourcer-table-body');stBody.innerHTML='';
+  if(allSourcerNames.length===0){stBody.innerHTML=`<tr><td colspan="7" class="empty-state">No data yet.</td></tr>`;}
+  else{allSourcerNames.forEach(name=>{const s=sMap[name],r=rosterMap[name]||{};const contrib=pct(s.offers,total);const ownedDomains=r.domains?r.domains.split(',').map(d=>d.trim()).filter(Boolean):[];stBody.innerHTML+=`<tr><td class="td-name">${esc(name)}</td><td class="td-mono td-blue">${s.offers}</td><td class="td-mono">${s.accepted}</td><td class="td-mono">${s.declined}</td><td class="td-mono">${s.offers>0?pct(s.accepted,s.offers)+'%':'—'}</td><td class="td-mono"><div style="font-size:11px;color:var(--text-muted)">${contrib}%</div><div class="bar-inline" style="width:${contrib}%;max-width:100%"></div></td><td class="td-dim">${ownedDomains.length?ownedDomains.join(', '):'—'}</td></tr>`;});}
+
+  // domain table
+  const dtBody=document.getElementById('domain-table-body');dtBody.innerHTML='';
+  const dEntries=Object.entries(dMap).sort((a,b)=>a[0].localeCompare(b[0]));
+  if(dEntries.length===0){dtBody.innerHTML=`<tr><td colspan="6" class="empty-state">No domain data yet.</td></tr>`;}
+  else{dEntries.forEach(([domain,d])=>{const contrib=pct(d.offers,total);const ar=d.offers>0?pct(d.accepted,d.offers)+'%':'—';const sourcerPills=[...d.sourcers].map(s=>`<span class="d-sourcer-pill">${esc(s)}</span>`).join('');dtBody.innerHTML+=`<tr><td class="td-name">${esc(domain)}</td><td class="td-mono td-blue">${d.offers}</td><td class="td-mono">${d.accepted}</td><td class="td-mono">${ar}</td><td class="td-mono"><div style="font-size:11px;color:var(--text-muted)">${contrib}%</div><div class="bar-inline" style="width:${contrib}%;max-width:100%"></div></td><td><div class="domain-sourcers">${sourcerPills||'<span class="td-dim">—</span>'}</div></td></tr>`;});}
+
+  // insights
+  const igDiv=document.getElementById('insights-grid');igDiv.innerHTML='';
+  const displayInsights=insightRows.length>0?insightRows:[{type:'info',text:'Add key insights in the Report Settings tab.'}];
+  displayInsights.forEach(i=>{const label=i.type==='positive'?'Strength':i.type==='watch'?'Watch':i.type==='risk'?'Risk':'Note';igDiv.innerHTML+=`<div class="insight-card ${i.type}"><div class="insight-type">${label}</div><div class="insight-text">${esc(i.text)}</div></div>`;});
+}
+
+// ── PASSWORD ──
+function checkPassword(){
+  const val=document.getElementById('pw-input').value;
+  const input=document.getElementById('pw-input');
+  const err=document.getElementById('pw-error');
+  if(val.toLowerCase().trim()==='raise the bar'){
+    document.getElementById('pw-gate').style.display='none';
+    err.textContent='';input.classList.remove('error');
+  } else {
+    input.classList.add('error');
+    err.textContent='Incorrect password. Please try again.';
+    input.value='';input.focus();
+  }
+}
+
+// ── SAVE / LOAD / DOWNLOAD ──
+const STORAGE_KEY='crusoe_ytd_sourcing_v2';
+function collectState(){ batchSyncOffers();batchSyncSourcers();batchSyncInsights();saveSettings();return{meta,offers:offerRows,sourcers:sourcerRows,insights:insightRows}; }
+function saveToStorage(){
+  const state=collectState();
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));flashSaved();}
+  catch(e){alert('localStorage unavailable — use Download backup instead.');}
+}
+function flashSaved(){
+  const btn=document.getElementById('save-btn'),lbl=document.getElementById('save-label');
+  btn.classList.add('saved');lbl.textContent='Saved ✓';
+  setTimeout(()=>{btn.classList.remove('saved');lbl.textContent='Save';},2000);
+}
+function loadFromStorage(state){
+  if(state.meta){
+    document.getElementById('s-period').value=state.meta.period||'';
+    document.getElementById('s-asof').value=state.meta.asof||'';
+    document.getElementById('s-prepby').value=state.meta.prepby||'';
+    document.getElementById('s-audience').value=state.meta.audience||'';
+    saveSettings();
+  }
+  document.getElementById('offer-log-body').innerHTML='';
+  (state.offers||[]).forEach(r=>addOfferRow(r));
+  if(!state.offers||state.offers.length===0)for(let i=0;i<5;i++)addOfferRow();
+  document.getElementById('sourcer-roster-body').innerHTML='';
+  (state.sourcers||[]).forEach(r=>addSourcerRow(r));
+  if(!state.sourcers||state.sourcers.length===0)for(let i=0;i<3;i++)addSourcerRow();
+  document.getElementById('insight-entry-wrap').innerHTML='';
+  (state.insights||[]).forEach(r=>addInsightRow(r));
+  if(!state.insights||state.insights.length===0){addInsightRow({type:'positive',text:''});addInsightRow({type:'watch',text:''});addInsightRow({type:'risk',text:''});}
+}
+function downloadWithData(){
+  const state=collectState();
+  const html=document.documentElement.outerHTML;
+  const inject=`<script id="__saved_state__">window.__SAVED_STATE__=${JSON.stringify(state)};<\/script>`;
+  const out=html.replace('</head>',inject+'</head>');
+  const b64=btoa(unescape(encodeURIComponent(out)));
+  const a=document.createElement('a');
+  a.href='data:text/html;base64,'+b64;
+  a.download='crusoe_ytd_sourcing_dashboard.html';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
+// ── INIT ──
+window.__SAVED_STATE__ = {
+  "meta": {
+    "period": "YTD 2026",
+    "asof": "May 21, 2026",
+    "prepby": "Nicole Shiu",
+    "audience": "Leadership"
+  },
+  "offers": [
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Praneeth Tota",
+      "role": "2026-05-14 11:11:21",
+      "domain": "Senior Software Engineer, Data Platform",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "May"
+    },
+    {
+      "sourcer": "Nicole Shiu",
+      "candidate": "Moiz Husain Haidry",
+      "role": "2026-02-18 07:29:53",
+      "domain": "Staff Software Engineer, Storage",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Feb"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Amreen Abdul Wahab",
+      "role": "2026-04-24 10:39:28",
+      "domain": "Senior Backend Software Engineer, Cloud Management",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Apr"
+    },
+    {
+      "sourcer": "Nicole Shiu",
+      "candidate": "Brian Olson",
+      "role": "2026-01-16 16:34:06",
+      "domain": "Storage Engineering Director",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Jan"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Manoj Sudheendra",
+      "role": "2026-03-26 16:41:25",
+      "domain": "Staff Software Engineer, Cloud Management",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Luis Valencia",
+      "candidate": "Harpreet Singh",
+      "role": "2026-05-15 11:56:34",
+      "domain": "Staff GRC Engineer",
+      "org": "IT, Compliance, and Security",
+      "status": "Accepted",
+      "month": "May"
+    },
+    {
+      "sourcer": "Dan Dougherty",
+      "candidate": "Zaur Naghiyev",
+      "role": "2026-01-09 08:55:39",
+      "domain": "Network Engineer, Deployment",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Jan"
+    },
+    {
+      "sourcer": "Ali Aguayo",
+      "candidate": "Abhiram Raghuraman",
+      "role": "2026-05-08 13:30:29",
+      "domain": "Software Engineer II Networking",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "May"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Aditi Mangal",
+      "role": "2026-04-08 11:00:13",
+      "domain": "Senior Backend Software Engineer, Cloud Management",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Apr"
+    },
+    {
+      "sourcer": "Dan Dougherty",
+      "candidate": "Matthew Nikahd",
+      "role": "2026-02-20 13:26:29",
+      "domain": "Staff/Senior Staff Network Engineer",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Feb"
+    },
+    {
+      "sourcer": "Ali Aguayo",
+      "candidate": "Lanxin Hu",
+      "role": "2026-04-06 13:35:08",
+      "domain": "Software Engineer II Networking",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Apr"
+    },
+    {
+      "sourcer": "Nicole Shiu",
+      "candidate": "Satya Suresh Chouta Naga Veera Venkata",
+      "role": "2026-02-05 17:40:37",
+      "domain": "Staff Software Engineer, CAPE",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Feb"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Anand Vastrad",
+      "role": "2026-03-12 14:16:54",
+      "domain": "Staff Software Engineer, Storage",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Sahil Mehta",
+      "role": "2026-05-14 14:46:30",
+      "domain": "Senior Software Engineer, Managed Services",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "May"
+    },
+    {
+      "sourcer": "Luis Valencia",
+      "candidate": "Natalie Serebryakova",
+      "role": "2026-03-02 12:36:16",
+      "domain": "Staff Infrastructure Engineer (Vault)",
+      "org": "IT, Compliance, and Security",
+      "status": "Accepted",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Pradyoth Hegde",
+      "role": "2026-05-18 09:35:33",
+      "domain": "Senior Backend Software Engineer, Cloud Management",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "May"
+    },
+    {
+      "sourcer": "Luis Valencia",
+      "candidate": "Weigang Geng",
+      "role": "2026-03-06 09:27:20",
+      "domain": "Senior+ Embedded Production Engineer",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Dan Dougherty",
+      "candidate": "Ken Struys",
+      "role": "2026-04-29 10:12:40",
+      "domain": "Senior Director, Developer Experience",
+      "org": "CTO Office",
+      "status": "Accepted",
+      "month": "Apr"
+    },
+    {
+      "sourcer": "Dan Dougherty",
+      "candidate": "Onur Turkcu",
+      "role": "2026-03-31 13:59:53",
+      "domain": "Senior Network Planner",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Bincan Zou",
+      "role": "2026-04-12 16:40:24",
+      "domain": "Staff Software Engineer, Managed Services",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Apr"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Spencer Derecat",
+      "role": "2026-05-19 11:24:53",
+      "domain": "Senior Backend Engineer, Tooling",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "May"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Sasivardhan Mamidigumpula",
+      "role": "2026-05-04 11:34:29",
+      "domain": "Staff Software Engineer, Cloud Management",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "May"
+    },
+    {
+      "sourcer": "Dan Dougherty",
+      "candidate": "Isaku Yamahata",
+      "role": "2026-04-30 17:03:04",
+      "domain": "Staff Cloud Hypervisor R&D",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Apr"
+    },
+    {
+      "sourcer": "Dan Dougherty",
+      "candidate": "Vaibhav Dhage",
+      "role": "2026-03-30 11:53:29",
+      "domain": "Principal Architect",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Darshan Yadav Venkatesh",
+      "role": "2026-02-10 11:04:25",
+      "domain": "Senior Backend Software Engineer, Cloud Management",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Feb"
+    },
+    {
+      "sourcer": "Ali Aguayo",
+      "candidate": "Waqas Alam",
+      "role": "2026-03-24 16:14:31",
+      "domain": "Senior Staff Software Engineer, Networking",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Nicole Shiu",
+      "candidate": "Ajay Kumar Mishra",
+      "role": "2026-04-16 11:05:35",
+      "domain": "Senior / Staff Software Engineer, Networking",
+      "org": "Cloud Engineering",
+      "status": "Accepted",
+      "month": "Apr"
+    },
+    {
+      "sourcer": "Luis Valencia",
+      "candidate": "Hannah Ng",
+      "role": "2026-05-08 15:18:41",
+      "domain": "Senior GRC Analyst",
+      "org": "IT, Compliance, and Security",
+      "status": "Declined",
+      "month": "May"
+    },
+    {
+      "sourcer": "Luis Valencia",
+      "candidate": "Robison Jacka",
+      "role": "2026-03-20 13:33:38",
+      "domain": "Staff Infrastructure Security Engineer",
+      "org": "IT, Compliance, and Security",
+      "status": "Declined",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Justin Lewis",
+      "candidate": "Ayush Kalani",
+      "role": "2026-05-05 11:25:54",
+      "domain": "Senior Software Engineer, Managed Services",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "May"
+    },
+    {
+      "sourcer": "Dan Dougherty",
+      "candidate": "Linwei Chen",
+      "role": "2026-03-30 11:53:04",
+      "domain": "Senior Backend Software Engineer, Cloud Management",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Ali Aguayo",
+      "candidate": "Sriganesh Kini",
+      "role": "2026-04-23 15:28:56",
+      "domain": "Staff/Senior Staff Network Engineer",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "Apr"
+    },
+    {
+      "sourcer": "Ali Aguayo",
+      "candidate": "Xianming Luo",
+      "role": "2026-02-25 11:47:08",
+      "domain": "Software Engineer II Networking",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "Feb"
+    },
+    {
+      "sourcer": "Nicole Shiu",
+      "candidate": "Nirvik Ghosh",
+      "role": "2026-02-13 12:37:31",
+      "domain": "Storage Systems Administrator II",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "Feb"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Rohit Singhal",
+      "role": "2026-03-16 15:18:55",
+      "domain": "Senior Software Engineer, Managed Services",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Zachary Beecher",
+      "candidate": "Sebastian Stahr",
+      "role": "2026-04-28 09:23:05",
+      "domain": "Senior Enterprise Technology Administrator, Finance Systems",
+      "org": "IT, Compliance, and Security",
+      "status": "Declined",
+      "month": "Apr"
+    },
+    {
+      "sourcer": "Dan Dougherty",
+      "candidate": "Xingtong Dong",
+      "role": "2026-05-04 15:27:45",
+      "domain": "Senior Software Engineer, Managed Orchestration (Managed Kubernetes)",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "May"
+    },
+    {
+      "sourcer": "Dan Dougherty",
+      "candidate": "Vishal Bhise",
+      "role": "2026-05-08 12:10:35",
+      "domain": "Senior Software Engineer, Data Platform",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "May"
+    },
+    {
+      "sourcer": "Ali Aguayo",
+      "candidate": "Rajesh Jalisatgi",
+      "role": "2026-05-11 12:49:12",
+      "domain": "Senior Software Engineer, Storage",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "May"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Sachin Sarsambi",
+      "role": "2026-03-09 16:13:04",
+      "domain": "Software Engineer II, Managed Platform Services",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Tyler Connel",
+      "role": "2026-02-16 11:47:19",
+      "domain": "Staff Software Engineer, Slurm",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "Feb"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Venkata S Vanapalli",
+      "role": "2026-01-08 17:48:45",
+      "domain": "Senior Staff Software Engineer - Cloud Availability Platform Engineering (Observability)",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "Jan"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Karun Satish",
+      "role": "2026-03-08 15:45:05",
+      "domain": "Senior Software Engineer, Data Platform",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "Mar"
+    },
+    {
+      "sourcer": "Luis Valencia",
+      "candidate": "Prashant Nadagoud",
+      "role": "2026-05-15 12:46:43",
+      "domain": "Senior API Engineer",
+      "org": "IT, Compliance, and Security",
+      "status": "Declined",
+      "month": "May"
+    },
+    {
+      "sourcer": "Jimmy Tran",
+      "candidate": "Ashutosh Sant",
+      "role": "2026-02-03 09:28:48",
+      "domain": "Staff Production Engineer (Operational Excellence)",
+      "org": "Cloud Engineering",
+      "status": "Declined",
+      "month": "Feb"
+    },
+    {
+      "sourcer": "Bianca Lucarelli",
+      "candidate": "Samuel Blais-Dowdy",
+      "role": "2026-05-19 14:38:37",
+      "domain": "Senior Production Engineer, Operational Excellence",
+      "org": "Cloud Engineering",
+      "status": "Extended",
+      "month": "May"
+    },
+    {
+      "sourcer": "Zachary Beecher",
+      "candidate": "Tejomayi Kurmala",
+      "role": "2026-05-21 11:17:13",
+      "domain": "SOX IT Manager",
+      "org": "IT, Compliance, and Security",
+      "status": "Extended",
+      "month": "May"
+    }
+  ],
+  "sourcers": [
+    {
+      "name": "Jimmy Tran",
+      "initials": "JT",
+      "title": "Sourcer",
+      "domains": "Cloud Management, Data Engineering, HPC / Slurm, Managed Services, Production Eng, CAPE"
+    },
+    {
+      "name": "Nicole Shiu",
+      "initials": "NS",
+      "title": "Sourcer",
+      "domains": "Cloud Engineering"
+    },
+    {
+      "name": "Dan Dougherty",
+      "initials": "DD",
+      "title": "Sourcer",
+      "domains": "Architecture, Cloud Management, Networking"
+    },
+    {
+      "name": "Ali Aguayo",
+      "initials": "AA",
+      "title": "Sourcer",
+      "domains": "Networking"
+    },
+    {
+      "name": "Luis Valencia",
+      "initials": "LV",
+      "title": "Sourcer",
+      "domains": "Infrastructure, Security"
+    },
+    {
+      "name": "Troy Liebesman",
+      "initials": "TL",
+      "title": "Sourcer",
+      "domains": "Compute, Storage"
+    },
+    {
+      "name": "Zachary Beecher",
+      "initials": "ZB",
+      "title": "Sourcer",
+      "domains": "Security & IT, Storage"
+    },
+    {
+      "name": "Bianca Lucarelli",
+      "initials": "BL",
+      "title": "Soucer",
+      "domains": "SRE (cloud availability)"
+    },
+    {
+      "name": "Justin Lewis",
+      "initials": "JL",
+      "title": "Sourcer",
+      "domains": "Data, Managed AI"
+    }
+  ],
+  "insights": [
+    {
+      "type": "positive",
+      "text": "Hiring pace accelerated 4x from Jan (3 offers) to Mar (13 offers) \u2014 the strongest output month YTD. April is early but already has 3 offers in flight."
+    },
+    {
+      "type": "positive",
+      "text": "Nicole Shiu and Dan Dougherty have the strongest conversion rates on the team \u2014 5/6 (83%) and 5/5 (100%) respectively, with zero declines for Dan YTD."
+    },
+    {
+      "type": "risk",
+      "text": "Jimmy Tran has the highest volume (10 offers, 36% of total) but the lowest accept rate \u2014 only 2 of 10 accepted (20%). Warrants a closer look at comp alignment and role complexity on his reqs."
+    },
+    {
+      "type": "watch",
+      "text": "4 of 9 sourcers \u2014 Troy Liebesman, Zachary Beecher, Bianca Lucarelli, and Justin Lewis \u2014 have no offer data yet. Worth confirming whether their pipelines are active or stalled."
+    },
+    {
+      "type": "watch",
+      "text": "IT, Compliance & Security is covered by Luis Valencia alone (3 offers, 11% of total). Single-sourcer coverage on a hard-to-fill org is a capacity risk."
+    }
+  ]
+};
+(function init(){
+  if(window.__SAVED_STATE__){ loadFromStorage(window.__SAVED_STATE__); refreshDashboard(); return; }
+  try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw){ loadFromStorage(JSON.parse(raw)); refreshDashboard(); return; } }catch(e){}
+  for(let i=0;i<5;i++)addOfferRow();
+  for(let i=0;i<3;i++)addSourcerRow();
+  addInsightRow({type:'positive',text:''});addInsightRow({type:'watch',text:''});addInsightRow({type:'risk',text:''});
+  refreshDashboard();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hiring Pace Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK TOKENS ── */
+[data-theme="dark"] {
+  --bg:#0a0b0f; --surface:#111318; --surface2:#181c24; --surface3:#1e2530;
+  --border:#1e2330; --border2:#252d3d;
+  --text:#e8eaf0; --text-muted:#6b7491; --text-dim:#3d4560;
+  --accent:#5b8fff; --accent-dim:rgba(91,143,255,0.08); --accent-bdr:rgba(91,143,255,0.22);
+  --teal:#47c5a8; --teal-dim:rgba(71,197,168,0.07); --teal-bdr:rgba(71,197,168,0.2);
+  --gold:#e8c547; --gold-dim:rgba(232,197,71,0.07); --gold-bdr:rgba(232,197,71,0.18);
+  --green:#4ade80; --green-dim:rgba(74,222,128,0.08); --green-bdr:rgba(74,222,128,0.22);
+  --danger:#f07a4a;
+  --noise-opacity: 0.022;
+  --chart-grid: rgba(255,255,255,0.04);
+  --chart-border: rgba(255,255,255,0.08);
+  --chart-tick: #3d4560;
+  --tooltip-bg: #111318;
+  --tooltip-border: #252d3d;
+}
+
+/* ── LIGHT TOKENS ── */
+[data-theme="light"] {
+  --bg:#f5f4f0; --surface:#ffffff; --surface2:#f0ede8; --surface3:#e8e4de;
+  --border:#ddd9d2; --border2:#ccc8c0;
+  --text:#1a1a1e; --text-muted:#6b6860; --text-dim:#aaa59e;
+  --accent:#2a5fd4; --accent-dim:rgba(42,95,212,0.07); --accent-bdr:rgba(42,95,212,0.22);
+  --teal:#1a9e85; --teal-dim:rgba(26,158,133,0.07); --teal-bdr:rgba(26,158,133,0.22);
+  --gold:#b08a00; --gold-dim:rgba(176,138,0,0.08); --gold-bdr:rgba(176,138,0,0.22);
+  --green:#1a8c4e; --green-dim:rgba(26,140,78,0.08); --green-bdr:rgba(26,140,78,0.22);
+  --danger:#c44b1a;
+  --noise-opacity: 0;
+  --chart-grid: rgba(0,0,0,0.05);
+  --chart-border: rgba(0,0,0,0.1);
+  --chart-tick: #aaa59e;
+  --tooltip-bg: #ffffff;
+  --tooltip-border: #ddd9d2;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-weight: 300;
+  min-height: 100vh; line-height: 1.6;
+}
+
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: var(--noise-opacity); pointer-events: none; z-index: 0;
+}
+
+/* ── LAYOUT ── */
+.app {
+  display: grid; grid-template-columns: 300px 1fr;
+  min-height: 100vh; position: relative; z-index: 1;
+  transition: grid-template-columns 0.25s ease;
+}
+.app.sidebar-hidden { grid-template-columns: 0px 1fr; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--surface); border-right: 1px solid var(--border);
+  height: 100vh; position: sticky; top: 0; overflow-y: auto;
+  padding: 24px 20px 48px;
+  transition: width .25s ease, padding .25s ease, opacity .2s ease, border .25s ease;
+}
+.sidebar.collapsed { width:0; padding:0; opacity:0; overflow:hidden; border-right:none; }
+
+.reopen-btn {
+  position: fixed; top: 16px; left: 0; z-index: 100;
+  background: var(--surface); border: 1px solid var(--border); border-left: none;
+  border-radius: 0 4px 4px 0; width: 24px; height: 48px;
+  display: none; align-items: center; justify-content: center; cursor: pointer;
+  font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 500;
+  letter-spacing: 0.12em; writing-mode: vertical-rl; color: var(--text-muted);
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2); transition: color .15s;
+}
+.reopen-btn.visible { display: flex; }
+.reopen-btn:hover { color: var(--text); }
+
+.sidebar-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--border);
+}
+
+.sidebar-eyebrow {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--text-muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.eyebrow-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); opacity: .6; }
+
+.sidebar-actions { display: flex; gap: 6px; align-items: center; }
+
+.icon-btn {
+  background: transparent; border: 1px solid var(--border2); border-radius: 4px;
+  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 12px; color: var(--text-muted); transition: all .15s;
+}
+.icon-btn:hover { color: var(--text); border-color: var(--accent-bdr); }
+
+/* Sidebar sections */
+.s-sec { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.s-sec:last-of-type { border-bottom: none; }
+
+.s-label {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 10px; display: block;
+}
+
+/* Inputs */
+.field-label {
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 5px; display: block; margin-top: 10px;
+}
+.field-label:first-of-type { margin-top: 0; }
+
+.field-input {
+  width: 100%; background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border2); border-radius: 4px;
+  padding: 7px 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px; font-weight: 300; color: var(--text);
+  outline: none; transition: border-color .2s, background .2s;
+}
+.field-input::placeholder { color: var(--text-dim); font-style: italic; }
+.field-input:focus {
+  border-color: var(--accent-bdr);
+  box-shadow: 0 0 0 3px rgba(91,143,255,0.06);
+  background: rgba(91,143,255,0.02);
+}
+[data-theme="light"] .field-input { background: var(--surface); }
+[data-theme="light"] .field-input:focus { background: rgba(42,95,212,0.02); }
+
+/* Org blocks */
+.org-block {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 4px; margin-bottom: 8px; overflow: hidden;
+}
+.org-block-header {
+  display: flex; align-items: center; gap: 8px; padding: 9px 10px;
+}
+.org-dot-preview { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.org-name-input {
+  flex: 1; border: none;
+  border-bottom: 1px dashed var(--border2);
+  background: transparent; font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px; font-weight: 500; color: var(--text);
+  outline: none; padding: 0 0 1px; cursor: text; transition: border-color .15s;
+}
+.org-name-input:focus { border-bottom-color: var(--accent); }
+
+.remove-org-btn {
+  background: none; border: none; color: var(--text-dim); font-size: 15px;
+  cursor: pointer; line-height: 1; padding: 0 2px; transition: color .15s;
+}
+.remove-org-btn:hover { color: var(--danger); }
+
+.color-row { display: grid; grid-template-columns: 1fr 30px; gap: 6px; align-items: center; padding: 0 10px 8px; }
+.color-swatch { width: 30px; height: 30px; padding: 2px; border: 1px solid var(--border2); border-radius: 4px; cursor: pointer; }
+
+.monthly-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; padding: 0 10px 10px; }
+.monthly-grid .field-label { font-size: 9px; text-align: center; margin-bottom: 2px; margin-top: 0; }
+.monthly-grid .field-input { padding: 4px; text-align: center; font-size: 11.5px; }
+
+.add-org-btn {
+  width: 100%; padding: 7px; background: transparent;
+  border: 1px dashed var(--border2); border-radius: 4px;
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-muted); cursor: pointer; transition: all .15s; margin-top: 4px;
+}
+.add-org-btn:hover { border-color: var(--accent-bdr); color: var(--accent); }
+
+/* Buttons */
+.btn-primary {
+  width: 100%; padding: 9px 14px; background: var(--accent-dim);
+  color: var(--accent); border: 1px solid var(--accent-bdr);
+  border-radius: 4px; font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all .15s; letter-spacing: .02em; margin-top: 4px;
+}
+.btn-primary:hover { background: rgba(91,143,255,0.14); border-color: var(--accent); }
+
+/* How to save */
+details { margin-top: 16px; }
+details summary {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted);
+  cursor: pointer; list-style: none; display: flex;
+  align-items: center; justify-content: space-between; user-select: none;
+}
+details summary::-webkit-details-marker { display: none; }
+.details-arrow {
+  font-size: 9px; color: var(--gold);
+  text-shadow: 0 0 6px var(--gold-bdr); transition: transform .2s;
+}
+details[open] .details-arrow { transform: rotate(90deg); }
+.save-body {
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);
+  font-size: 11.5px; color: var(--text-muted); font-weight: 300; line-height: 1.8;
+}
+.save-body div { margin-bottom: 2px; }
+.save-body strong { color: var(--text); font-weight: 500; }
+kbd {
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 3px; padding: 1px 5px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+}
+
+/* ── CHART PANEL ── */
+.chart-panel {
+  padding: 32px 40px 56px; overflow-y: auto;
+  transition: padding-left .25s ease;
+}
+.chart-panel.expanded { padding-left: 52px; }
+
+/* Report header */
+.report-header { margin-bottom: 28px; }
+
+.report-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.report-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px; font-weight: 700; line-height: 1.1;
+  letter-spacing: -.02em; color: var(--text); margin-bottom: 6px;
+}
+.report-title em { color: var(--accent); font-style: italic; }
+
+.report-subtitle { font-size: 12.5px; color: var(--text-muted); font-weight: 300; }
+
+.date-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.date-label {
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted);
+  white-space: nowrap;
+}
+.date-input {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 300;
+  color: var(--text); border: none;
+  border-bottom: 1px dashed var(--border2);
+  background: transparent; outline: none; padding: 1px 4px; width: 180px;
+}
+.date-input::placeholder { color: var(--text-dim); font-style: italic; }
+.date-input:focus { border-bottom-color: var(--accent); }
+
+/* Legend */
+.legend-wrapper {
+  border: 1px solid var(--border); border-radius: 4px;
+  overflow: hidden; margin-bottom: 24px;
+}
+.legend-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 13px; cursor: pointer; background: var(--surface2);
+  border: none; width: 100%; font-family: 'DM Sans', sans-serif;
+  transition: background .15s;
+}
+.legend-toggle:hover { background: var(--surface3); }
+.legend-toggle-left { display: flex; align-items: center; gap: 10px; }
+.legend-toggle-label {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted);
+}
+.legend-org-dots { display: flex; gap: 4px; align-items: center; }
+.legend-org-dot { width: 7px; height: 7px; border-radius: 50%; }
+.legend-arrow {
+  font-size: 9px; color: var(--gold);
+  text-shadow: 0 0 6px var(--gold-bdr); transition: transform .2s;
+}
+.legend-wrapper.open .legend-arrow { transform: rotate(90deg); }
+.legend {
+  display: none; flex-wrap: wrap; gap: 12px 24px;
+  padding: 14px 16px; border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.legend-wrapper.open .legend { display: flex; }
+.legend-org-group { min-width: 130px; }
+.legend-org-name {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 6px;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-muted); margin-bottom: 3px; font-weight: 300; }
+.legend-bar-swatch { width: 13px; height: 13px; border-radius: 2px; flex-shrink: 0; }
+.legend-line-swatch { width: 18px; height: 0; border-top: 2px dashed; flex-shrink: 0; }
+
+/* Org sections */
+.org-section { margin-bottom: 28px; }
+.org-section-label {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 7px;
+}
+.org-section-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+.chart-wrap { height: 155px; position: relative; }
+
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 0 0 28px; }
+
+/* Summary */
+.summary { display: flex; gap: 24px; flex-wrap: wrap; padding-top: 4px; }
+.summary-item { font-size: 12px; color: var(--text-muted); font-weight: 300; min-width: 90px; }
+.summary-item strong {
+  display: block; font-family: 'DM Mono', monospace;
+  font-size: 24px; font-weight: 500; color: var(--text);
+  line-height: 1.2; margin-bottom: 2px;
+}
+.status-pill {
+  display: inline-block; margin-top: 3px; font-size: 10px; font-weight: 500;
+  padding: 2px 8px; border-radius: 3px;
+  font-family: 'DM Mono', monospace; letter-spacing: .04em;
+}
+.onpace { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-bdr); }
+.behind { background: rgba(240,122,74,0.08); color: var(--danger); border: 1px solid rgba(240,122,74,0.22); }
+.neutral { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-bdr); }
+
+.catchup-rate {
+  font-size: 10.5px; color: var(--text-muted); margin-top: 5px;
+  font-weight: 300; font-style: italic;
+}
+.catchup-rate span { font-style: normal; font-weight: 500; color: var(--teal); }
+
+/* Empty state */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; height: 65vh; color: var(--text-dim); text-align: center; gap: 12px;
+}
+.empty-state svg { opacity: 0.2; }
+.empty-state p { font-size: 13px; color: var(--text-muted); font-weight: 300; line-height: 1.7; }
+
+/* Theme toggle */
+.theme-toggle {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted);
+  cursor: pointer; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 5px 10px; transition: all .15s;
+}
+.theme-toggle:hover { border-color: var(--accent-bdr); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<button class="reopen-btn" id="reopenBtn" onclick="toggleSidebar()" title="Show sidebar">MENU</button>
+
+<div class="app" id="app">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-eyebrow">
+      <span class="eyebrow-dot"></span>
+      TI Hub
+      <span class="eyebrow-dot"></span>
+    </div>
+    <div class="sidebar-actions">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Toggle light/dark mode">☀ Light</button>
+      <button class="icon-btn" id="toggleBtn" onclick="toggleSidebar()" title="Hide sidebar">✕</button>
+    </div>
+  </div>
+
+  <!-- Chart settings -->
+  <div class="s-sec">
+    <span class="s-label">Chart Settings</span>
+    <span class="field-label">Report Title</span>
+    <input type="text" id="chartTitle" value="Hiring Pace Simulator" class="field-input" />
+    <span class="field-label">Year</span>
+    <input type="number" id="chartYear" value="2026" min="2020" max="2035" class="field-input" />
+    <span class="field-label">Attrition Rate (%)</span>
+    <input type="number" id="attritionRate" value="20" min="0" max="100" step="1" class="field-input" />
+    <div style="font-size:10.5px;color:var(--text-dim);margin-top:5px;font-style:italic;font-weight:300;">Gross monthly target = annual target × (1 + rate/100) ÷ 12</div>
+  </div>
+
+  <!-- Orgs -->
+  <div class="s-sec">
+    <span class="s-label">Organizations</span>
+    <div id="orgList"></div>
+    <button class="add-org-btn" onclick="addOrg()">+ Add org</button>
+  </div>
+
+  <button class="btn-primary" onclick="generateChart()">Generate Chart</button>
+
+  <!-- How to save -->
+  <details>
+    <summary>
+      <span>How to Save in Chrome</span>
+      <span class="details-arrow">▶</span>
+    </summary>
+    <div class="save-body">
+      <div><strong>1.</strong> Click the file link above the chart preview</div>
+      <div><strong>2.</strong> The file opens in a new tab</div>
+      <div><strong>3.</strong> Press <kbd>⌘+S</kbd> or <kbd>Ctrl+S</kbd></div>
+      <div><strong>4.</strong> Choose <em>Webpage, HTML Only</em></div>
+      <div><strong>5.</strong> Click Save — done!</div>
+    </div>
+  </details>
+</aside>
+
+<!-- ── CHART PANEL ── -->
+<main class="chart-panel" id="chartPanel">
+  <div class="empty-state">
+    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <path d="M8 17V13M12 17V9M16 17V11"/>
+    </svg>
+    <p>Configure your orgs on the left,<br>then click <strong>Generate Chart</strong>.</p>
+  </div>
+</main>
+
+</div>
+
+<script>
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DEFAULT_COLORS = ['#5b8fff','#47c5a8','#e8c547','#f07a4a','#a78bfa','#ec4899'];
+
+let orgs = [
+  { name: 'Cloud Engineering',        color: '#5b8fff', annualTarget: 309, actuals: [14,22,28,30,22,'','','','','','',''] },
+  { name: 'Product & Design',         color: '#e8c547', annualTarget: 14,  actuals: ['',4,3,7,5,'','','','','','',''] },
+  { name: 'IT, Compliance & Security',color: '#47c5a8', annualTarget: 71,  actuals: [4,4,5,4,5,'','','','','','',''] },
+];
+let chartInstances = [];
+let isDark = true;
+
+// ── Theme toggle ──
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = isDark ? '☀ Light' : '☾ Dark';
+  // Regenerate chart to update colors
+  if (document.getElementById('chartPanel').querySelector('.org-section')) generateChart();
+}
+
+// ── Sidebar toggle ──
+function toggleSidebar() {
+  const app = document.getElementById('app');
+  const sidebar = document.querySelector('.sidebar');
+  const panel = document.querySelector('.chart-panel');
+  const reopen = document.getElementById('reopenBtn');
+  const collapsed = sidebar.classList.toggle('collapsed');
+  app.classList.toggle('sidebar-hidden', collapsed);
+  panel.classList.toggle('expanded', collapsed);
+  reopen.classList.toggle('visible', collapsed);
+}
+
+// ── Sidebar rendering ──
+function renderSidebar() {
+  const list = document.getElementById('orgList');
+  list.innerHTML = '';
+  orgs.forEach((org, i) => {
+    const block = document.createElement('div');
+    block.className = 'org-block';
+    block.innerHTML = `
+      <div class="org-block-header">
+        <div class="org-dot-preview" id="dot-${i}" style="background:${org.color}"></div>
+        <input type="text" class="org-name-input" value="${org.name}"
+          oninput="orgs[${i}].name=this.value" />
+        ${orgs.length > 1 ? `<button class="remove-org-btn" onclick="removeOrg(${i})">×</button>` : ''}
+      </div>
+      <div class="color-row">
+        <input type="text" class="field-input" value="${org.color}"
+          oninput="updateColor(${i}, this.value)" placeholder="#hex" style="font-family:'DM Mono',monospace;font-size:11px;" />
+        <input type="color" class="color-swatch" value="${org.color}"
+          oninput="updateColor(${i}, this.value)" />
+      </div>
+      <div style="padding:0 10px 6px;">
+        <span class="field-label">Annual Growth Target (HC)</span>
+        <input type="number" class="field-input" value="${org.annualTarget}"
+          min="0" oninput="orgs[${i}].annualTarget=+this.value" />
+        <span class="field-label" style="margin-top:8px;">Monthly Actuals</span>
+      </div>
+      <div class="monthly-grid">
+        ${MONTHS.map((m, mi) => `
+          <div>
+            <span class="field-label">${m}</span>
+            <input type="number" class="field-input" min="0"
+              value="${org.actuals[mi] !== '' ? org.actuals[mi] : ''}"
+              oninput="orgs[${i}].actuals[${mi}] = this.value === '' ? '' : +this.value"
+              placeholder="—" />
+          </div>`).join('')}
+      </div>
+    `;
+    list.appendChild(block);
+  });
+}
+
+function updateColor(i, val) {
+  orgs[i].color = val;
+  const dot = document.getElementById(`dot-${i}`);
+  if (dot) dot.style.background = val;
+  const blocks = document.querySelectorAll('.org-block');
+  if (blocks[i]) {
+    const inputs = blocks[i].querySelectorAll('input[type="text"], input[type="color"]');
+    if (inputs[0]) inputs[0].value = val;
+    if (inputs[1]) inputs[1].value = val;
+  }
+}
+
+function addOrg() {
+  const color = DEFAULT_COLORS[orgs.length % DEFAULT_COLORS.length];
+  orgs.push({ name: `Org ${orgs.length + 1}`, color, annualTarget: '', actuals: Array(12).fill('') });
+  renderSidebar();
+}
+
+function removeOrg(i) {
+  orgs.splice(i, 1);
+  renderSidebar();
+}
+
+// ── Chart generation ──
+function generateChart() {
+  chartInstances.forEach(c => c.destroy());
+  chartInstances = [];
+
+  const title     = document.getElementById('chartTitle').value || 'Hiring Pace Simulator';
+  const year      = document.getElementById('chartYear').value || '2026';
+  const attrition = (+document.getElementById('attritionRate').value || 0) / 100;
+  const dark      = isDark;
+
+  const tickColor   = dark ? '#3d4560' : '#aaa59e';
+  const gridColor   = dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)';
+  const borderColor = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)';
+  const tooltipBg   = dark ? '#111318' : '#ffffff';
+  const tooltipBdr  = dark ? '#252d3d' : '#ddd9d2';
+
+  const panel = document.getElementById('chartPanel');
+  panel.innerHTML = '';
+
+  // Header
+  const header = document.createElement('div');
+  header.className = 'report-header';
+  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const savedDate = document.getElementById('dateUpdated') ? (document.getElementById('dateUpdated').value || today) : today;
+  header.innerHTML = `
+    <div class="report-eyebrow">
+      <span class="eyebrow-dot"></span>
+      Talent Intelligence Hub
+      <span class="eyebrow-dot"></span>
+      Workforce Planning
+    </div>
+    <div class="report-title">${title}</div>
+    <div class="report-subtitle">Monthly hiring results vs. growth HC target by org · Jan–Dec ${year}</div>
+    <div class="date-row">
+      <span class="date-label">Last updated</span>
+      <input class="date-input" id="dateUpdated" type="text" placeholder="e.g. May 2026" value="${savedDate}" />
+    </div>
+  `;
+  panel.appendChild(header);
+
+  // Legend
+  const legendWrapper = document.createElement('div');
+  legendWrapper.className = 'legend-wrapper';
+  const dotsHTML = orgs.map(o => `<div class="legend-org-dot" style="background:${o.color}"></div>`).join('');
+  legendWrapper.innerHTML = `
+    <button class="legend-toggle" onclick="this.closest('.legend-wrapper').classList.toggle('open')">
+      <div class="legend-toggle-left">
+        <span class="legend-toggle-label">Legend</span>
+        <div class="legend-org-dots">${dotsHTML}</div>
+      </div>
+      <span class="legend-arrow">▶</span>
+    </button>
+    <div class="legend"></div>
+  `;
+  const legend = legendWrapper.querySelector('.legend');
+  orgs.forEach(org => {
+    const group = document.createElement('div');
+    group.className = 'legend-org-group';
+    group.innerHTML = `
+      <div class="legend-org-name">${org.name}</div>
+      <div class="legend-item">
+        <div class="legend-bar-swatch" style="background:${org.color}55;border:1px solid ${org.color}"></div>
+        Actuals
+      </div>
+      <div class="legend-item">
+        <div class="legend-line-swatch" style="border-color:${org.color}"></div>
+        Growth HC (${((org.annualTarget * (1 + attrition)) / 12).toFixed(1)}/mo)
+      </div>
+    `;
+    legend.appendChild(group);
+  });
+  panel.appendChild(legendWrapper);
+
+  // Org charts
+  orgs.forEach((org, i) => {
+    const grossMonthly = (org.annualTarget * (1 + attrition)) / 12;
+    const targetLine   = Array(12).fill(grossMonthly);
+    const actualData   = org.actuals.map(v => v === '' ? NaN : v);
+
+    if (i > 0) { const hr = document.createElement('hr'); hr.className = 'divider'; panel.appendChild(hr); }
+
+    const section = document.createElement('div');
+    section.className = 'org-section';
+    section.innerHTML = `
+      <div class="org-section-label">
+        <span class="org-section-dot" style="background:${org.color}"></span>
+        ${org.name} — growth target ${org.annualTarget || '—'} / ${org.annualTarget ? Math.round(org.annualTarget * (1 + attrition)) : '—'} gross (incl. ${Math.round(attrition * 100)}% attrition)
+      </div>
+      <div class="chart-wrap"><canvas id="chart-${i}"></canvas></div>
+    `;
+    panel.appendChild(section);
+
+    requestAnimationFrame(() => {
+      const ctx = document.getElementById(`chart-${i}`).getContext('2d');
+      const instance = new Chart(ctx, {
+        data: {
+          labels: MONTHS,
+          datasets: [
+            {
+              type: 'bar', label: 'Actual', data: actualData,
+              backgroundColor: org.color + '55', borderColor: org.color,
+              borderWidth: 1.5, borderRadius: 2, barPercentage: 0.55, order: 2,
+            },
+            {
+              type: 'line', label: 'Growth HC Target', data: targetLine,
+              borderColor: org.color, borderWidth: 1.5, borderDash: [5,4],
+              pointRadius: 0, pointHoverRadius: 0, fill: false, tension: 0, order: 1,
+            }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, animation: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: tooltipBg, borderColor: tooltipBdr, borderWidth: 1,
+              titleColor: dark ? '#e8eaf0' : '#1a1a1e',
+              bodyColor: dark ? '#6b7491' : '#6b6860',
+              padding: 11,
+              titleFont: { family: "'DM Mono', monospace", size: 10, weight: '500' },
+              bodyFont: { family: "'DM Sans', sans-serif", size: 11, weight: '300' },
+              callbacks: {
+                title: items => MONTHS[items[0].dataIndex] + ' ' + year,
+                label: item => {
+                  if (item.dataset.label === 'Growth HC Target') return `  Growth HC: ${item.raw.toFixed(1)}`;
+                  if (isNaN(item.raw)) return null;
+                  return `  Actual: ${item.raw}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              border: { color: borderColor },
+              ticks: { font: { family: "'DM Mono', monospace", size: 10 }, color: tickColor }
+            },
+            y: {
+              grid: { color: gridColor },
+              border: { display: false },
+              ticks: { font: { family: "'DM Mono', monospace", size: 10 }, color: tickColor, maxTicksLimit: 5 },
+              beginAtZero: true,
+            }
+          }
+        }
+      });
+      chartInstances.push(instance);
+    });
+  });
+
+  // Summary
+  const summaryHr = document.createElement('hr');
+  summaryHr.className = 'divider'; summaryHr.style.marginTop = '32px';
+  panel.appendChild(summaryHr);
+
+  const summary = document.createElement('div');
+  summary.className = 'summary';
+  const totalActual = orgs.reduce((sum, o) => sum + o.actuals.reduce((s,v) => s + (v===''?0:+v), 0), 0);
+  summary.innerHTML = `<div class="summary-item"><strong>${totalActual}</strong>Total hires YTD</div>`;
+
+  orgs.forEach(org => {
+    const ytd = org.actuals.reduce((s,v) => s + (v===''?0:+v), 0);
+    const monthsWithData = org.actuals.filter(v => v !== '').length;
+    const grossTarget = org.annualTarget * (1 + attrition);
+    const grossMonthly = grossTarget / 12;
+    const expected = grossMonthly * monthsWithData;
+    const diff = ytd - expected;
+    const pillClass = diff >= 0 ? 'onpace' : Math.abs(diff) < grossMonthly ? 'neutral' : 'behind';
+    const pillLabel = diff >= 0 ? `+${diff.toFixed(0)} vs target` : `${diff.toFixed(0)} vs target`;
+
+    const monthsRemaining = 12 - monthsWithData;
+    const hiresRemaining = grossTarget - ytd;
+    const catchupRate = monthsRemaining > 0 && org.annualTarget !== ''
+      ? (hiresRemaining / monthsRemaining).toFixed(1) : null;
+    const catchupHTML = catchupRate !== null
+      ? `<div class="catchup-rate">Needs <span>${catchupRate}/mo</span> to hit target</div>` : '';
+
+    summary.innerHTML += `
+      <div class="summary-item">
+        <strong>${ytd}</strong>
+        ${org.name} YTD
+        <span class="status-pill ${pillClass}">${pillLabel}</span>
+        ${catchupHTML}
+      </div>`;
+  });
+
+  panel.appendChild(summary);
+}
+
+// ── Init ──
+renderSidebar();
+generateChart();
+</script>
+</body>
+</html>

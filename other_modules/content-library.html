@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crusoe · Content Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[data-theme="dark"]{
+  --bg:#0a0b0f;--surface:#111318;--surface2:#181c24;
+  --border:#1e2330;--border2:#252d3d;
+  --text:#e8eaf0;--text-muted:#6b7491;--text-dim:#3d4560;
+  --accent:#5b8fff;--accent-dim:rgba(91,143,255,0.08);--accent-bdr:rgba(91,143,255,0.22);
+  --teal:#47c5a8;--teal-dim:rgba(71,197,168,0.07);--teal-bdr:rgba(71,197,168,0.2);
+  --gold:#e8c547;--gold-dim:rgba(232,197,71,0.07);--gold-bdr:rgba(232,197,71,0.18);
+  --green:#4ade80;--green-dim:rgba(74,222,128,0.08);--green-bdr:rgba(74,222,128,0.22);
+  --danger:#f07a4a;
+  --input-bg:rgba(255,255,255,0.02);--topbar-bg:rgba(10,11,15,0.95);
+  --row-bg:rgba(255,255,255,0.025);--row-hover:rgba(255,255,255,0.045);--row-border:rgba(255,255,255,0.06);
+}
+[data-theme="light"]{
+  --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0ede8;
+  --border:#ddd9d2;--border2:#ccc8c0;
+  --text:#1a1a1e;--text-muted:#6b6860;--text-dim:#aaa59e;
+  --accent:#2a5fd4;--accent-dim:rgba(42,95,212,0.07);--accent-bdr:rgba(42,95,212,0.22);
+  --teal:#1a9e85;--teal-dim:rgba(26,158,133,0.07);--teal-bdr:rgba(26,158,133,0.22);
+  --gold:#b08a00;--gold-dim:rgba(176,138,0,0.08);--gold-bdr:rgba(176,138,0,0.22);
+  --green:#1a8c4e;--green-dim:rgba(26,140,78,0.08);--green-bdr:rgba(26,140,78,0.22);
+  --danger:#c44b1a;
+  --input-bg:#ffffff;--topbar-bg:rgba(245,244,240,0.96);
+  --row-bg:rgba(0,0,0,0.02);--row-hover:rgba(0,0,0,0.04);--row-border:rgba(0,0,0,0.07);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;line-height:1.6;transition:background .25s,color .25s;}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.022;pointer-events:none;z-index:0;}
+.topbar{position:sticky;top:0;z-index:100;background:var(--topbar-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:56px;transition:background .25s;}
+.topbar-brand{display:flex;align-items:center;gap:12px;}
+.topbar-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);}
+.topbar-sep{width:1px;height:14px;background:var(--border2);}
+.topbar-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);}
+.theme-toggle{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:4px;cursor:pointer;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border2);background:var(--surface2);color:var(--text-muted);transition:all .15s;}
+.theme-toggle:hover{border-color:var(--accent-bdr);color:var(--accent);background:var(--accent-dim);}
+.page{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:48px 48px 80px;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);}
+.eyebrow-dot{width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:.6}
+.page-title{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;line-height:1.04;letter-spacing:-.02em;color:var(--text);margin-bottom:8px;}
+.page-title em{color:var(--accent);font-style:italic}
+.page-sub{font-size:13px;color:var(--text-muted);font-weight:300;margin-bottom:10px;line-height:1.7;}
+.count-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--text-dim);margin-bottom:24px;}
+.count-label em{color:var(--accent);font-style:normal;}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;align-items:center;}
+.search-input{flex:1 1 220px;min-width:200px;padding:8px 12px;border-radius:4px;font-size:13px;background:var(--input-bg);border:1px solid var(--border2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;font-weight:300;transition:border-color .2s,background .25s;}
+.search-input::placeholder{color:var(--text-dim);font-style:italic}
+.search-input:focus{border-color:var(--accent-bdr);box-shadow:0 0 0 3px var(--accent-dim);}
+.sort-btn{padding:7px 14px;border-radius:4px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;border:1px solid var(--border2);background:var(--surface2);color:var(--text-muted);transition:all .15s;}
+.sort-btn:hover{border-color:var(--accent-bdr);color:var(--accent);}
+.filter-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;align-items:center;}
+.filter-label{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);margin-right:4px;min-width:40px;}
+.pill{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:3px;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--text-muted);transition:all .15s;}
+.pill.active{border-color:var(--accent-bdr);background:var(--accent-dim);color:var(--accent);}
+.pill:hover:not(.active){color:var(--text);}
+.divider{height:1px;background:linear-gradient(90deg,var(--accent-bdr),transparent);margin:20px 0;}
+.table-header{display:grid;grid-template-columns:88px 130px 150px 110px 160px 1fr;gap:12px;padding:8px 16px;margin-bottom:6px;border-bottom:1px solid var(--border);}
+.table-header span{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);}
+#results{display:flex;flex-direction:column;gap:4px;}
+.row{display:grid;grid-template-columns:88px 130px 150px 110px 160px 1fr;gap:12px;padding:14px 16px;border-radius:4px;background:var(--row-bg);border:1px solid var(--row-border);align-items:start;transition:background .15s;}
+.row:hover{background:var(--row-hover);}
+.cell-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);padding-top:2px;}
+.cell-source{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text);}
+.cell-tldr{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:var(--text-muted);line-height:1.6;margin-bottom:8px;}
+.cell-actions{display:flex;align-items:center;gap:8px;}
+.view-link{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-bdr);padding-bottom:1px;transition:border-color .15s;}
+.view-link:hover{border-color:var(--accent);}
+.copy-btn{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--text-dim);transition:all .15s;}
+.copy-btn:hover{border-color:var(--teal-bdr);color:var(--teal);background:var(--teal-dim);}
+.copy-btn.copied{border-color:var(--green-bdr);color:var(--green);background:var(--green-dim);}
+.badge{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap;}
+.no-results{text-align:center;color:var(--text-dim);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:48px 0;}
+/* Featured */
+.featured-header{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-radius:4px;cursor:pointer;background:var(--gold-dim);border:1px solid var(--gold-bdr);transition:background .15s;user-select:none;}
+.featured-header:hover{background:rgba(232,197,71,0.12);}
+.featured-body{border:1px solid var(--gold-bdr);border-top:none;border-radius:0 0 4px 4px;background:var(--surface);overflow:hidden;max-height:800px;opacity:1;transition:max-height .35s ease,opacity .25s ease;}
+.featured-body.closed{max-height:0;opacity:0;}
+.featured-row{display:grid;grid-template-columns:88px 130px 1fr auto;gap:12px;padding:13px 16px;align-items:start;border-bottom:1px solid var(--border);transition:background .15s;}
+.featured-row:last-child{border-bottom:none;}
+.featured-row:hover{background:var(--surface2);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <span class="topbar-name">TI Hub</span>
+    <div class="topbar-sep"></div>
+    <span class="topbar-label">Cloud Engineering · Content Library</span>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
+    <span id="theme-icon">☀️</span>
+    <span id="theme-label">Light Mode</span>
+  </button>
+</div>
+
+<div class="page">
+  <div class="eyebrow"><span class="eyebrow-dot"></span>Talent Intelligence Hub<span class="eyebrow-dot"></span>Cloud Engineering</div>
+  <h1 class="page-title">Content <em>Library</em></h1>
+  <p class="page-sub">Articles, blogs, podcasts, docs, and research curated for the Cloud Engineering org.</p>
+  <p class="count-label" id="count-label"> </p>
+
+  <!-- FEATURED BANNER -->
+  <div style="margin-bottom:20px;">
+    <div class="featured-header" onclick="toggleFeatured()">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);">★ Featured</span>
+        <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:var(--text-muted);">5 hand-picked resources — recent, credible, and candidate-ready</span>
+      </div>
+      <span id="feat-chevron" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);transition:transform .25s;">▼</span>
+    </div>
+    <div class="featured-body" id="feat-body">
+      <div id="feat-list"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <input type="text" class="search-input" id="search" placeholder="Search sources, topics, summaries…" oninput="render()">
+    <button class="sort-btn" onclick="toggleSort()">Date <span id="sort-icon">↓</span></button>
+  </div>
+  <div class="filter-row"><span class="filter-label">Type</span><div id="type-pills" style="display:flex;flex-wrap:wrap;gap:6px;"></div></div>
+  <div class="filter-row"><span class="filter-label">Topic</span><div id="topic-pills" style="display:flex;flex-wrap:wrap;gap:6px;"></div></div>
+  <div class="filter-row"><span class="filter-label">Team</span><div id="team-pills" style="display:flex;flex-wrap:wrap;gap:6px;"></div></div>
+  <div class="divider"></div>
+  <div class="table-header">
+    <span>Date</span><span>Type</span><span>Source</span><span>Topic</span><span>Team</span><span>Summary</span>
+  </div>
+  <div id="results"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const data = [
+  {date:"2/12/2026",type:"Article",source:"InfoWorld",link:"https://www.infoworld.com/article/4123878/how-neoclouds-meet-the-demands-of-ai-workloads.html",topic:"NeoClouds",team:"",tldr:"Article by Nadav Eiron: How neoclouds meet the demands of AI workloads"},
+  {date:"10/14/2025",type:"Article",source:"Fierce Network",link:"https://www.fierce-network.com/cloud/neoclouds-ride-runaway-revenue-growth-train-2030",topic:"NeoClouds",team:"",tldr:"Crusoe cited as a top-tier neocloud contender; expert analysis explains why purpose-built AI clouds like Crusoe can price at 1/3 of hyperscaler rates."},
+  {date:"11/30/2025",type:"Article",source:"MLQ.ai",link:"https://mlq.ai/research/neocloud-infrastructure/",topic:"NeoClouds",team:"",tldr:"Notes Crusoe's Abilene Stargate campus (Phase 1 live in Sept 2025, 1 year vs. the 3-4 year industry norm) as a standout infrastructure execution story."},
+  {date:"8/26/2025",type:"Article",source:"Time",link:"https://time.com/collections/time100-ai-2025/7305822/chase-lochmiller/",topic:"Time100",team:"",tldr:"Chase Named to TIME's 3rd annual list of most influential people in AI"},
+  {date:"8/14/2023",type:"Podcast",source:"Acquired Podcast",link:"https://www.acquired.fm/episodes/saving-the-planet-with-better-ai-data-centers-with-crusoe-ceo-chase-lochmiller",topic:"AI Cloud",team:"",tldr:"Deep dive into building a new AI cloud from scratch; covers GPU infrastructure, cloud differentiation, and the vertical integration strategy"},
+  {date:"2/20/2026",type:"Article",source:"Fierce Network",link:"https://www.fierce-network.com/cloud/crusoe-building-easy-button-ai-infrastructure",topic:"Product Evolution",team:"",tldr:"Coverage of Crusoe's product evolution beyond raw GPU access — Managed Inference, self-healing clusters, and developer-focused roadmap."},
+  {date:"10/24/2025",type:"Announcement",source:"Crusoe",link:"https://www.crusoe.ai/resources/newsroom/crusoe-announces-series-e-funding",topic:"Series E",team:"",tldr:"Cloud bookings grew 5x in first 3 quarters of 2025 vs. 2024. Gold SemiAnalysis rating, NVIDIA collaboration, AMD strategic partnership."},
+  {date:"6/6/2024",type:"Article",source:"Texas Energy & Power",link:"https://www.texasenergyandpower.com/p/turning-waste-into-power-crusoes",topic:"Energy",team:"",tldr:"Cully on DFM/DRO technology, AI training vs. inference workloads, flexible compute loads, and carbon accounting."},
+  {date:"11/24/2025",type:"Article",source:"McKinsey & Company",link:"https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/the-ai-infrastructure-of-the-future",topic:"Energy",team:"",tldr:"Chase on AI data center architecture, the future workforce, and what \"energy-first\" really means."},
+  {date:"6/25/2025",type:"Article",source:"NetworkWorld",link:"https://www.networkworld.com/article/4011187/neoclouds-roll-in-challenge-hyperscalers-for-ai-workloads.html",topic:"NeoClouds",team:"",tldr:"Crusoe named one of four neocloud market leaders; positioned as the sustainability differentiator."},
+  {date:"",type:"Info Page",source:"DPR Construction",link:"https://www.dpr.com/projects/crusoe-abilene-data-center",topic:"Data Center Build",team:"",tldr:"Abilene Data Center Campus – Construction"},
+  {date:"7/18/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/the-crusoe-cloud-journey-engineering-the-ai-first-backbone",topic:"Cloud Engineering",team:"Networking",tldr:"The Crusoe Cloud journey: Engineering the AI-first backbone"},
+  {date:"",type:"Video",source:"Crusoe PM – YouTube",link:"https://www.youtube.com/watch?v=tQTB4MU_z8w",topic:"Cloud Engineering",team:"Networking",tldr:"Accelerating Mixture of Experts Training With Rail Optimized InfiniBand Networking in Crusoe Cloud"},
+  {date:"7/28/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/the-crusoe-cloud-journey-evolution-of-the-edge",topic:"Cloud Engineering",team:"Networking",tldr:"The Crusoe Cloud journey: Evolution of the edge"},
+  {date:"7/10/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/the-crusoe-cloud-origin-story-a-new-cloud-for-a-new-era",topic:"Cloud Engineering",team:"Networking",tldr:"The Crusoe Cloud origin story: A new cloud for a new era (AI-first network design)"},
+  {date:"6/26/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/newsroom/crusoe-introduces-crusoe-spark-modular-ai-data-centers",topic:"Cloud Engineering",team:"Networking",tldr:"Crusoe introduces Crusoe Spark: Modular AI data centers for scalable edge computing"},
+  {date:"3/18/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/newsroom/crusoe-expands-ai-data-center-campus-in-abilene-to-1-2-gigawatts",topic:"Cloud Engineering",team:"Networking",tldr:"Crusoe expands AI data center campus in Abilene to 1.2 gigawatts"},
+  {date:"10/28/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/newsroom/crusoe-deploys-nvidia-bluefield",topic:"Cloud Engineering",team:"Networking",tldr:"Crusoe deploys NVIDIA BlueField-4 to power the next generation of AI infrastructure"},
+  {date:"",type:"Docs",source:"Crusoe Docs",link:"https://docs.crusoecloud.com/networking/infiniband/managing-infiniband-networks/index.html",topic:"Cloud Engineering",team:"Networking",tldr:"Managing InfiniBand Networking"},
+  {date:"",type:"Docs",source:"Crusoe Docs",link:"https://docs.crusoecloud.com/networking/load-balancers/overview/index.html",topic:"Cloud Engineering",team:"Networking",tldr:"Load Balancers"},
+  {date:"",type:"Docs",source:"Crusoe Docs",link:"https://docs.crusoecloud.com/networking/vpc",topic:"Cloud Engineering",team:"Networking",tldr:"VPC Networks"},
+  {date:"9/30/2025",type:"Article",source:"Data Center Dynamics",link:"https://www.datacenterdynamics.com/en/news/crusoes-abilene-data-center-officially-live-serving-oracle-and-openais-stargate/",topic:"Cloud Engineering",team:"Networking",tldr:"Data Center Dynamics coverage of Abilene live / serving OCI for OpenAI."},
+  {date:"11/3/2025",type:"Industry Article",source:"Vitex Tech",link:"https://vitextech.com/infiniband-vs-ethernet-for-ai-clusters-2025/",topic:"Cloud Engineering",team:"Networking",tldr:"Practical comparison of InfiniBand vs. Ethernet for AI GPU clusters in 2025 as Ultra Ethernet matures."},
+  {date:"9/18/2025",type:"Engineering Blog",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/the-crusoe-cloud-journey-engineering-the-ai-first-backbone",topic:"Cloud Engineering",team:"Networking",tldr:"Deep dive into Crusoe's backbone network architecture including hybrid iBGP routing and MPLS-TE traffic engineering."},
+  {date:"9/17/2025",type:"Industry Article",source:"Network-Switch.com",link:"https://network-switch.com/blogs/networking/what-is-rdma-technology",topic:"Cloud Engineering",team:"Networking",tldr:"Explainer on RDMA technology covering InfiniBand, RoCE, and iWARP for AI and HPC clusters."},
+  {date:"7/18/2025",type:"Engineering Blog",source:"Crusoe Blog",link:"https://crusoe.ai/blog/the-crusoe-cloud-journey-evolution-of-the-edge/",topic:"Cloud Engineering",team:"Networking",tldr:"Details how Crusoe expanded its edge network to nine PoPs across North America and Europe."},
+  {date:"7/1/2024",type:"News Article",source:"Data Center Dynamics",link:"https://www.datacenterdynamics.com/en/news/crusoe-pivots-to-building-data-centers-plans-100mw-facility/",topic:"Cloud Engineering",team:"Networking",tldr:"Crusoe announces its pivot to building permanent AI data centers capable of hosting 100,000 GPUs on a single integrated network fabric."},
+  {date:"2/18/2026",type:"Press Release",source:"Crusoe Newsroom",link:"https://www.crusoe.ai/resources/newsroom/crusoe-launches-command-center-a-unified-operations-platform-for-high-performance-ai-workloads",topic:"Cloud Engineering",team:"All CMD",tldr:"New platform provides orchestration, deep observability, and collaborative support to maximize GPU uptime and accelerate AI development."},
+  {date:"2/18/2026",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/introducing-crusoe-command-center",topic:"Cloud Engineering",team:"All CMD",tldr:"Crusoe Command Center automates orchestration, observability, and support across your AI stack."},
+  {date:"2/11/2026",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/introducing-the-crusoe-cloud-mcp-server",topic:"Cloud Engineering",team:"All CMD",tldr:"Crusoe Cloud MCP server connecting AI coding assistants like Claude Code and Cursor directly to your infrastructure."},
+  {date:"11/21/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/slurm-block-topology-on-crusoe-accelerated-by-nvidia-gb200-nvl72",topic:"Cloud Engineering",team:"Managed Orchestration",tldr:"SLURM topology-aware block scheduling aligned to GB200 NVL72's NVLink rack architecture delivers 10%+ throughput gains for large-scale AI training."},
+  {date:"11/17/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/crusoe-managed-kubernetes-nvidia-run-ai",topic:"Cloud Engineering",team:"Managed Orchestration",tldr:"Combine climate-aligned GPU infrastructure with enterprise AI orchestration to maximize GPU utilization, accelerate MLOps, and reduce costs."},
+  {date:"11/17/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/guide-to-deploying-nvidia-run-ai-on-crusoe-managed-kubernetes",topic:"Cloud Engineering",team:"Managed Orchestration",tldr:"Learn to configure networking, storage (CSI), and Knative for maximum GPU utilization and faster MLOps."},
+  {date:"6/13/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/crusoe-skypilot-ai-workloads",topic:"Cloud Engineering",team:"Managed Orchestration",tldr:"Easily run AI & ML jobs on Crusoe Managed Kubernetes with our new SkyPilot integration."},
+  {date:"6/5/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/how-to-deploy-your-own-slurm-cluster-on-crusoe-cloud",topic:"Cloud Engineering",team:"Managed Orchestration",tldr:"Our guide simplifies deploying SLURM on Crusoe Cloud with Terraform & Ansible for powerful, distributed GPU workload management."},
+  {date:"2/3/2026",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/autoclusters-minimizing-hardware-failures-in-large-gpu-clusters",topic:"Cloud Engineering",team:"Compute",tldr:"Crusoe AutoClusters automatically detects and replaces failed GPU nodes in under 5 minutes to minimize downtime in large-scale AI training runs."},
+  {date:"1/6/2026",type:"Industry Article",source:"Data Center Knowledge",link:"https://www.datacenterknowledge.com/cloud/2025-cloud-highlights-ai-outages-and-the-future-of-infrastructure",topic:"Cloud Engineering",team:"Compute",tldr:"2025 recap covering how AI demand pushed cloud platforms to capacity limits and fueled the rise of neocloud providers."},
+  {date:"11/21/2025",type:"Engineering Blog",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/slurm-block-topology-on-crusoe-accelerated-by-nvidia-gb200-nvl72",topic:"Cloud Engineering",team:"Compute",tldr:"Topology-aware SLURM block scheduling aligned to GB200 NVL72's NVLink rack architecture delivers 10%+ throughput gains for large-scale AI training."},
+  {date:"11/19/2025",type:"Industry Article",source:"McKinsey",link:"https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/the-evolution-of-neoclouds-and-their-next-moves",topic:"Cloud Engineering",team:"Compute",tldr:"McKinsey examines how neoclouds are filling the GPU compute gap left by hyperscalers and what strategic moves will determine their long-term survival."},
+  {date:"10/9/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/unlocking-the-power-of-nvidia-gb200-nvl72",topic:"Cloud Engineering",team:"Compute",tldr:"Overview of how Crusoe's vertically integrated infrastructure handles the power density, cooling, and scalability demands of the NVIDIA GB200 NVL72."},
+  {date:"9/1/2025",type:"Industry Article",source:"Omdia",link:"https://omdia.tech.informa.com/blogs/2025/sep/the-storage-that-feeds-ai-training-and-modeling-for-high-impact-ai",topic:"Cloud Engineering",team:"Storage",tldr:"Omdia breaks down how high-performance storage tiers using NVMe and parallel file systems eliminate GPU starvation and accelerate AI model training pipelines."},
+  {date:"2/12/2025",type:"Blog Post",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/scaling-up-with-crusoe-cloud-and-vast-data",topic:"Cloud Engineering",team:"Storage",tldr:"Crusoe expands its storage offering with VAST Data to deliver petabyte-scale shared file storage optimized for multi-GPU AI training workloads."},
+  {date:"1/12/2025",type:"Industry Article",source:"Introl",link:"https://introl.com/blog/ai-optimized-storage-nvme-gpudirect-parallel-file-systems-2025",topic:"Cloud Engineering",team:"Storage",tldr:"Comprehensive look at AI storage trends including NVMe-oF, GPUDirect, and parallel file systems as the market grows toward $322B by 2035."},
+  {date:"9/30/2024",type:"News Article",source:"Blocks & Files",link:"https://blocksandfiles.com/2024/09/30/clean-living-crusoe-scales-up-its-ai-cloud-with-vast-data-systems/",topic:"Cloud Engineering",team:"Storage",tldr:"Crusoe partners with VAST Data to launch Shared Disks delivering up to 200 MBps read throughput per TiB for data-intensive AI workloads."},
+  {date:"1/14/2024",type:"Engineering Blog",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/how-we-built-it-block-storage-for-ai-ml-workloads-powered-by-lightbits",topic:"Cloud Engineering",team:"Storage",tldr:"How Crusoe moved from local-only block storage to a remote persistent solution powered by Lightbits achieving sub-millisecond latency at petabyte scale."},
+  {date:"",type:"Product Webpage",source:"Crusoe",link:"https://www.crusoe.ai/cloud/managed-inference",topic:"Managed Inference",team:"Managed AI",tldr:"Official product page for Crusoe Managed Inference"},
+  {date:"11/20/2025",type:"Company Blog",source:"Crusoe",link:"https://www.crusoe.ai/resources/blog/crusoe-memoryalloy-reinventing-kv-caching-for-cluster-scale-inference",topic:"Managed Inference",team:"Managed AI",tldr:"Tech deep dive on MemoryAlloy — Crusoe's proprietary distributed KV cache achieving 9.9x faster TTFT and 5x higher throughput vs. vLLM."},
+  {date:"11/20/2026",type:"Company Blog",source:"Crusoe",link:"https://www.crusoe.ai/resources/blog/crusoe-managed-inference-optimize-performance-for-demanding-ai-workloads",topic:"Managed Inference",team:"Managed AI",tldr:"Product launch: Crusoe Managed Inference"},
+  {date:"11/20/2026",type:"Company Blog",source:"Crusoe",link:"https://www.crusoe.ai/resources/newsroom/crusoe-launches-managed-inference-delivering-breakthrough-speed-for-production-ai",topic:"Managed Inference",team:"Managed AI",tldr:"Product launch: Crusoe Managed Inference"},
+  {date:"2/6/2026",type:"Company Blog",source:"Crusoe",link:"https://www.crusoe.ai/resources/blog/building-the-worlds-favorite-ai-cloud",topic:"Managed Inference",team:"Managed AI",tldr:"Product launch: BYO Model for Managed Inference"},
+  {date:"10/21/2025",type:"Video",source:"Crusoe (YouTube)",link:"https://www.youtube.com/watch?v=l1_6gGAPN10",topic:"AI Cloud",team:"AI Lab",tldr:"Tech deep dive on difference between traditional and AI cloud"},
+  {date:"11/20/2025",type:"Video",source:"Crusoe (YouTube)",link:"https://www.youtube.com/watch?v=ymyt2XpyjKE",topic:"Managed Inference",team:"Managed AI",tldr:"Product launch: Crusoe Managed Inference"},
+  {date:"11/21/2025",type:"Video",source:"Crusoe (YouTube)",link:"https://www.youtube.com/watch?v=R74kx7GKEbs",topic:"Managed Inference",team:"Managed AI",tldr:"Product explainer: Crusoe Managed Inference"},
+  {date:"2/5/2026",type:"Competitor Blog",source:"ML6",link:"https://www.ml6.eu/en/blog/agent-builders-guide-2026-managed-vs-custom-ai-agent-solutions",topic:"Managed Inference",team:"Competitor",tldr:"Concept explainer: Managed vs Custom AI Agent Solutions"},
+  {date:"12/16/2025",type:"Competitor Blog",source:"SIILI",link:"https://www.siili.com/newsandinsights/what-is-managed-ai",topic:"Managed Inference",team:"Competitor",tldr:"Concept explainer: Managed AI"},
+  {date:"12/5/2025",type:"Interview",source:"Ignite GTM",link:"https://www.youtube.com/watch?v=Fmy1bKk6Qhs",topic:"Cloud Engineering",team:"VP Eng, Cloud",tldr:"Interview w/ Crusoe Leader - GPU for Inference"},
+  {date:"11/26/2025",type:"Explainer",source:"Uplatz",link:"https://www.youtube.com/watch?v=ss-9MiBIi6A",topic:"AI Cloud",team:"Educational",tldr:"Concept explainer: Cloud based vs self-hosted LLM"},
+  {date:"11/14/2024",type:"Explainer",source:"IBM",link:"https://www.youtube.com/watch?v=XtT5i0ZeHHE",topic:"AI Cloud",team:"Competitor",tldr:"Concept explainer: AI Inference"},
+  {date:"4/14/2025",type:"Explainer",source:"IBM",link:"https://www.youtube.com/watch?v=zYGDpG-pTho",topic:"AI Cloud",team:"Competitor",tldr:"Concept explainer: RAG vs Fine-Tuning vs Prompt Engineering"},
+  {date:"2/16/2026",type:"Security Blog",source:"Crusoe",link:"https://www.crusoe.ai/resources/blog/crusoe-cloud-achieves-iso-27001-and-42001-certifications",topic:"Security",team:"GRC / Security Engineering",tldr:"Crusoe announces ISO 27001 and ISO 42001 certifications for its AI cloud."},
+  {date:"9/1/2025",type:"Security Blog",source:"Crusoe",link:"https://www.crusoe.ai/resources/blog/crusoe-cloud-achieves-soc-2-type-ii",topic:"Security",team:"GRC / Security Engineering",tldr:"Details Crusoe Cloud's SOC 2 Type II attestation and commitment to independently audited security."},
+  {date:"",type:"Trust Center",source:"Crusoe",link:"https://trust.crusoe.ai/",topic:"Security",team:"GRC / Security Engineering",tldr:"Central place for SOC 2 reports, ISO info, and security posture documentation for Crusoe Cloud."},
+  {date:"1/14/2026",type:"Technical Blog",source:"Introl",link:"https://introl.com/blog/compliance-frameworks-ai-infrastructure-soc2-iso27001-gdpr",topic:"Security",team:"GRC / Infra Security",tldr:"Maps SOC 2, ISO 27001, GDPR to AI infra and discusses AI-specific incident scenarios."},
+  {date:"12/31/2024",type:"Technical Blog",source:"Introl",link:"https://introl.com/blog/multi-tenant-gpu-security-isolation-strategies-shared-infrastructure-2025",topic:"Security",team:"Infrastructure / Platform Security",tldr:"Deep dive on isolation strategies for multi-tenant GPU environments (MIG, vGPU, scheduling)."},
+  {date:"12/1/2025",type:"Technical Blog",source:"Edera",link:"https://edera.dev/stories/why-gpus-are-the-weak-link-in-ai-security",topic:"Security",team:"Infrastructure / Platform Security",tldr:"Explains why GPUs are currently a weak link: memory isolation gaps, side channels, and challenges in hardening GPU clusters."},
+  {date:"7/28/2025",type:"Technical Blog",source:"Eclypsium",link:"https://eclypsium.com/blog/gpuhammer-ai-security-vulnerabilities/",topic:"Security",team:"Hardware / Platform Security",tldr:"Analyzes GPUHammer, a real GPU vulnerability, and what it reveals about AI hardware and firmware security maturity."},
+  {date:"1/15/2024",type:"Vulnerability Write-up",source:"Trail of Bits",link:"https://blog.trailofbits.com/2024/01/16/leftoverlocals-listening-to-llm-responses-through-leaked-gpu-local-memory/",topic:"Security",team:"Application / Platform Security",tldr:"Shows how leaked GPU local memory can expose LLM responses, highlighting concrete GPU→LLM data exfil risks."},
+  {date:"2022",type:"Research Paper",source:"ACM",link:"https://dl.acm.org/doi/10.1145/3544102",topic:"Security",team:"Research / Platform Security",tldr:"Survey of microarchitectural attacks in heterogeneous systems, including GPU-related side channels relevant to AI infra."},
+  {date:"1/26/2026",type:"Research Paper",source:"Durham University",link:"https://durham-repository.worktribe.com/OutputFile/5010243",topic:"Security",team:"Research / Confidential Computing",tldr:"Explores confidential computing on heterogeneous CPU-GPU systems and how TEEs might extend to GPU-heavy AI stacks."},
+  {date:"2/20/2026",type:"Article",source:"Fierce Network",link:"https://www.fierce-network.com/cloud/crusoe-building-easy-button-ai-infrastructure",topic:"Product Evolution",team:"Product - PM",tldr:"The Fierce Network article features SVP of Product Erwan Menard directly talking about product strategy and roadmap direction."},
+  {date:"12/12/2024",type:"Blog",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/crusoe-empowering-the-ai-revolution",topic:"Product Evolution",team:"Product - PM, TPM",tldr:"Detailed breakdown of what makes Crusoe Cloud differentiated — reliability, speed, customer feedback loop in product roadmap."},
+  {date:"7/18/2025",type:"Blog",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/the-crusoe-cloud-journey-engineering-the-ai-first-backbone",topic:"Cloud Engineering",team:"Product - PM, TPM",tldr:"Deep dive into the 10x network scaling initiative — architecture decisions, routing, QoS, and what \"AI-first\" infrastructure actually means in practice."},
+  {date:"",type:"Docs",source:"Crusoe Cloud Docs",link:"https://docs.crusoecloud.com/",topic:"Cloud Engineering",team:"Product - PM, TPM",tldr:"Technical overview of the cloud platform for TPM/engineering candidates."},
+  {date:"8/4/2025",type:"Announcement",source:"Crusoe",link:"https://www.crusoe.ai/resources/newsroom/crusoe-hires-google-cloud-ai-product-leader-erwan-menard-as-svp-of-product",topic:"Product Evolution",team:"Product - PM, TPM",tldr:"Strong signal for PM candidates: Crusoe attracting top-tier product talent from Google Cloud."},
+  {date:"2/6/2026",type:"Article",source:"Semafor",link:"https://www.semafor.com/article/02/06/2026/crusoe-launches-cloud-product-to-take-on-hyperscalers",topic:"Product Evolution",team:"Product - PM, TPM",tldr:"High-profile exclusive on Crusoe's intelligence foundry launch. SVP Erwan Menard on \"technical intimacy\" vs. hyperscalers, Cursor as early customer, and edge inference roadmap."},
+  {date:"11/20/2025",type:"Blog",source:"Crusoe",link:"https://www.crusoe.ai/resources/blog/crusoe-managed-inference-optimize-performance-for-demanding-ai-workloads",topic:"Managed Inference",team:"Product - PM, TPM",tldr:"Written by SVP Product Erwan Menard and Aditya Shanker. Breaks down the \"inference iron triangle\" (speed, throughput, cost) and how MemoryAlloy solves it."},
+  {date:"5/7/2026",type:"News Article",source:"Data Center Dynamics",link:"https://www.datacenterdynamics.com/en/news/crusoe-signs-two-deals-with-energy-storage-firms-to-support-ai-data-center-buildout/",topic:"Energy",team:"",tldr:"Crusoe expands Redwood Materials partnership from 4 to 24 Crusoe Spark data centers, following a microgrid deployment that hit 99.2% operational availability over 7 months."},
+  {date:"4/25/2026",type:"Announcement",source:"Crusoe Newsroom",link:"https://www.crusoe.ai/resources/newsroom",topic:"Company",team:"",tldr:"Crusoe begins international expansion into the Middle East with investment from Oman Investment Authority and Mubadala."},
+  {date:"3/25/2026",type:"News Article",source:"Access IPOs",link:"https://accessipos.com/crusoe-ipo-stock/",topic:"Company",team:"",tldr:"Crusoe reported to be raising at up to a $40B valuation — a 4x increase from its October 2025 Series E."},
+  {date:"3/16/2026",type:"Engineering Blog",source:"Crusoe Blog",link:"https://www.crusoe.ai/resources/blog/building-the-future-foundation-for-intelligence",topic:"Cloud Engineering",team:"All CMD",tldr:"At NVIDIA GTC 2026: Crusoe announces Edge Zones, expanded NVIDIA collaboration, and early adoption of NVIDIA Vera + HGX Rubin NVL72 systems planned for late 2026."},
+  {date:"3/16/2026",type:"News Article",source:"Fast Company",link:"https://www.crusoe.ai/about/company",topic:"Company",team:"",tldr:"Crusoe named to Fast Company's Most Innovative Companies of 2026."},
+  {date:"1/21/2026",type:"Announcement",source:"Crusoe Newsroom",link:"https://www.crusoe.ai/resources/newsroom",topic:"Company",team:"",tldr:"Crusoe appoints Nader Pakfar as General Counsel, Real Estate."},
+  {date:"12/11/2025",type:"Announcement",source:"Crusoe Newsroom",link:"https://www.crusoe.ai/resources/newsroom",topic:"Company",team:"",tldr:"Crusoe appoints former MongoDB executive Michael Gordon as COO and CFO."},
+  {date:"10/22/2025",type:"Press Release",source:"Crusoe Newsroom",link:"https://www.crusoe.ai/resources/newsroom/crusoe-to-become-first-cloud-operator-in-space-through-partnership-with-starcloud",topic:"Cloud Engineering",team:"",tldr:"Crusoe partners with Starcloud to deploy Crusoe Cloud on a satellite launching late 2026 — becoming the first public AI cloud in outer space, powered by solar arrays."},
+];
+
+// ── FEATURED ─────────────────────────────────────────────────────────────
+const featuredItems = [
+  { link:"https://www.datacenterdynamics.com/en/news/crusoe-signs-two-deals-with-energy-storage-firms-to-support-ai-data-center-buildout/", why:"Most recent — Crusoe scales to 24 modular data centers with 99.2% uptime" },
+  { link:"https://www.semafor.com/article/02/06/2026/crusoe-launches-cloud-product-to-take-on-hyperscalers", why:"Highest credibility — exclusive Semafor feature on Crusoe's product vision" },
+  { link:"https://time.com/collections/time100-ai-2025/7305822/chase-lochmiller/", why:"Brand recognition — Chase named TIME100 most influential in AI" },
+  { link:"https://www.crusoe.ai/resources/blog/crusoe-memoryalloy-reinventing-kv-caching-for-cluster-scale-inference", why:"Best for candidates — proprietary tech showing frontier engineering" },
+  { link:"https://www.crusoe.ai/resources/newsroom/crusoe-to-become-first-cloud-operator-in-space-through-partnership-with-starcloud", why:"Most memorable — Crusoe becomes the first AI cloud in outer space" },
+];
+
+// ── BADGE COLORS ──────────────────────────────────────────────────────────
+const typeStyle = {
+  "Article":{"c":"var(--accent)","bg":"var(--accent-dim)","b":"var(--accent-bdr)"},
+  "Industry Article":{"c":"var(--accent)","bg":"var(--accent-dim)","b":"var(--accent-bdr)"},
+  "News Article":{"c":"var(--accent)","bg":"var(--accent-dim)","b":"var(--accent-bdr)"},
+  "Podcast":{"c":"#af52de","bg":"rgba(175,82,222,0.08)","b":"rgba(175,82,222,0.25)"},
+  "Blog":{"c":"var(--teal)","bg":"var(--teal-dim)","b":"var(--teal-bdr)"},
+  "Blog Post":{"c":"var(--teal)","bg":"var(--teal-dim)","b":"var(--teal-bdr)"},
+  "Engineering Blog":{"c":"var(--teal)","bg":"var(--teal-dim)","b":"var(--teal-bdr)"},
+  "Company Blog":{"c":"var(--teal)","bg":"var(--teal-dim)","b":"var(--teal-bdr)"},
+  "Technical Blog":{"c":"var(--teal)","bg":"var(--teal-dim)","b":"var(--teal-bdr)"},
+  "Security Blog":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "Competitor Blog":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "Announcement":{"c":"var(--gold)","bg":"var(--gold-dim)","b":"var(--gold-bdr)"},
+  "Press Release":{"c":"var(--green)","bg":"var(--green-dim)","b":"var(--green-bdr)"},
+  "Info Page":{"c":"#64d2ff","bg":"rgba(100,210,255,0.08)","b":"rgba(100,210,255,0.25)"},
+  "Product Webpage":{"c":"#64d2ff","bg":"rgba(100,210,255,0.08)","b":"rgba(100,210,255,0.25)"},
+  "Trust Center":{"c":"#64d2ff","bg":"rgba(100,210,255,0.08)","b":"rgba(100,210,255,0.25)"},
+  "Video":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "Docs":{"c":"var(--gold)","bg":"var(--gold-dim)","b":"var(--gold-bdr)"},
+  "Interview":{"c":"#af52de","bg":"rgba(175,82,222,0.08)","b":"rgba(175,82,222,0.25)"},
+  "Explainer":{"c":"var(--gold)","bg":"var(--gold-dim)","b":"var(--gold-bdr)"},
+  "Research Paper":{"c":"#af52de","bg":"rgba(175,82,222,0.08)","b":"rgba(175,82,222,0.25)"},
+  "Vulnerability Write-up":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+};
+const topicStyle = {
+  "NeoClouds":{"c":"var(--accent)","bg":"var(--accent-dim)","b":"var(--accent-bdr)"},
+  "Time100":{"c":"var(--gold)","bg":"var(--gold-dim)","b":"var(--gold-bdr)"},
+  "AI Cloud":{"c":"#af52de","bg":"rgba(175,82,222,0.08)","b":"rgba(175,82,222,0.25)"},
+  "Managed Inference":{"c":"var(--teal)","bg":"var(--teal-dim)","b":"var(--teal-bdr)"},
+  "Product Evolution":{"c":"var(--gold)","bg":"var(--gold-dim)","b":"var(--gold-bdr)"},
+  "Series E":{"c":"#64d2ff","bg":"rgba(100,210,255,0.08)","b":"rgba(100,210,255,0.25)"},
+  "Energy":{"c":"var(--green)","bg":"var(--green-dim)","b":"var(--green-bdr)"},
+  "Data Center Build":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "Cloud Engineering":{"c":"var(--teal)","bg":"var(--teal-dim)","b":"var(--teal-bdr)"},
+  "Security":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "Company":{"c":"#af52de","bg":"rgba(175,82,222,0.08)","b":"rgba(175,82,222,0.25)"},
+};
+const teamStyle = {
+  "Networking":{"c":"var(--accent)","bg":"var(--accent-dim)","b":"var(--accent-bdr)"},
+  "Cloud Availability / Networking":{"c":"var(--accent)","bg":"var(--accent-dim)","b":"var(--accent-bdr)"},
+  "All CMD":{"c":"var(--teal)","bg":"var(--teal-dim)","b":"var(--teal-bdr)"},
+  "Managed Orchestration":{"c":"#af52de","bg":"rgba(175,82,222,0.08)","b":"rgba(175,82,222,0.25)"},
+  "Compute":{"c":"var(--gold)","bg":"var(--gold-dim)","b":"var(--gold-bdr)"},
+  "Storage":{"c":"var(--gold)","bg":"var(--gold-dim)","b":"var(--gold-bdr)"},
+  "Managed AI":{"c":"var(--teal)","bg":"var(--teal-dim)","b":"var(--teal-bdr)"},
+  "AI Lab":{"c":"#af52de","bg":"rgba(175,82,222,0.08)","b":"rgba(175,82,222,0.25)"},
+  "Competitor":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "VP Eng, Cloud":{"c":"var(--accent)","bg":"var(--accent-dim)","b":"var(--accent-bdr)"},
+  "Educational":{"c":"var(--gold)","bg":"var(--gold-dim)","b":"var(--gold-bdr)"},
+  "GRC / Security Engineering":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "GRC / Infra Security":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "Infrastructure / Platform Security":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "Hardware / Platform Security":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "Application / Platform Security":{"c":"var(--danger)","bg":"rgba(240,122,74,0.08)","b":"rgba(240,122,74,0.25)"},
+  "Research / Platform Security":{"c":"#af52de","bg":"rgba(175,82,222,0.08)","b":"rgba(175,82,222,0.25)"},
+  "Research / Confidential Computing":{"c":"#af52de","bg":"rgba(175,82,222,0.08)","b":"rgba(175,82,222,0.25)"},
+  "Product - PM":{"c":"var(--gold)","bg":"var(--gold-dim)","b":"var(--gold-bdr)"},
+  "Product - PM, TPM":{"c":"var(--gold)","bg":"var(--gold-dim)","b":"var(--gold-bdr)"},
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+var sortDir = "desc";
+var activeType = "All", activeTopic = "All", activeTeam = "All";
+var featuredOpen = true;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function parseDate(s){ var d=new Date(s); return isNaN(d)?0:d.getTime(); }
+function unique(key){ return ["All",...new Set(data.map(function(d){return d[key];}).filter(Boolean))]; }
+
+function badge(label, styleMap) {
+  var s = styleMap[label] || {c:"var(--text-dim)",bg:"var(--surface2)",b:"var(--border2)"};
+  return '<span class="badge" style="color:'+s.c+';background:'+s.bg+';border:1px solid '+s.b+'">'+label+'</span>';
+}
+
+function copyLink(btn, url) {
+  navigator.clipboard.writeText(url).then(function() {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(function(){ btn.textContent='Copy link'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── THEME ─────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  var html = document.documentElement;
+  var isDark = html.getAttribute("data-theme") === "dark";
+  html.setAttribute("data-theme", isDark ? "light" : "dark");
+  document.getElementById("theme-label").textContent = isDark ? "Dark Mode" : "Light Mode";
+  document.getElementById("theme-icon").textContent  = isDark ? "🌙" : "☀️";
+}
+
+// ── FEATURED ──────────────────────────────────────────────────────────────
+function toggleFeatured() {
+  featuredOpen = !featuredOpen;
+  var body    = document.getElementById("feat-body");
+  var chevron = document.getElementById("feat-chevron");
+  if (featuredOpen) {
+    body.classList.remove("closed");
+    chevron.style.transform = "rotate(0deg)";
+  } else {
+    body.classList.add("closed");
+    chevron.style.transform = "rotate(-90deg)";
+  }
+}
+
+function renderFeatured() {
+  var el = document.getElementById("feat-list");
+  var rows = featuredItems.map(function(f, i) {
+    var r = data.find(function(d){ return d.link === f.link; });
+    if (!r) return '';
+    var isLast = i === featuredItems.length - 1;
+    var safeLink = r.link.replace(/'/g, "\\'");
+    return '<div class="featured-row" style="border-bottom:'+(isLast?'none':'1px solid var(--border)')+';">'
+      + '<div class="cell-date">'+( r.date||"—")+'</div>'
+      + '<div>'+badge(r.type, typeStyle)+'</div>'
+      + '<div>'
+        + '<div style="font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">'+r.source+'</div>'
+        + '<div style="font-family:\'DM Sans\',sans-serif;font-size:12px;font-weight:300;color:var(--text-muted);line-height:1.55;margin-bottom:7px;">'+r.tldr+'</div>'
+        + '<span style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:.06em;color:var(--gold);background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:3px;padding:2px 8px;">★ '+f.why+'</span>'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;padding-top:2px;">'
+        + '<a href="'+r.link+'" target="_blank" rel="noreferrer" class="view-link">View ↗</a>'
+        + '<button class="copy-btn" onclick="copyLink(this,\''+safeLink+'\')">Copy link</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+  el.innerHTML = rows;
+}
+
+// ── FILTERS ───────────────────────────────────────────────────────────────
+function setType(v)  { activeType  = v; }
+function setTopic(v) { activeTopic = v; }
+function setTeam(v)  { activeTeam  = v; }
+
+function toggleSort() {
+  sortDir = sortDir === "desc" ? "asc" : "desc";
+  document.getElementById("sort-icon").textContent = sortDir === "desc" ? "↓" : "↑";
+  render();
+}
+
+function buildPills(containerId, items, getActive, setter) {
+  document.getElementById(containerId).innerHTML = items.map(function(t) {
+    var safe = t.replace(/'/g, "\\'");
+    return '<button class="pill'+(getActive()===t?' active':'')+'" onclick="'+setter+'(\''+safe+'\');render()">'+t+'</button>';
+  }).join('');
+}
+
+// ── MAIN RENDER ───────────────────────────────────────────────────────────
+function render() {
+  var q = document.getElementById("search").value.toLowerCase();
+
+  buildPills("type-pills",  unique("type"),  function(){ return activeType;  }, "setType");
+  buildPills("topic-pills", unique("topic"), function(){ return activeTopic; }, "setTopic");
+  buildPills("team-pills",  unique("team"),  function(){ return activeTeam;  }, "setTeam");
+
+  var filtered = data.filter(function(r) {
+    var match = !q || [r.source,r.topic,r.tldr,r.type,r.team].some(function(f){ return f && f.toLowerCase().indexOf(q) !== -1; });
+    return match
+      && (activeType  === "All" || r.type  === activeType)
+      && (activeTopic === "All" || r.topic === activeTopic)
+      && (activeTeam  === "All" || r.team  === activeTeam);
+  }).sort(function(a,b){
+    return sortDir === "desc" ? parseDate(b.date)-parseDate(a.date) : parseDate(a.date)-parseDate(b.date);
+  });
+
+  document.getElementById("count-label").innerHTML = '<em>'+filtered.length+'</em> of '+data.length+' resources';
+
+  var el = document.getElementById("results");
+  if (!filtered.length) { el.innerHTML = '<div class="no-results">No results found</div>'; return; }
+
+  el.innerHTML = filtered.map(function(r) {
+    var safeLink = r.link.replace(/'/g, "\\'");
+    return '<div class="row">'
+      + '<div class="cell-date">'+(r.date||"—")+'</div>'
+      + '<div>'+badge(r.type, typeStyle)+'</div>'
+      + '<div class="cell-source">'+r.source+'</div>'
+      + '<div>'+badge(r.topic, topicStyle)+'</div>'
+      + '<div>'+(r.team ? badge(r.team, teamStyle) : '<span style="color:var(--text-dim);font-family:\'DM Mono\',monospace;font-size:10px">—</span>')+'</div>'
+      + '<div>'
+        + '<div class="cell-tldr">'+r.tldr+'</div>'
+        + '<div class="cell-actions">'
+          + '<a href="'+r.link+'" target="_blank" rel="noreferrer" class="view-link">View resource ↗</a>'
+          + '<button class="copy-btn" onclick="copyLink(this,\''+safeLink+'\')">Copy link</button>'
+        + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+renderFeatured();
+render();
+</script>
+</body>
+</html>
